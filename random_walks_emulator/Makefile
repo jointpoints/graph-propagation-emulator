@@ -1,7 +1,7 @@
 COMPILER_FLAGS = -Wall -O2 -std=c++11
 OBJECT_FOLDER = random_walks_emulator_obj
 OUT_FOLDER = Random Walks Emulator (build)
-UNITS = metric_graph
+UNITS = metric_graph wander
 
 
 
@@ -58,7 +58,7 @@ release_clean_win:
 release_saturate_win:
 	powershell New-Item -ItemType Directory -Force -Path \"$(OUT_FOLDER)\\Configuration\"
 	powershell New-Item -ItemType Directory -Force -Path \"$(OUT_FOLDER)\\Saved files\"
-	powershell Copy-Item -Force -Path supply\\Sample1 -Destination \"$(OUT_FOLDER)\\Saved files\\Sample graph 1.rweg\"
+	powershell Copy-Item -Force -Path _util\\Sample1 -Destination \"$(OUT_FOLDER)\\Saved files\\Sample graph 1.rweg\"
 
 
 
@@ -85,4 +85,4 @@ release_clean_unx:
 release_saturate_unx:
 	mkdir \"$(OUT_FOLDER)/Configuration\"
 	mkdir \"$(OUT_FOLDER)/Saved files\"
-	cp supply/Sample1 \"$(OUT_FOLDER)/Saved files/Sample graph 1.rweg\"
+	cp _util/Sample1 \"$(OUT_FOLDER)/Saved files/Sample graph 1.rweg\"

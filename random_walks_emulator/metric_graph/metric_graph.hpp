@@ -30,14 +30,14 @@ namespace rand_walks
 		~MetricGraph(void);
 
 		// Capacity
-		uint32_t const getVertexCount(void);
+		uint32_t const getVertexCount(void) const;
 
 		// Modifiers
-		void addEdge(uint32_t, uint32_t, long double, bool is_directed = false);
+		void addEdge(uint32_t const, uint32_t const, long double const, bool const);
 
 		// Save/load
-		void toFile(std::string file_name = "Saved files/My metric graph");
-		void fromFile(std::string);
+		void toFile(std::string const) const;
+		void fromFile(std::string const);
 	private:
 		using VertexList            = std::vector<uint32_t>;
 		using LengthList            = std::vector<long double>;

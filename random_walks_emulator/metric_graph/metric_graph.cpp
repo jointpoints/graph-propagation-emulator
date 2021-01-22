@@ -43,7 +43,7 @@ rand_walks::MetricGraph::~MetricGraph(void)
 
 
 
-uint32_t const rand_walks::MetricGraph::getVertexCount(void)
+uint32_t const rand_walks::MetricGraph::getVertexCount(void) const
 {
 	return this->edges.size();
 }
@@ -58,7 +58,7 @@ uint32_t const rand_walks::MetricGraph::getVertexCount(void)
 
 
 
-void rand_walks::MetricGraph::addEdge(uint32_t out_vertex, uint32_t in_vertex, long double length, bool is_directed)
+void rand_walks::MetricGraph::addEdge(uint32_t const out_vertex, uint32_t const in_vertex, long double const length, bool const is_directed = false)
 {
 	auto out_vertex_neighbourhood = std::find_if(this->edges.begin(), this->edges.end(), [out_vertex](VertexNeighbourhood neighbourhood){return neighbourhood.vertex_id == out_vertex;});
 	if (out_vertex_neighbourhood != this->edges.end())
@@ -90,7 +90,7 @@ void rand_walks::MetricGraph::addEdge(uint32_t out_vertex, uint32_t in_vertex, l
 
 
 
-void rand_walks::MetricGraph::toFile(std::string file_name)
+void rand_walks::MetricGraph::toFile(std::string const file_name = "Saved files/My metric graph") const
 {
 	std::string const   file_format     = ".rweg";
 	std::string         file_name_new   = file_name;
@@ -120,11 +120,10 @@ void rand_walks::MetricGraph::toFile(std::string file_name)
 	{
 		for (uint32_t adjacent_vertex_i = 0; adjacent_vertex_i < this->edges[vertex_i].connected_vertices.size(); ++adjacent_vertex_i)
 		{
-			VertexNeighbourhood &curr_vertex = this->edges[vertex_i];
-			out_file.write(reinterpret_cast<char *>(&curr_vertex.vertex_id), sizeof(curr_vertex.vertex_id));
-			out_file.write(reinterpret_cast<char *>(&curr_vertex.connected_vertices[adjacent_vertex_i]), sizeof(curr_vertex.connected_vertices[adjacent_vertex_i]));
-			out_file.write(reinterpret_cast<char *>(&curr_vertex.lengths[adjacent_vertex_i]), sizeof(curr_vertex.lengths[adjacent_vertex_i]));
-			//out_file << curr_vertex.vertex_id << curr_vertex.connected_vertices[adjacent_vertex_i] << curr_vertex.lengths[adjacent_vertex_i];
+			VertexNeighbourhood const &curr_vertex = this->edges[vertex_i];
+			out_file.write(reinterpret_cast<char const *const>(&curr_vertex.vertex_id), sizeof(curr_vertex.vertex_id));
+			out_file.write(reinterpret_cast<char const *const>(&curr_vertex.connected_vertices[adjacent_vertex_i]), sizeof(curr_vertex.connected_vertices[adjacent_vertex_i]));
+			out_file.write(reinterpret_cast<char const *const>(&curr_vertex.lengths[adjacent_vertex_i]), sizeof(curr_vertex.lengths[adjacent_vertex_i]));
 		}
 	}
 	out_file.close();
@@ -134,7 +133,7 @@ void rand_walks::MetricGraph::toFile(std::string file_name)
 
 
 
-void rand_walks::MetricGraph::fromFile(std::string file_name)
+void rand_walks::MetricGraph::fromFile(std::string const file_name)
 {
 	std::string const   file_format     = ".rweg";
 	std::fstream        in_file;
