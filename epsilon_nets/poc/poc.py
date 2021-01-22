@@ -74,6 +74,11 @@ for x_i in range(2, s):
 	x_prev = x_curr
 	# RotCart --> RotCyln
 	new_point_rot_cyln[x_i - 2] = (sgn(point_rot_cart[x_i - 2]) * atan(r_curr**.5 / point_rot_cart[x_i - 1])) % pi_3
+	#new_point_rot_cyln[x_i - 2] = (sgn(point_rot_cart[x_i - 2]) * atan(r_curr**.5 / point_rot_cart[x_i - 1])) % (pi_3 if x_i == 2 else atan((x_i / (x_i - 2))**.5 / cos(new_point_rot_cyln[x_i - 3])))
+	'''if x_i > 2:
+		print(sgn(point_rot_cart[x_i - 2]) * atan(r_curr**.5 / point_rot_cart[x_i - 1]))
+		print(atan((x_i / (x_i - 2))**.5 / cos(new_point_rot_cyln[x_i - 3])))
+		print((sgn(point_rot_cart[x_i - 2]) * atan(r_curr**.5 / point_rot_cart[x_i - 1])) % (pi_3 if x_i == 2 else atan((x_i / (x_i - 2))**.5 / cos(new_point_rot_cyln[x_i - 3]))))'''
 	r_curr = r_curr + point_rot_cart[x_i - 1]**2
 file.close()
 
