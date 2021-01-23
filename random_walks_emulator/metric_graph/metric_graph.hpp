@@ -26,25 +26,31 @@ namespace rand_walks
 	{
 	public:
 		// Constructors and destructors
-		MetricGraph(void);
-		~MetricGraph(void);
+		MetricGraph     (void);
+		~MetricGraph    (void);
 
-		// Capacity
-		uint32_t const getVertexCount(void) const;
+		// Access
+		uint32_t const      getVertexCount  (void)                              const;
+		long double const   getEdgeLength   (uint32_t const, uint32_t const)    const;
 
 		// Modifiers
 		void addEdge(uint32_t const, uint32_t const, long double const, bool const);
 
 		// Save/load
-		void toFile(std::string const) const;
-		void fromFile(std::string const);
+		void    toFile      (std::string const)     const;
+		void    fromFile    (std::string const);
 	private:
 		using VertexList            = std::vector<uint32_t>;
 		using LengthList            = std::vector<long double>;
-		using VertexNeighbourhood   = struct {uint32_t vertex_id; VertexList connected_vertices; LengthList lengths;};
+		using DirectionList         = std::vector<bool>;
+		using VertexNeighbourhood   = struct {uint32_t vertex_id; VertexList connected_vertices; LengthList lengths; DirectionList is_directed;};
 		using EdgeList              = std::vector<VertexNeighbourhood>;
+		using EdgeSpecifier         = std::pair<EdgeList::const_iterator, uint32_t const>;
 
 		EdgeList    edges;
+
+		// Access
+		EdgeSpecifier getEdge(uint32_t const, uint32_t const, bool const, bool const) const;
 	};
 } // rand_walks
 
