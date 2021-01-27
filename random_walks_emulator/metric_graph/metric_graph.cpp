@@ -79,10 +79,10 @@ long double const rand_walks::MetricGraph::getEdgeLength(uint32_t const out_vert
 			return out_lower_bound->lengths[std::distance(out_lower_bound->connected_vertices.begin(), in_lower_bound)];
 	}*/
 	// 1. Try to find corresponding edge
-	EdgeSpecifier edge = this->getEdge(out_vertex, in_vertex);
+	Edge edge = this->getEdge(out_vertex, in_vertex);
 
-	if (edge.first != this->edges.end())
-		return edge.first->lengths[edge.second];
+	if (edge.first != this->edges.size())
+		return this->edges[edge.first].lengths[edge.second];
 
 	// 2. If both attempts are unsuccessful, there is no edge between <out_vertex> and <in_vertex>
 	return std::numeric_limits<long double const>::infinity();
@@ -90,7 +90,21 @@ long double const rand_walks::MetricGraph::getEdgeLength(uint32_t const out_vert
 
 
 
-rand_walks::MetricGraph::EdgeSpecifier rand_walks::MetricGraph::getEdge(uint32_t const out_vertex, uint32_t const in_vertex, bool const is_directed = true, bool const strict_mode = false) const
+void rand_walks::MetricGraph::outputEdgeList(std::ostream &output_stream) const
+{
+	for (uint32_t vertex_1 = 0; vertex_1 < this->edges.size(); ++vertex_1)
+	{
+		VertexNeighbourhood const &curr_neighbourhood = this->edges[vertex_1];
+		for (uint32_t vertex_2 = 0; vertex_2 < curr_neighbourhood.connected_vertices.size(); ++vertex_2)
+			output_stream << curr_neighbourhood.vertex_id << ((curr_neighbourhood.is_directed[vertex_2]) ? (" ---> ") : (" ---- ")) << curr_neighbourhood.connected_vertices[vertex_2] << '\t' << curr_neighbourhood.lengths[vertex_2] << '\n';
+	}
+
+	return;
+}
+
+
+
+rand_walks::MetricGraph::Edge rand_walks::MetricGraph::getEdge(uint32_t const out_vertex, uint32_t const in_vertex, bool const is_directed, bool const strict_mode) const
 {
 	uint32_t const  out_vertex_new      = (is_directed) ? (out_vertex) : (std::min(out_vertex, in_vertex));
 	uint32_t const  in_vertex_new       = (is_directed) ? (in_vertex)  : (std::max(out_vertex, in_vertex));
@@ -107,12 +121,12 @@ rand_walks::MetricGraph::EdgeSpecifier rand_walks::MetricGraph::getEdge(uint32_t
 			if (strict_mode)
 			{
 				if (out_lower_bound->is_directed[std::distance(out_lower_bound->connected_vertices.begin(), in_lower_bound)] == is_directed)
-					return std::make_pair(out_lower_bound, std::distance(out_lower_bound->connected_vertices.begin(), in_lower_bound));
+					return std::make_pair(std::distance(this->edges.begin(), out_lower_bound), std::distance(out_lower_bound->connected_vertices.begin(), in_lower_bound));
 				else
-					return std::make_pair(this->edges.end(), 0);
+					return std::make_pair(this->edges.size(), 0);
 			}
 			else
-				return std::make_pair(out_lower_bound, std::distance(out_lower_bound->connected_vertices.begin(), in_lower_bound));
+				return std::make_pair(std::distance(this->edges.begin(), out_lower_bound), std::distance(out_lower_bound->connected_vertices.begin(), in_lower_bound));
 		}
 	}
 
@@ -126,12 +140,12 @@ rand_walks::MetricGraph::EdgeSpecifier rand_walks::MetricGraph::getEdge(uint32_t
 			auto in_lower_bound = std::lower_bound(out_lower_bound->connected_vertices.begin(), out_lower_bound->connected_vertices.end(), out_vertex_new);
 
 			if ((in_lower_bound != out_lower_bound->connected_vertices.end()) && (*in_lower_bound == in_vertex_new) && (!out_lower_bound->is_directed[std::distance(out_lower_bound->connected_vertices.begin(), in_lower_bound)]))
-				return std::make_pair(out_lower_bound, std::distance(out_lower_bound->connected_vertices.begin(), in_lower_bound));
+				return std::make_pair(std::distance(this->edges.begin(), out_lower_bound), std::distance(out_lower_bound->connected_vertices.begin(), in_lower_bound));
 		}
 	}
 
 	// 3. Otherwise, such edge doesn't exist
-	return std::make_pair(this->edges.end(), 0);
+	return std::make_pair(this->edges.size(), 0);
 }
 
 
@@ -144,12 +158,61 @@ rand_walks::MetricGraph::EdgeSpecifier rand_walks::MetricGraph::getEdge(uint32_t
 
 
 
-void rand_walks::MetricGraph::addEdge(uint32_t const out_vertex, uint32_t const in_vertex, long double const length, bool const is_directed = false)
+void rand_walks::MetricGraph::addEdge(uint32_t const out_vertex, uint32_t const in_vertex, long double const length, bool const is_directed)
 {
 	uint32_t const  out_vertex_new  = (is_directed) ? (out_vertex) : (std::min(out_vertex, in_vertex));
 	uint32_t const  in_vertex_new   = (is_directed) ? (in_vertex)  : (std::max(out_vertex, in_vertex));
+	auto            out_comparator  = [](VertexNeighbourhood const curr_neighbourhood, uint32_t const value){return curr_neighbourhood.vertex_id < value;};
+	Edge            existing_edge   = this->getEdge(out_vertex_new, in_vertex_new, is_directed);
 
-	// TODO
+	if (existing_edge.first == this->edges.size())
+		existing_edge = this->getEdge(in_vertex_new, out_vertex_new);
+
+	// 1. If there is no edge like this, we just add a new element to the EdgeList
+	if (existing_edge.first == this->edges.size())
+	{
+		auto out_lower_bound = std::lower_bound(this->edges.begin(), this->edges.end(), out_vertex_new, out_comparator);
+
+		// 1.1. If <out_vertex_new> has been added before
+		if ((out_lower_bound != this->edges.end()) && (out_lower_bound->vertex_id == out_vertex_new))
+		{
+			auto in_lower_bound = std::lower_bound(out_lower_bound->connected_vertices.begin(), out_lower_bound->connected_vertices.end(), in_vertex_new);
+			out_lower_bound->connected_vertices.insert(in_lower_bound, in_vertex_new);
+			out_lower_bound->lengths.insert(out_lower_bound->lengths.begin() + std::distance(out_lower_bound->connected_vertices.begin(), in_lower_bound), length);
+			out_lower_bound->is_directed.insert(out_lower_bound->is_directed.begin() + std::distance(out_lower_bound->connected_vertices.begin(), in_lower_bound), is_directed);
+			return;
+		}
+
+		// 1.2. If <out_vertex_new> has never been added before
+		this->edges.insert(out_lower_bound, {out_vertex_new, VertexList{in_vertex_new}, LengthList{length}, DirectionList{is_directed}});
+		return;
+	}
+
+	// 2. If there is an edge like this, we need to check how strict the match is:
+	//        - if new edge is <out_vertex_new> ---> <in_vertex_new> but existing is <out_vertex_new> ---> <in_vertex_new>,
+	//          we only need to update the length
+	//        - if new edge is <out_vertex_new> ---> <in_vertex_new> but existing is <out_vertex_new> <--- <in_vertex_new>,
+	//          we need to replace it with a single undirected edge <out_vertex_new> ---- <in_vertex_new>
+	//        - if new edge is <out_vertex_new> ---> <in_vertex_new> but existing is <out_vertex_new> ---- <in_vertex_new>,
+	//          we only need to update the length
+	//        - if new edge is <out_vertex_new> ---- <in_vertex_new> but existing is <out_vertex_new> <--- <in_vertex_new> or <out_vertex_new> ---> <in_vertex_new>,
+	//          we need to replace it with a single undirected edge <out_vertex_new> ---- <in_vertex_new>
+	//        - if new edge is <out_vertex_new> ---- <in_vertex_new> but existing is <out_vertex_new> ---- <in_vertex_new>,
+	//          we only need to update the length
+	if (this->edges[existing_edge.first].vertex_id == out_vertex_new)
+	{
+		this->edges[existing_edge.first].lengths[existing_edge.second] = length;
+		if ((this->edges[existing_edge.first].is_directed[existing_edge.second]) && (is_directed))
+			return;
+		this->edges[existing_edge.first].is_directed[existing_edge.second] = false;
+		return;
+	}
+	this->edges[existing_edge.second].connected_vertices.erase(this->edges[existing_edge.second].connected_vertices.begin() + existing_edge.first);
+	this->edges[existing_edge.second].lengths.erase(this->edges[existing_edge.second].lengths.begin() + existing_edge.first);
+	this->edges[existing_edge.second].is_directed.erase(this->edges[existing_edge.second].is_directed.begin() + existing_edge.first);
+	if (this->edges[existing_edge.second].connected_vertices.size() == 0)
+		this->edges.erase(this->edges.begin() + existing_edge.second);
+	this->addEdge(out_vertex_new, in_vertex_new, length, false);
 	
 	return;
 }
@@ -164,7 +227,7 @@ void rand_walks::MetricGraph::addEdge(uint32_t const out_vertex, uint32_t const 
 
 
 
-void rand_walks::MetricGraph::toFile(std::string const file_name = "Saved files/My metric graph") const
+void rand_walks::MetricGraph::toFile(std::string const file_name) const
 {
 	std::string const   file_format     = ".rweg";
 	std::string         file_name_new   = file_name;

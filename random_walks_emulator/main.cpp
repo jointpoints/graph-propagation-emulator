@@ -16,10 +16,10 @@
 int main(void)
 {
 	rand_walks::MetricGraph graph;
-	graph.fromFile("Saved files/Sample graph 1.rweg");
-
-	rand_walks::WanderInfo wander_info{0.1, rand_walks::Concurrency::none};
-	rand_walks::Wander wander(graph, wander_info, 0);
+	graph.addEdge(1, 0, 1.0, false);
+	graph.outputEdgeList(std::cout);
+	graph.addEdge(0, 1, 2.0, true);
+	graph.outputEdgeList(std::cout);
 
 	return 0;
 }

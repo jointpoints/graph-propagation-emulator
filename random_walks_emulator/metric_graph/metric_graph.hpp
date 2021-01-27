@@ -15,6 +15,7 @@
 #include <vector>   // needed for "vector"
 #include <cstdint>  // needed for "int*_t" and "uint*_t" types
 #include <string>   // needed for "string"
+#include <iostream> // needed for "iostream"
 
 
 
@@ -30,27 +31,28 @@ namespace rand_walks
 		~MetricGraph    (void);
 
 		// Access
-		uint32_t const      getVertexCount  (void)                              const;
-		long double const   getEdgeLength   (uint32_t const, uint32_t const)    const;
+		uint32_t const      getVertexCount  (void)                                              const;
+		long double const   getEdgeLength   (uint32_t const out_vertex, uint32_t in_vertex)     const;
+		void                outputEdgeList  (std::ostream &output_stream)                       const;
 
 		// Modifiers
-		void addEdge(uint32_t const, uint32_t const, long double const, bool const);
+		void addEdge(uint32_t const out_vertex, uint32_t const in_vertex, long double const length, bool const is_directed = false);
 
 		// Save/load
-		void    toFile      (std::string const)     const;
-		void    fromFile    (std::string const);
+		void    toFile      (std::string const file_name = "Saved files/My metric graph")   const;
+		void    fromFile    (std::string const file_name);
 	private:
 		using VertexList            = std::vector<uint32_t>;
 		using LengthList            = std::vector<long double>;
 		using DirectionList         = std::vector<bool>;
 		using VertexNeighbourhood   = struct {uint32_t vertex_id; VertexList connected_vertices; LengthList lengths; DirectionList is_directed;};
 		using EdgeList              = std::vector<VertexNeighbourhood>;
-		using EdgeSpecifier         = std::pair<EdgeList::const_iterator, uint32_t const>;
+		using Edge                  = std::pair<uint32_t, uint32_t>;
 
 		EdgeList    edges;
 
 		// Access
-		EdgeSpecifier getEdge(uint32_t const, uint32_t const, bool const, bool const) const;
+		Edge getEdge(uint32_t const out_vertex, uint32_t const in_vertex, bool const is_directed = true, bool const strict_mode = false) const;
 	};
 } // rand_walks
 
