@@ -52,39 +52,13 @@ uint32_t const rand_walks::MetricGraph::getVertexCount(void) const
 
 long double const rand_walks::MetricGraph::getEdgeLength(uint32_t const out_vertex, uint32_t in_vertex) const
 {
-	/*auto out_comparator     = [](VertexNeighbourhood const curr_neighbourhood, uint32_t const value){return curr_neighbourhood.vertex_id < value;};
-
-	// 1. Try to find an indirected edge between <out_vertex> and <in_vertex>
-	uint32_t const  out_vertex_new      = std::min(out_vertex, in_vertex);
-	uint32_t const  in_vertex_new       = std::max(out_vertex, in_vertex);
-	auto            out_lower_bound     = std::lower_bound(this->edges.begin(), this->edges.end(), out_vertex_new, out_comparator);
-
-	if ((out_lower_bound != this->edges.end()) && (out_lower_bound->vertex_id == out_vertex_new))
-	{
-		auto in_lower_bound = std::lower_bound(out_lower_bound->connected_vertices.begin(), out_lower_bound->connected_vertices.end(), in_vertex_new);
-
-		if ((in_lower_bound != out_lower_bound->connected_vertices.end()) && (*in_lower_bound == in_vertex_new))
-			if ((out_lower_bound->is_directed[std::distance(out_lower_bound->connected_vertices.begin(), in_lower_bound)] == false) || (out_vertex == out_vertex_new))
-				return out_lower_bound->lengths[std::distance(out_lower_bound->connected_vertices.begin(), in_lower_bound)];
-	}
-
-	// 2. If previous attempt is unsuccessful, try to find a directed edge between <out_vertex> and <in_vertex>
-	out_lower_bound = std::lower_bound(this->edges.begin(), this->edges.end(), out_vertex, out_comparator);
-
-	if ((out_lower_bound != this->edges.end()) && (out_lower_bound->vertex_id == out_vertex))
-	{
-		auto in_lower_bound = std::lower_bound(out_lower_bound->connected_vertices.begin(), out_lower_bound->connected_vertices.end(), in_vertex);
-
-		if ((in_lower_bound != out_lower_bound->connected_vertices.end()) && (*in_lower_bound == in_vertex))
-			return out_lower_bound->lengths[std::distance(out_lower_bound->connected_vertices.begin(), in_lower_bound)];
-	}*/
 	// 1. Try to find corresponding edge
 	Edge edge = this->getEdge(out_vertex, in_vertex);
 
 	if (edge.first != this->edges.size())
 		return this->edges[edge.first].lengths[edge.second];
 
-	// 2. If both attempts are unsuccessful, there is no edge between <out_vertex> and <in_vertex>
+	// 2. If there is no edge between <out_vertex> and <in_vertex>, return infinity
 	return std::numeric_limits<long double const>::infinity();
 }
 
@@ -158,7 +132,7 @@ rand_walks::MetricGraph::Edge rand_walks::MetricGraph::getEdge(uint32_t const ou
 
 
 
-void rand_walks::MetricGraph::addEdge(uint32_t const out_vertex, uint32_t const in_vertex, long double const length, bool const is_directed)
+void rand_walks::MetricGraph::updateEdge(uint32_t const out_vertex, uint32_t const in_vertex, long double const length, bool const is_directed)
 {
 	uint32_t const  out_vertex_new  = (is_directed) ? (out_vertex) : (std::min(out_vertex, in_vertex));
 	uint32_t const  in_vertex_new   = (is_directed) ? (in_vertex)  : (std::max(out_vertex, in_vertex));
@@ -177,9 +151,9 @@ void rand_walks::MetricGraph::addEdge(uint32_t const out_vertex, uint32_t const 
 		if ((out_lower_bound != this->edges.end()) && (out_lower_bound->vertex_id == out_vertex_new))
 		{
 			auto in_lower_bound = std::lower_bound(out_lower_bound->connected_vertices.begin(), out_lower_bound->connected_vertices.end(), in_vertex_new);
-			out_lower_bound->connected_vertices.insert(in_lower_bound, in_vertex_new);
 			out_lower_bound->lengths.insert(out_lower_bound->lengths.begin() + std::distance(out_lower_bound->connected_vertices.begin(), in_lower_bound), length);
 			out_lower_bound->is_directed.insert(out_lower_bound->is_directed.begin() + std::distance(out_lower_bound->connected_vertices.begin(), in_lower_bound), is_directed);
+			out_lower_bound->connected_vertices.insert(in_lower_bound, in_vertex_new);
 			return;
 		}
 
@@ -207,12 +181,18 @@ void rand_walks::MetricGraph::addEdge(uint32_t const out_vertex, uint32_t const 
 		this->edges[existing_edge.first].is_directed[existing_edge.second] = false;
 		return;
 	}
+	if (this->edges[existing_edge.first].vertex_id < out_vertex_new)
+	{
+		this->edges[existing_edge.first].lengths[existing_edge.second] = length;
+		this->edges[existing_edge.first].is_directed[existing_edge.second] = false;
+		return;
+	}
 	this->edges[existing_edge.second].connected_vertices.erase(this->edges[existing_edge.second].connected_vertices.begin() + existing_edge.first);
 	this->edges[existing_edge.second].lengths.erase(this->edges[existing_edge.second].lengths.begin() + existing_edge.first);
 	this->edges[existing_edge.second].is_directed.erase(this->edges[existing_edge.second].is_directed.begin() + existing_edge.first);
 	if (this->edges[existing_edge.second].connected_vertices.size() == 0)
 		this->edges.erase(this->edges.begin() + existing_edge.second);
-	this->addEdge(out_vertex_new, in_vertex_new, length, false);
+	this->updateEdge(out_vertex_new, in_vertex_new, length, false);
 	
 	return;
 }
@@ -253,14 +233,16 @@ void rand_walks::MetricGraph::toFile(std::string const file_name) const
 
 	// 2. Dump information about graph into this file
 	out_file.open(file_name_new + file_format, std::fstream::out | std::fstream::binary);
-	for (uint32_t vertex_i = 0; vertex_i < this->edges.size(); ++vertex_i)
+	for (uint32_t vertex_1 = 0; vertex_1 < this->edges.size(); ++vertex_1)
 	{
-		for (uint32_t adjacent_vertex_i = 0; adjacent_vertex_i < this->edges[vertex_i].connected_vertices.size(); ++adjacent_vertex_i)
+		VertexNeighbourhood const &curr_neighbourhood = this->edges[vertex_1];
+		for (uint32_t vertex_2 = 0; vertex_2 < curr_neighbourhood.connected_vertices.size(); ++vertex_2)
 		{
-			VertexNeighbourhood const &curr_vertex = this->edges[vertex_i];
-			out_file.write(reinterpret_cast<char const *const>(&curr_vertex.vertex_id), sizeof(curr_vertex.vertex_id));
-			out_file.write(reinterpret_cast<char const *const>(&curr_vertex.connected_vertices[adjacent_vertex_i]), sizeof(curr_vertex.connected_vertices[adjacent_vertex_i]));
-			out_file.write(reinterpret_cast<char const *const>(&curr_vertex.lengths[adjacent_vertex_i]), sizeof(curr_vertex.lengths[adjacent_vertex_i]));
+			bool const is_directed = curr_neighbourhood.is_directed[vertex_2];
+			out_file.write(reinterpret_cast<char const *const>(&curr_neighbourhood.vertex_id), sizeof(curr_neighbourhood.vertex_id));
+			out_file.write(reinterpret_cast<char const *const>(&curr_neighbourhood.connected_vertices[vertex_2]), sizeof(curr_neighbourhood.connected_vertices[vertex_2]));
+			out_file.write(reinterpret_cast<char const *const>(&curr_neighbourhood.lengths[vertex_2]), sizeof(curr_neighbourhood.lengths[vertex_2]));
+			out_file.write(reinterpret_cast<char const *const>(&is_directed), sizeof(curr_neighbourhood.is_directed[vertex_2]));
 		}
 	}
 	out_file.close();
@@ -281,16 +263,19 @@ void rand_walks::MetricGraph::fromFile(std::string const file_name)
 	{
 		uint32_t        out_vertex(0), in_vertex(0);
 		long double     length(0.0);
+		bool            is_directed(false);
 
 		in_file.read(reinterpret_cast<char *>(&out_vertex), sizeof(out_vertex));
 		in_file.read(reinterpret_cast<char *>(&in_vertex), sizeof(in_vertex));
 		in_file.read(reinterpret_cast<char *>(&length), sizeof(length));
+		in_file.read(reinterpret_cast<char *>(&is_directed), sizeof(is_directed));
 		while (!in_file.fail())
 		{
-			this->addEdge(out_vertex, in_vertex, length, true);
+			this->updateEdge(out_vertex, in_vertex, length, is_directed);
 			in_file.read(reinterpret_cast<char *>(&out_vertex), sizeof(out_vertex));
 			in_file.read(reinterpret_cast<char *>(&in_vertex), sizeof(in_vertex));
 			in_file.read(reinterpret_cast<char *>(&length), sizeof(length));
+			in_file.read(reinterpret_cast<char *>(&is_directed), sizeof(is_directed));
 		}
 	}
 	in_file.close();

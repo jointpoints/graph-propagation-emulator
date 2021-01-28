@@ -36,7 +36,7 @@ namespace rand_walks
 		void                outputEdgeList  (std::ostream &output_stream)                       const;
 
 		// Modifiers
-		void addEdge(uint32_t const out_vertex, uint32_t const in_vertex, long double const length, bool const is_directed = false);
+		void updateEdge(uint32_t const out_vertex, uint32_t const in_vertex, long double const length, bool const is_directed = false);
 
 		// Save/load
 		void    toFile      (std::string const file_name = "Saved files/My metric graph")   const;
