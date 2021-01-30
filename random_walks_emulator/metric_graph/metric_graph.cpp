@@ -5,9 +5,9 @@
  * \author
  *       Andrei Eliseev (JointPoints), 2021
  */
-#include "metric_graph.hpp"
+#include "../wander/wander.hpp"
 
-#include <algorithm>    // needed for "find_if", "find", "min", "max", "binary_search"
+#include <algorithm>    // needed for "find_if", "find", "min", "max", "lower_bound"
 #include <fstream>      // needed for "fstream"
 
 
@@ -21,7 +21,7 @@
 
 
 rand_walks::MetricGraph::MetricGraph(void) :
-	edges()
+	edges(), associated_wanders()
 {
 	// Intended to be empty
 }
@@ -30,7 +30,9 @@ rand_walks::MetricGraph::MetricGraph(void) :
 
 rand_walks::MetricGraph::~MetricGraph(void)
 {
-	// Intended to be empty
+	// 1. Kill all associated wanders
+	for (uint32_t wander_i = 0; wander_i < this->associated_wanders.size(); ++wander_i)
+		this->associated_wanders[wander_i]->kill();
 }
 
 
@@ -53,7 +55,7 @@ bool const rand_walks::MetricGraph::checkVertex(uint32_t const vertex) const
 		return true;
 
 	// 2. Try looking for <vertex> among adjacent vertices
-	for (uint32_t neighbourhood_i = 0; neighbourhood_i < std::distance(this->edges.begin(), vertex_lower_bound); ++neighbourhood_i)
+	for (uint32_t neighbourhood_i = 0; neighbourhood_i < this->edges.size(); ++neighbourhood_i)
 	{
 		VertexList const    &neighbourhood          = this->edges[neighbourhood_i].connected_vertices;
 		auto                 adjacent_lower_bound   = std::lower_bound(neighbourhood.begin(), neighbourhood.end(), vertex);
@@ -217,6 +219,10 @@ void rand_walks::MetricGraph::updateEdge(uint32_t const out_vertex, uint32_t con
 	if (this->edges[existing_edge.second].connected_vertices.size() == 0)
 		this->edges.erase(this->edges.begin() + existing_edge.second);
 	this->updateEdge(out_vertex_new, in_vertex_new, length, false);
+
+	// 3. Invalidate associated wanders
+	for (uint32_t wander_i = 0; wander_i < this->associated_wanders.size(); ++wander_i)
+		this->associated_wanders[wander_i]->invalidate();
 	
 	return;
 }

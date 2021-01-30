@@ -19,5 +19,8 @@ int main(void)
 	graph.fromFile("Saved files/Sample graph 1");
 	graph.outputEdgeList(std::cout);
 
+	rand_walks::Wander my_wander(graph);
+	my_wander.run(0, 0.5);
+
 	return 0;
 }

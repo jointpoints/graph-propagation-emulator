@@ -23,18 +23,59 @@
 
 namespace rand_walks
 {
+
+
+
+
+
+	// Forward declaration of Wander class
+	class Wander;
+
+
+
+
+
+	/**
+	 * \class MetricGraph
+	 * \brief A metric graph class
+	 * 
+	 * Metric graph is defined as a graph $(V,E)$ with each edge $e \in E$ being associated with
+	 * a certain interval $[0,l(e)]$, where $l(e) > 0$.
+	 */
 	class MetricGraph
 	{
 	public:
-		// Constructors and destructors
+		/// \name Constructors and destructors
+		///@{
+		
+		/**
+		 * Default constructor
+		 * 
+		 * Constructs an empty metric graph.
+		 */
 		MetricGraph     (void);
+
+		/**
+		 * Default destructor
+		 * 
+		 * Destroys the metric graph.
+		 * 
+		 * \warning All \c Wander objects associated with the respective metric graph will be
+		 * automatically transferred to the \c dead state.
+		 */
 		~MetricGraph    (void);
 
-		// Access
+		///@}
+
+
+
+		/// \name Accessors
+		///@{
 		bool const          checkVertex     (uint32_t const vertex)                             const;
 		uint32_t const      getVertexCount  (void)                                              const;
 		long double const   getEdgeLength   (uint32_t const out_vertex, uint32_t in_vertex)     const;
 		void                outputEdgeList  (std::ostream &output_stream)                       const;
+		///@}
 
 		// Modifiers
 		void updateEdge(uint32_t const out_vertex, uint32_t const in_vertex, long double const length, bool const is_directed = false);
@@ -52,11 +93,17 @@ namespace rand_walks
 		using EdgeList              = std::vector<VertexNeighbourhood>;
 		using Edge                  = std::pair<uint32_t, uint32_t>;
 
-		EdgeList    edges;
+		EdgeList                edges;
+		std::vector<Wander *>   associated_wanders;
 
 		// Access
 		Edge getEdge(uint32_t const out_vertex, uint32_t const in_vertex, bool const is_directed = true, bool const strict_mode = false) const;
 	};
+
+
+
+
+
 } // rand_walks
 
 
