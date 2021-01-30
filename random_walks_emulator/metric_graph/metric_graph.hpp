@@ -31,6 +31,7 @@ namespace rand_walks
 		~MetricGraph    (void);
 
 		// Access
+		bool const          checkVertex     (uint32_t const vertex)                             const;
 		uint32_t const      getVertexCount  (void)                                              const;
 		long double const   getEdgeLength   (uint32_t const out_vertex, uint32_t in_vertex)     const;
 		void                outputEdgeList  (std::ostream &output_stream)                       const;
@@ -42,6 +43,8 @@ namespace rand_walks
 		void    toFile      (std::string const file_name = "Saved files/My metric graph")   const;
 		void    fromFile    (std::string const file_name);
 	private:
+		friend class Wander;
+
 		using VertexList            = std::vector<uint32_t>;
 		using LengthList            = std::vector<long double>;
 		using DirectionList         = std::vector<bool>;

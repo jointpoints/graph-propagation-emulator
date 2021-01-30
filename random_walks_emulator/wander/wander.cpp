@@ -17,10 +17,13 @@
 
 
 
-rand_walks::Wander::Wander(MetricGraph const &graph, WanderInfo const &wander_info, uint32_t const start_vertex) :
-	graph(graph), info(wander_info)
+rand_walks::Wander::Wander(MetricGraph const &graph) :
+	graph(graph)
 {
-	// Intended to be empty
+	// 1. Initialise the graph state
+	this->state.resize(graph.edges.size());
+	for (uint32_t vertex_1 = 0; vertex_1 < this->state.size(); ++vertex_1)
+		this->state[vertex_1] = NeighbourhoodState(graph.edges[vertex_1].connected_vertices.size(), EdgeState());
 }
 
 
@@ -28,4 +31,22 @@ rand_walks::Wander::Wander(MetricGraph const &graph, WanderInfo const &wander_in
 rand_walks::Wander::~Wander(void)
 {
 	// Intended to be empty
+}
+
+
+
+
+
+// Modifiers
+
+
+
+
+
+void rand_walks::Wander::reset(void)
+{
+	// 1. Initialise the graph state
+	this->state = GraphState(graph.edges.size());
+	for (uint32_t vertex_1 = 0; vertex_1 < this->state.size(); ++vertex_1)
+		this->state[vertex_1] = NeighbourhoodState(graph.edges[vertex_1].connected_vertices.size(), EdgeState());
 }

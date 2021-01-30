@@ -20,33 +20,25 @@
 
 namespace rand_walks
 {
-	typedef enum uint8_t
-	{
-		none,
-		cpu
-	}
-	Concurrency;
-
-
-
-	typedef struct
-	{
-		long double const   time_delta;
-		Concurrency const   mode;
-	}
-	WanderInfo;
-
-
-
 	class Wander
 	{
 	public:
+		using Concurrency = enum uint8_t {none, cpu};
+
 		// Constructors and destructors
-		Wander(MetricGraph const &, WanderInfo const &, uint32_t const);
+		Wander(MetricGraph const &graph);
 		~Wander(void);
+
+		// Modifiers
+		void reset(void);
 	private:
+		using AgentInstance         = struct {long double position; bool direction : 1;};
+		using EdgeState             = std::vector<AgentInstance>;
+		using NeighbourhoodState    = std::vector<EdgeState>;
+		using GraphState            = std::vector<NeighbourhoodState>;
+
 		MetricGraph const   &graph;
-		WanderInfo const    &info;
+		GraphState           state;
 	};
 } // rand_walks
 

@@ -43,6 +43,30 @@ rand_walks::MetricGraph::~MetricGraph(void)
 
 
 
+bool const rand_walks::MetricGraph::checkVertex(uint32_t const vertex) const
+{
+	// 1. Check if <vertex> is present in the <vertex_id>'s of neighbourhoods
+	auto    comparator          = [](VertexNeighbourhood const curr_neighbourhood, uint32_t const value){return curr_neighbourhood.vertex_id < value;};
+	auto    vertex_lower_bound  = std::lower_bound(this->edges.begin(), this->edges.end(), vertex, comparator);
+
+	if ((vertex_lower_bound != this->edges.end()) && (vertex_lower_bound->vertex_id == vertex))
+		return true;
+
+	// 2. Try looking for <vertex> among adjacent vertices
+	for (uint32_t neighbourhood_i = 0; neighbourhood_i < std::distance(this->edges.begin(), vertex_lower_bound); ++neighbourhood_i)
+	{
+		VertexList const    &neighbourhood          = this->edges[neighbourhood_i].connected_vertices;
+		auto                 adjacent_lower_bound   = std::lower_bound(neighbourhood.begin(), neighbourhood.end(), vertex);
+
+		if ((adjacent_lower_bound != neighbourhood.end()) && (*adjacent_lower_bound == vertex))
+			return true;
+	}
+
+	return false;
+}
+
+
+
 uint32_t const rand_walks::MetricGraph::getVertexCount(void) const
 {
 	return 0; // TODO
