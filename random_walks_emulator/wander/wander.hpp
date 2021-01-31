@@ -49,6 +49,9 @@ namespace rand_walks
 		MetricGraph const   &graph;
 		GraphState           graph_state;
 		WanderState          wander_state;
+
+		// Modifiers
+		bool const updateEdgeState(uint32_t vertex_1, uint32_t vertex_2, long double const epsilon, long double const time_delta);
 	};
 
 
