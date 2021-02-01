@@ -51,7 +51,7 @@ void rand_walks::Wander::reset(void)
 	// 1. Initialise the graph state
 	this->graph_state = GraphState(graph.edges.size());
 	for (uint32_t vertex_1 = 0; vertex_1 < this->graph_state.size(); ++vertex_1)
-		this->graph_state[vertex_1] = NeighbourhoodState(graph.edges[vertex_1].connected_vertices.size(), EdgeState());
+		this->graph_state[vertex_1] = NeighbourhoodState(graph.edges[vertex_1].connected_vertices.size(), EdgeState{AgentInstanceList(), false});
 	
 	// 2. Update wander state
 	this->wander_state = WanderState::ready;
@@ -79,9 +79,9 @@ long double const rand_walks::Wander::run(uint32_t const start_vertex, long doub
 		{
 			MetricGraph::VertexNeighbourhood curr_neighbourhood = this->graph.edges[vertex_1_i];
 			if (curr_neighbourhood.vertex_id == start_vertex)
-				this->graph_state[vertex_1_i][vertex_2_i].push_back({0.0L, true});
+				this->graph_state[vertex_1_i][vertex_2_i].agents.push_back({0.0L, true});
 			if ((curr_neighbourhood.connected_vertices[vertex_2_i] == start_vertex) && (curr_neighbourhood.is_directed[vertex_2_i] == false))
-				this->graph_state[vertex_1_i][vertex_2_i].push_back({curr_neighbourhood.lengths[vertex_2_i], false});
+				this->graph_state[vertex_1_i][vertex_2_i].agents.push_back({curr_neighbourhood.lengths[vertex_2_i], false});
 		}
 	
 	// 4. Run simulation
@@ -117,7 +117,7 @@ void rand_walks::Wander::kill(void)
 
 bool const rand_walks::Wander::updateEdgeState(uint32_t const vertex_1, uint32_t const vertex_2, long double const epsilon, long double const time_delta)
 {
-	EdgeState           &edge_state         = this->graph_state[vertex_1][vertex_2];
+	AgentInstanceList   &agents             = this->graph_state[vertex_1][vertex_2].agents;
 	long double const    length             = this->graph.edges[vertex_1].lengths[vertex_2];
 	bool const           is_directed        = this->graph.edges[vertex_1].is_directed[vertex_2];
 	bool                 is_saturated       = true;
@@ -125,26 +125,27 @@ bool const rand_walks::Wander::updateEdgeState(uint32_t const vertex_1, uint32_t
 	uint32_t             agent_j;
 
 	// 1. Update position of each AgentInstance while preserving their ascending order
-	for (uint32_t agent_i = 0; agent_i < edge_state.size(); ++agent_i)
+	for (uint32_t agent_i = 0; agent_i < agents.size(); ++agent_i)
 	{
-		edge_state[agent_i].position = (edge_state[agent_i].direction) ? (edge_state[agent_i].position + time_delta) : (edge_state[agent_i].position - time_delta);
-		should_reverse = (edge_state[agent_i].position > length) || (edge_state[agent_i].position < 0);
-		edge_state[agent_i].position = (edge_state[agent_i].position < 0) ? (-edge_state[agent_i].position) : (  (edge_state[agent_i].position > length) ? (length - std::fmod(edge_state[agent_i].position, length)) : (edge_state[agent_i].position)  );
-		edge_state[agent_i].direction = (should_reverse) ? (!edge_state[agent_i].direction) : (edge_state[agent_i].direction);
-		if ((is_directed) && (!edge_state[agent_i].direction))
+		agents[agent_i].position = (agents[agent_i].direction) ? (agents[agent_i].position + time_delta) : (agents[agent_i].position - time_delta);
+		should_reverse = (agents[agent_i].position > length) || (agents[agent_i].position < 0);
+		agents[agent_i].position = (agents[agent_i].position < 0) ? (-agents[agent_i].position) : (  (agents[agent_i].position > length) ? (length - std::fmod(agents[agent_i].position, length)) : (agents[agent_i].position)  );
+		agents[agent_i].direction = (should_reverse) ? (!agents[agent_i].direction) : (agents[agent_i].direction);
+		if ((is_directed) && (!agents[agent_i].direction))
 		{
-			edge_state.erase(edge_state.begin() + (agent_i--));
+			agents.erase(agents.begin() + (agent_i--));
 			continue;
 		}
-		for (agent_j = agent_i; (agent_j > 0) && (edge_state[agent_j].position < edge_state[agent_j - 1].position); --agent_j)
-			std::swap(edge_state[agent_j], edge_state[agent_j - 1]);
-		is_saturated &= (agent_j == 0) || (edge_state[agent_j].position - edge_state[agent_j - 1].position < 2 * epsilon);
+		for (agent_j = agent_i; (agent_j > 0) && (agents[agent_j].position < agents[agent_j - 1].position); --agent_j)
+			std::swap(agents[agent_j], agents[agent_j - 1]);
+		is_saturated &= (agent_j == 0) || (agents[agent_j].position - agents[agent_j - 1].position < 2 * epsilon);
 	}
 
-	std::cout << edge_state[0].position << '\n';
+	std::cout << agents[0].position << '\n';
 
 	// 2. Final checks for epsilon-net
-	is_saturated &= (edge_state.size() > 0) && (edge_state[0].position < epsilon) && (length - edge_state.back().position < epsilon);
+	is_saturated &= (agents.size() > 0) && (agents[0].position < epsilon) && (length - agents.back().position < epsilon);
+	this->graph_state[vertex_1][vertex_2].is_saturated = is_saturated;
 
 	return is_saturated;
 }

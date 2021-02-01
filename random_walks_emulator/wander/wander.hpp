@@ -42,7 +42,8 @@ namespace rand_walks
 		void                kill        (void);
 	private:
 		using AgentInstance         = struct {long double position; bool direction : 1;};
-		using EdgeState             = std::vector<AgentInstance>;
+		using AgentInstanceList     = std::vector<AgentInstance>;
+		using EdgeState             = struct {AgentInstanceList agents; bool is_saturated : 1;};
 		using NeighbourhoodState    = std::vector<EdgeState>;
 		using GraphState            = std::vector<NeighbourhoodState>;
 

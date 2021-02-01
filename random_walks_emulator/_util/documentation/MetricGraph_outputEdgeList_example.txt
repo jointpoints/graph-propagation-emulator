@@ -1,0 +1,5 @@
+// Print list of edges into standard output stream (typically, console)
+rand_walks::MetricGraph my_graph;
+my_graph.updateEdge(2, 1, 15.5, false);
+my_graph.updateEdge(0, 1, 8.0, true);
+my_graph.outputEdgeList(std::cout);
