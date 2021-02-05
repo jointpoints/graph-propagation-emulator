@@ -12,7 +12,7 @@
 
 
 
-#include "../metric_graph/metric_graph.hpp"
+#include "../metric_graph/metric_graph.hpp"     // needed for "MetricGraph"
 
 
 
@@ -46,13 +46,14 @@ namespace rand_walks
 		using EdgeState             = struct {AgentInstanceList agents; bool is_saturated : 1;};
 		using NeighbourhoodState    = std::vector<EdgeState>;
 		using GraphState            = std::vector<NeighbourhoodState>;
+		using AgentCreationRequest  = struct {std::deque<MetricGraph::Edge> target_edges; std::deque<long double> init_positions; std::deque<bool> init_directions;};
 
 		MetricGraph const   &graph;
 		GraphState           graph_state;
 		WanderState          wander_state;
 
 		// Modifiers
-		bool const updateEdgeState(uint32_t vertex_1, uint32_t vertex_2, long double const epsilon, long double const time_delta);
+		AgentCreationRequest updateEdgeState(uint32_t vertex_1, uint32_t vertex_2, long double const epsilon, long double const time_delta);
 	};
 
 

@@ -13,6 +13,7 @@
 
 
 #include <vector>   // needed for "vector"
+#include <deque>    // needed for "deque"
 #include <cstdint>  // needed for "int*_t" and "uint*_t" types
 #include <string>   // needed for "string"
 #include <iostream> // needed for "iostream"
@@ -39,12 +40,30 @@ namespace rand_walks
 	 * \class MetricGraph
 	 * \brief A metric graph class
 	 * 
-	 * Metric graph is defined as a graph \f$(V,E)\f$ with each edge \f$e \in E\f$ being associated with
-	 * a certain interval \f$[0,l(e)]\f$, where \f$l(e) > 0\f$.
+	 * Metric graph is defined as a graph \f$(V,E)\f$ where \f$V\f$ is a set of \b vertices,
+	 * \f$E \subset V^2\f$ is a set of \b edges with each edge \f$e \in E\f$ being associated with
+	 * a certain interval \f$[0,l(e)]\f$, where \f$l(e) > 0\f$ is called a \b length of the edge.
+	 * Edge \f$(v,w) \in E\f$ is called \b directed (from \f$v\f$ to \f$w\f$), if \f$(w,v) \notin E\f$.
+	 * Such edges will be marked \f$v \rightarrow w\f$ hereafter. Otherwise, if \f$(w,v) \in E\f$,
+	 * the edge \f$(v,w) \in E\f$ is called \b undirected (from \f$v\f$ to \f$w\f$, or between \f$v\f$
+	 * and \f$w\f$). Such edges will be marked \f$v-w\f$ hereafter. You may read more about metric
+	 * graphs [here](https://en.wikipedia.org/wiki/Quantum_graph#Metric_graphs).
+	 * 
+	 * This implementation also binds general theory by following additional restrictions:
+	 * * \f$V \subset \{0,1,2,...,2^{32}-1\}\f$ (i.e., vertices can only be represented as
+	 * non-negative integers up to \f$2^{32}-1\f$);
+	 * * \f$\{(v,w),(w,v)\} \subset E \Rightarrow l((v,w)) = l((w,v))\f$ (i.e., if one
+	 * can go both ways, the distance between end points is the same).
 	 */
 	class MetricGraph
 	{
+
+
+
 	public:
+
+
+
 		/// \name Constructors and destructors
 		///@{
 		
@@ -216,24 +235,53 @@ namespace rand_walks
 		void updateEdge(uint32_t const out_vertex, uint32_t const in_vertex, long double const length, bool const is_directed = false);
 		///@}
 
-		// Save/load
+
+
+		/// \name Save/load
+		///@{
+
+		/**
+		 * Save graph to \c rweg file
+		 * 
+		 * This function saves respective metric graph to a binary file of \c rweg format with
+		 * the name specified by user. If the last five symbols of target file name are not
+		 * <tt>.rweg</tt>, they will be added automatically. If a file with the specified name
+		 * already exists, it will not be rewritten but the ordinal number will be added to the
+		 * name in parentheses (like <em>'My file name (1).rweg'</em>, <em>'My file name (2).rweg'</em>
+		 * and so on).
+		 * 
+		 * \param   file_name   Name of a target \c rweg file.
+		 */
 		void    toFile      (std::string const file_name = "Saved files/My metric graph")   const;
+
+		/**
+		 * Load graph from \c rweg file
+		 * 
+		 * This function loads graph from the specified \c rweg file and merges it with the existing
+		 * one by adding all absent vertices, edges and updating their lengths and directions. If a
+		 * file with the specified name does not exist, the original data is left unchanged.
+		 * 
+		 * \param   file_name   Name of a source \c rweg file.
+		 */
 		void    fromFile    (std::string const file_name);
+
+		///@}
 	private:
 		friend class Wander;
 
 		using VertexList            = std::vector<uint32_t>;
 		using LengthList            = std::vector<long double>;
 		using DirectionList         = std::vector<bool>;
-		using VertexNeighbourhood   = struct {uint32_t vertex_id; VertexList connected_vertices; LengthList lengths; DirectionList is_directed;};
-		using EdgeList              = std::vector<VertexNeighbourhood>;
+		using VertexView            = struct {uint32_t id; VertexList adjacents; LengthList lengths; DirectionList is_directed;};
+		using EdgeList              = std::vector<VertexView>;
 		using Edge                  = std::pair<uint32_t, uint32_t>;
 
 		EdgeList                edges;
 		std::vector<Wander *>   associated_wanders;
 
 		// Access
-		Edge getEdge(uint32_t const out_vertex, uint32_t const in_vertex, bool const is_directed = true, bool const strict_mode = false) const;
+		Edge                getEdge             (uint32_t const out_vertex, uint32_t const in_vertex, bool const is_directed = true, bool const strict_mode = false) const;
+		std::deque<Edge>    getDepartingEdges   (uint32_t const out_vertex) const;
 	};
 
 

@@ -20,7 +20,11 @@ int main(void)
 	graph.outputEdgeList(std::cout);
 
 	rand_walks::Wander my_wander(graph);
-	my_wander.run(0, 0.5, 0.01);
+	std::cout << "Epsilon = 0.1: " << my_wander.run(0, 0.1) << '\n';
+	my_wander.reset();
+	std::cout << "Epsilon = 0.5: " << my_wander.run(0, 0.5) << '\n';
+	my_wander.reset();
+	std::cout << "Epsilon = 0.9: " << my_wander.run(0, 0.9) << '\n';
 
 	return 0;
 }
