@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['updateedge_23',['updateEdge',['../classrand__walks_1_1_metric_graph.html#a2719a926f85bf442246e4b51c7ab73d2',1,'rand_walks::MetricGraph']]]
+  ['kill_26',['kill',['../classrand__walks_1_1_wander.html#a490251272659f1cf985fa38bfe0fb160',1,'rand_walks::Wander']]]
 ];

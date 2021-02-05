@@ -20,8 +20,27 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 @licend  The above is the entire license notice
 for the JavaScript code in this file
 */
-var menudata={children:[
-{text:"Home page",url:"index.html"},
-{text:"List of classes",url:"annotated.html"},
-{text:"Installation",url:"installation.html"},
-{text:"Tutorials",url:"tutorials.html"}]}
+var NAVTREE =
+[
+  [ "Random Walks Emulator", "index.html", [
+    [ "Home page", "index.html", [
+      [ "Introduction", "index.html#intoduction", null ],
+      [ "Basic theory and definitions", "index.html#theory", [
+        [ "Metric graphs", "index.html#metric_graph", null ],
+        [ "Random walk", "index.html#random_walk", null ]
+      ] ],
+      [ "Copyright", "index.html#copyright", null ]
+    ] ],
+    [ "List of classes", "annotated.html", "annotated" ],
+    [ "Installation", "installation.html", null ],
+    [ "Tutorials", "tutorials.html", null ]
+  ] ]
+];
+
+var NAVTREEINDEX =
+[
+".html"
+];
+
+var SYNCONMSG = 'click to disable panel synchronisation';
+var SYNCOFFMSG = 'click to enable panel synchronisation';

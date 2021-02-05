@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['metric_5fgraph_2ecpp_3',['metric_graph.cpp',['../metric__graph_8cpp.html',1,'']]],
-  ['metric_5fgraph_2ehpp_4',['metric_graph.hpp',['../metric__graph_8hpp.html',1,'']]],
-  ['metricgraph_5',['MetricGraph',['../classrand__walks_1_1_metric_graph.html',1,'rand_walks::MetricGraph'],['../classrand__walks_1_1_metric_graph.html#a7ad36180b25f5a1b7dafaf2aa267ae28',1,'rand_walks::MetricGraph::MetricGraph()']]]
+  ['getedgelength_3',['getEdgeLength',['../classrand__walks_1_1_metric_graph.html#aefba96b5b9dc50402be9a7547f3cea9a',1,'rand_walks::MetricGraph']]],
+  ['getvertexcount_4',['getVertexCount',['../classrand__walks_1_1_metric_graph.html#ab46296bed7a7c5a29f5c3829de273d7a',1,'rand_walks::MetricGraph']]]
 ];
