@@ -1,0 +1,23 @@
+<doxygenlayout version="1.0">
+	<navindex>
+		<tab type="mainpage" visible="yes" title="Home page"/>
+		<tab type="classlist" visible="yes" title="List of classes"/>
+		<tab type="usergroup" visible="yes" title="Installation" url="@ref installation"/>
+		<tab type="usergroup" visible="yes" title="Tutorials" url="@ref tutorials"/>
+	</navindex>
+<!--	<class>
+		...
+	</class>
+	<namespace>
+		...
+	</namespace>
+	<file>
+		...
+	</file>
+	<group>
+		...
+	</group>
+	<directory>
+		...
+	</directory>-->
+</doxygenlayout>

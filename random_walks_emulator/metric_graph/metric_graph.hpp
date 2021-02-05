@@ -40,13 +40,13 @@ namespace rand_walks
 	 * \class MetricGraph
 	 * \brief A metric graph class
 	 * 
-	 * Metric graph is defined as a graph \f$(V,E)\f$ where \f$V\f$ is a set of \b vertices,
+	 * <b>Metric graph</b> is defined as a graph \f$(V,E)\f$ where \f$V\f$ is a set of \b vertices,
 	 * \f$E \subset V^2\f$ is a set of \b edges with each edge \f$e \in E\f$ being associated with
 	 * a certain interval \f$[0,l(e)]\f$, where \f$l(e) > 0\f$ is called a \b length of the edge.
-	 * Edge \f$(v,w) \in E\f$ is called \b directed (from \f$v\f$ to \f$w\f$), if \f$(w,v) \notin E\f$.
+	 * Edge \f$(v,w) \in E\f$ is called \b directed ('from \f$v\f$ to \f$w\f$'), if \f$(w,v) \notin E\f$.
 	 * Such edges will be marked \f$v \rightarrow w\f$ hereafter. Otherwise, if \f$(w,v) \in E\f$,
-	 * the edge \f$(v,w) \in E\f$ is called \b undirected (from \f$v\f$ to \f$w\f$, or between \f$v\f$
-	 * and \f$w\f$). Such edges will be marked \f$v-w\f$ hereafter. You may read more about metric
+	 * the edge \f$(v,w) \in E\f$ is called \b undirected ('from \f$v\f$ to \f$w\f$', or 'between \f$v\f$
+	 * and \f$w\f$'). Such edges will be marked \f$v-w\f$ hereafter. You may read more about metric
 	 * graphs [here](https://en.wikipedia.org/wiki/Quantum_graph#Metric_graphs).
 	 * 
 	 * This implementation also binds general theory by following additional restrictions:
@@ -79,8 +79,8 @@ namespace rand_walks
 		 * 
 		 * Destroys the metric graph.
 		 * 
-		 * \warning All \c Wander objects associated with the respective metric graph will be
-		 * automatically transferred to the \c dead state.
+		 * \note All \c Wander objects associated with the respective metric graph will be
+		 * automatically transferred into the \c dead state.
 		 */
 		~MetricGraph    (void);
 
@@ -112,7 +112,7 @@ namespace rand_walks
 		 * 
 		 * \return Number of vertices, i.e. \f$|V|\f$.
 		 * 
-		 * \warning Yet to be implemented.
+		 * \warning This is a future feature, currently it has no effect.
 		 */
 		uint32_t const      getVertexCount  (void)                                              const;
 
@@ -225,6 +225,9 @@ namespace rand_walks
 		 * \param   length          Desired length of edge between \f$v\f$ and \f$w\f$ (i.e., \f$l\f$).
 		 * \param   is_directed     If \c true, desired type of edge will be \f$v \rightarrow w\f$,
 		 *                          if \c false, desired type of edge will be \f$v-w\f$.
+		 * 
+		 * \note All \c Wander objects associated with the respective metric graph will be
+		 * automatically transferred into the \c invalid state.
 		 * 
 		 * \paragraph example Example
 		 * Source snippet:

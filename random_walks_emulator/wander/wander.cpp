@@ -47,12 +47,16 @@ rand_walks::Wander::~Wander(void)
 
 void rand_walks::Wander::reset(void)
 {
-	// 1. Initialise the graph state
+	// 1. Check if wander state is "invalid"
+	if (this->wander_state != WanderState::invalid)
+		throw std::logic_error("Wander object needs to be in invalid state in order to be reset.");
+
+	// 2. Initialise the graph state
 	this->graph_state = GraphState(graph.edges.size());
 	for (uint32_t vertex_1 = 0; vertex_1 < this->graph_state.size(); ++vertex_1)
 		this->graph_state[vertex_1] = NeighbourhoodState(graph.edges[vertex_1].adjacents.size(), EdgeState{AgentInstanceList(), false});
 	
-	// 2. Update wander state
+	// 3. Update wander state
 	this->wander_state = WanderState::ready;
 
 	return;
