@@ -108,6 +108,7 @@ $(document).ready(function(){initNavTree('index.html','');});
 <div class="textblock"><h1><a class="anchor" id="intoduction"></a>
 Introduction</h1>
 <p>This website presents documentation and other additional materials for the random walks emulator that can be found in <a href="https://github.com/jointpoints/random-walks">this GitHub repository</a>. The latter houses a C++ computer program that emulates random walks of a point on a metric graph.</p>
+<dl class="section note"><dt>Note</dt><dd>The program is in pre-release stages, it can contain bugs and errors. Any of its contents may eventually become subjects to significant changes.</dd></dl>
 <h1><a class="anchor" id="theory"></a>
 Basic theory and definitions</h1>
 <h2><a class="anchor" id="metric_graph"></a>
@@ -117,17 +118,18 @@ Metric graphs</h2>
 <li>\(V \subset \{0,1,2,...,2^{32}-1\}\) (i.e., vertices can only be represented as non-negative integers up to \(2^{32}-1\));</li>
 <li>\(\{(v,w),(w,v)\} \subset E \Rightarrow l((v,w)) = l((w,v))\) (i.e., if one can go both ways, the distance between end points is the same).</li>
 </ul>
+<p>For undirected edges, any point \(a \in [0,l((v,w))]\) will be considered the same with the point \(l((w,v)) - a \in [0,l((w,v))]\).</p>
 <p>Thus, the main difference between metric graphs and non-metric graphs can be briefly stated by possibility of interpreting edges of a metric graph as geometric objects where distance can be measured not only between vertices of the graph itself, but also between points on intervals \([0,l(e)]\) that correspond to the edges. Collectively, they will be noted as <b>points of the graph</b>.</p>
 <p>You may read more about metric graphs <a href="https://en.wikipedia.org/wiki/Quantum_graph#Metric_graphs">here</a>.</p>
 <h2><a class="anchor" id="random_walk"></a>
 Random walk</h2>
 <p><b>Random walk</b> of an <b>agent</b> \(A(t)\) on a metric graph \(G\) is a continuous-time random process that is described as follows:</p><ol type="1">
-<li>\(t \in \{\tau \in \mathbb{R} | \tau \ge 0\}\) (time is non-negative);</li>
+<li>\(t \in T = \{\tau \in \mathbb{R} | \tau \ge 0\}\) (time is non-negative);</li>
 <li>\(A(t)\) maps a moment of time to some point of the graph;</li>
 <li>\(A(t)\) is continuous;</li>
 <li>if \(A(t) = v \in V\), the point \(A(t + \delta t)\) is chosen randomly among all points of all edges outgoing from \(v\);</li>
 <li>if \(A(t) = p \notin V\), \(A(t + \delta t) - A(t) = A(t) - A(t - \delta t)\) (direction of a walk cannot be changed while on edge, the speed of a point is constant);</li>
-<li>if \(A(t) = v \in V\) and \(A(t + \delta t) = p \notin V, p \in e = (v,w) \in E\), then \(\min_{\tau &gt; t}\{A(\tau) = w\} = l(e)\) (the time that it takes to walk from vertex \(v\) to vertex \(w\) equals the length of the corresponding edge).</li>
+<li>if \(A(t) = v \in V\) and \(A(t + \delta t) = p \notin V, p \in [0, l((v,w))]\) where \((v,w) \in E\), then \(\min \{\tau \in T | \tau &gt; t, A(\tau) = w\} = t + l(e)\) (the time that it takes to walk from vertex \(v\) to vertex \(w\) equals the length of the corresponding edge).</li>
 </ol>
 <p>An example of a random walk of a point on a metric graph can be seen below.</p>
 <div class="image">

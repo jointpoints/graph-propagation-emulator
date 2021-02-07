@@ -181,7 +181,7 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Right after the end of construction the new <a class="el" href="classrand__walks_1_1_wander.html" title="Emulator of random walks on metric graphs that calculates time of -saturation.">Wander</a> object will be in <code>ready</code> state. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Right after the end of construction the new <a class="el" href="classrand__walks_1_1_wander.html" title="Emulator of random walks on metric graphs that calculates time of -saturation.">Wander</a> object will be in the <code>ready</code> state. </dd></dl>
 
 </div>
 </div>
@@ -222,7 +222,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>Invalidates the emulator</p>
-<p>Transfers the emulator into the <code>invalid</code> state. </p>
+<p>Transfers the emulator into the <code>invalid</code> state.</p>
+<dl class="section note"><dt>Note</dt><dd>If the <a class="el" href="classrand__walks_1_1_wander.html" title="Emulator of random walks on metric graphs that calculates time of -saturation.">Wander</a> object is in the <code>dead</code> state at the moment of function call, this function call will have no effect. </dd></dl>
 
 </div>
 </div>
@@ -263,7 +264,13 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Reset the emulator</p>
 <p>Transfers the emulator into the <code>ready</code> state.</p>
-<dl class="section note"><dt>Note</dt><dd>The <a class="el" href="classrand__walks_1_1_wander.html" title="Emulator of random walks on metric graphs that calculates time of -saturation.">Wander</a> object needs to be in the <code>invalid</code> state in order to be reset. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The <a class="el" href="classrand__walks_1_1_wander.html" title="Emulator of random walks on metric graphs that calculates time of -saturation.">Wander</a> object needs to be in the <code>invalid</code> state in order to be reset.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">logic_error</td><td>if the <a class="el" href="classrand__walks_1_1_wander.html" title="Emulator of random walks on metric graphs that calculates time of -saturation.">Wander</a> object is in either <code>active</code> or <code>dead</code> states at the moment of function call. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -319,7 +326,14 @@ Public Member Functions</h2></td></tr>
 <dl class="section warning"><dt>Warning</dt><dd><code>concurrency_type</code> is a future feature, currently it has no effect.</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>The <a class="el" href="classrand__walks_1_1_wander.html" title="Emulator of random walks on metric graphs that calculates time of -saturation.">Wander</a> object needs to be in the <code>ready</code> state in order to be run.</dd>
 <dd>
-After the emulation halts, the <a class="el" href="classrand__walks_1_1_wander.html" title="Emulator of random walks on metric graphs that calculates time of -saturation.">Wander</a> object is transferred into the <code>invalid</code> state. </dd></dl>
+After the emulation halts, the <a class="el" href="classrand__walks_1_1_wander.html" title="Emulator of random walks on metric graphs that calculates time of -saturation.">Wander</a> object is transferred into the <code>invalid</code> state.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">logic_error</td><td>if the <a class="el" href="classrand__walks_1_1_wander.html" title="Emulator of random walks on metric graphs that calculates time of -saturation.">Wander</a> object is either in <code>active</code>, or <code>invalid</code>, or <code>dead</code> states at the moment of function call. </td></tr>
+    <tr><td class="paramname">invalid_argument</td><td>if initial vertex does not exist in the graph. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
