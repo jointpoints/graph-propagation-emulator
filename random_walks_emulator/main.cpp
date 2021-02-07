@@ -22,7 +22,19 @@ int main(void)
 	rand_walks::Wander my_wander(graph);
 	std::cout << "Epsilon = 0.1: " << my_wander.run(0, 0.1) << '\n';
 	my_wander.reset();
+	std::cout << "Epsilon = 0.2: " << my_wander.run(0, 0.2) << '\n';
+	my_wander.reset();
+	std::cout << "Epsilon = 0.3: " << my_wander.run(0, 0.3) << '\n';
+	my_wander.reset();
+	std::cout << "Epsilon = 0.4: " << my_wander.run(0, 0.4) << '\n';
+	my_wander.reset();
 	std::cout << "Epsilon = 0.5: " << my_wander.run(0, 0.5) << '\n';
+	my_wander.reset();
+	std::cout << "Epsilon = 0.6: " << my_wander.run(0, 0.6) << '\n';
+	my_wander.reset();
+	std::cout << "Epsilon = 0.7: " << my_wander.run(0, 0.7) << '\n';
+	my_wander.reset();
+	std::cout << "Epsilon = 0.8: " << my_wander.run(0, 0.8) << '\n';
 	my_wander.reset();
 	std::cout << "Epsilon = 0.9: " << my_wander.run(0, 0.9) << '\n';
 

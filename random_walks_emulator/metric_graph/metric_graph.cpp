@@ -7,6 +7,7 @@
  */
 #include "../wander/wander.hpp"
 
+#include <stdexcept>    // needed for exceptions
 #include <algorithm>    // needed for "find_if", "find", "min", "max", "lower_bound"
 #include <fstream>      // needed for "fstream"
 
@@ -188,6 +189,10 @@ std::deque<rand_walks::MetricGraph::Edge> rand_walks::MetricGraph::getDepartingE
 
 void rand_walks::MetricGraph::updateEdge(uint32_t const out_vertex, uint32_t const in_vertex, long double const length, bool const is_directed)
 {
+	// 1. <length> must be positive
+	if (length <= 0)
+		throw std::invalid_argument("Desired length of an edge must be a positive number.");
+
 	uint32_t const  out_vertex_new  = (is_directed) ? (out_vertex) : (std::min(out_vertex, in_vertex));
 	uint32_t const  in_vertex_new   = (is_directed) ? (in_vertex)  : (std::max(out_vertex, in_vertex));
 	auto            out_comparator  = [](VertexView const curr_vertex, uint32_t const value){return curr_vertex.id < value;};

@@ -23,7 +23,7 @@
 
 
 rand_walks::Wander::Wander(MetricGraph const &graph) :
-	graph(graph)
+	graph(graph), wander_state(invalid)
 {
 	this->reset();
 }
@@ -47,16 +47,23 @@ rand_walks::Wander::~Wander(void)
 
 void rand_walks::Wander::reset(void)
 {
-	// 1. Check if wander state is "invalid"
-	if (this->wander_state != WanderState::invalid)
-		throw std::logic_error("Wander object needs to be in invalid state in order to be reset.");
+	// 1. Process the Wander object accordingly
+	switch (this->wander_state)
+	{
+		case ready:
+			break;
+		case active:
+			throw std::logic_error("Active Wander object cannot be reset. Invalidate it, if you want to interrupt the emulation.");
+		case invalid:
+			this->graph_state = GraphState(graph.edges.size());
+			for (uint32_t vertex_1 = 0; vertex_1 < this->graph_state.size(); ++vertex_1)
+				this->graph_state[vertex_1] = NeighbourhoodState(graph.edges[vertex_1].adjacents.size(), EdgeState{AgentInstanceList(), false});
+			break;
+		case dead:
+			throw std::logic_error("Wander object is dead.");
+	}
 
-	// 2. Initialise the graph state
-	this->graph_state = GraphState(graph.edges.size());
-	for (uint32_t vertex_1 = 0; vertex_1 < this->graph_state.size(); ++vertex_1)
-		this->graph_state[vertex_1] = NeighbourhoodState(graph.edges[vertex_1].adjacents.size(), EdgeState{AgentInstanceList(), false});
-	
-	// 3. Update wander state
+	// 2. Update wander state
 	this->wander_state = WanderState::ready;
 
 	return;
@@ -75,7 +82,7 @@ long double const rand_walks::Wander::run(uint32_t const start_vertex, long doub
 		throw std::logic_error("Wander object is dead.");
 	// 1.2. Check if wander state is "ready"
 	if (this->wander_state != WanderState::ready)
-		throw std::logic_error("Wander object needs to be reset before running the simulation.");
+		throw std::logic_error("Wander object needs to be reset before running the emulation.");
 	// 1.3. Check if <start_vertex> is valid
 	if (!this->graph.checkVertex(start_vertex))
 		throw std::invalid_argument("Vetrex " + std::to_string(start_vertex) + " does not exist in the specified graph.");
@@ -133,6 +140,9 @@ long double const rand_walks::Wander::run(uint32_t const start_vertex, long doub
 		//std::cout << "Runtime ended: " << runtime << "\n================================\n";
 	}
 
+	// 5. Update wander state
+	this->wander_state = WanderState::invalid;
+
 	return runtime;
 }
 
@@ -140,7 +150,8 @@ long double const rand_walks::Wander::run(uint32_t const start_vertex, long doub
 
 void rand_walks::Wander::invalidate(void)
 {
-	this->wander_state = WanderState::invalid;
+	if (this->wander_state != WanderState::dead)
+		this->wander_state = WanderState::invalid;
 
 	return;
 }
@@ -163,7 +174,7 @@ rand_walks::Wander::AgentCreationRequest rand_walks::Wander::updateEdgeState(uin
 		throw std::logic_error("Wander object is dead.");
 	// 1.2. Check if wander state is "active"
 	if (this->wander_state != WanderState::active)
-		throw std::logic_error("Wander object needs to be reset before running the simulation.");
+		throw std::logic_error("Wander object needs to be reset before running the emulation.");
 	
 	AgentInstanceList       &agents             = this->graph_state[vertex_1][vertex_2].agents;
 	long double const        length             = this->graph.edges[vertex_1].lengths[vertex_2];

@@ -72,7 +72,7 @@ namespace rand_walks
 		 * 
 		 * \param   graph   A metric graph to construct an emulator for.
 		 * 
-		 * \note Right after the end of construction the new Wander object will be in \c ready state.
+		 * \note Right after the end of construction the new Wander object will be in the \c ready state.
 		 */
 		Wander(MetricGraph const &graph);
 
@@ -96,6 +96,9 @@ namespace rand_walks
 		 * Transfers the emulator into the \c ready state.
 		 * 
 		 * \note The Wander object needs to be in the \c invalid state in order to be reset.
+		 * 
+		 * \throw logic_error if the Wander object is in either \c active or \c dead states
+		 * at the moment of function call.
 		 */
 		void                reset       (void);
 
@@ -120,6 +123,10 @@ namespace rand_walks
 		 * 
 		 * \note After the emulation halts, the Wander object is transferred into the \c invalid
 		 * state.
+		 * 
+		 * \throw logic_error if the Wander object is either in \c active, or \c invalid, or \c dead
+		 * states at the moment of function call.
+		 * \throw invalid_argument if initial vertex does not exist in the graph.
 		 */
 		long double const   run         (uint32_t const start_vertex, long double const epsilon, long double const time_delta = 1e-6L, Concurrency concurrency_type = none);
 
@@ -127,6 +134,9 @@ namespace rand_walks
 		 * Invalidates the emulator
 		 * 
 		 * Transfers the emulator into the \c invalid state.
+		 * 
+		 * \note If the Wander object is in the \c dead state at the moment of function call, this
+		 * function call will have no effect.
 		 */
 		void                invalidate  (void);
 

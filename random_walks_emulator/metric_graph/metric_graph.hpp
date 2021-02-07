@@ -229,6 +229,8 @@ namespace rand_walks
 		 * \note All \c Wander objects associated with the respective metric graph will be
 		 * automatically transferred into the \c invalid state.
 		 * 
+		 * \throw invalid_argument if desired length is non-positive.
+		 * 
 		 * \paragraph example Example
 		 * Source snippet:
 		 * \include{lineno} MetricGraph_updateEdge_example.txt
