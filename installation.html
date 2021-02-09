@@ -96,7 +96,42 @@ $(document).ready(function(){initNavTree('installation.html','');});
 <div class="title">Installation </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><dl class="section warning"><dt>Warning</dt><dd>Coming soon. </dd></dl>
+<div class="toc"><h3>Table of Contents</h3>
+<ul><li class="level1"><a href="#install_compile">Option #1. Manual compilation</a><ul><li class="level2"><a href="#install_compile_prereq">Prerequisites</a></li>
+<li class="level2"><a href="#install_compile_manual">Step-by-step manual</a><ul><ul><li class="level4"><a href="#install_compile_1">Step 1</a></li>
+<li class="level4"><a href="#install_compile_2">Step 2</a></li>
+<li class="level4"><a href="#install_compile_3">Step 3</a></li>
+</ul>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="textblock"><p>You may use Random Walks Emulator as a library embedded into your own piece of software, or as a stand-alone application.</p>
+<dl class="section note"><dt>Note</dt><dd>Due to early stages of development, possibilities of a stand-alone application are limited to running a single example, however, they will definitely be broadened in the future.</dd></dl>
+<p>At this moment, manual source code compilation is the only possible way to utilise this software as an application. As development goes further, the list of installation options will be enriched.</p>
+<h1><a class="anchor" id="install_compile"></a>
+Option #1. Manual compilation</h1>
+<h2><a class="anchor" id="install_compile_prereq"></a>
+Prerequisites</h2>
+<ul>
+<li>Windows or any operating system from Unix family;</li>
+<li>GCC 4.8.1 or newer (recommended GCC packages for Windows are <a href="https://sourceforge.net/projects/mingw/">MinGW</a> and <a href="http://mingw-w64.org/doku.php">MinGW-w64</a>);</li>
+<li>Make 3.81 or newer (visit <a href="https://www.gnu.org/software/make/">this</a> or <a href="http://gnuwin32.sourceforge.net/packages/make.htm">this</a> for more info).</li>
+</ul>
+<p>If you use Windows, both GCC and Make directories must be included into PATH variable.</p>
+<h2><a class="anchor" id="install_compile_manual"></a>
+Step-by-step manual</h2>
+<h4><a class="anchor" id="install_compile_1"></a>
+Step 1</h4>
+<p>Download the archive with the source code and unpack it.</p>
+<div class="image" style="text-align:left"><img src="Installation_install_compile_Step1.png" alt="" class="inline"/></div><h4><a class="anchor" id="install_compile_2"></a>
+Step 2</h4>
+<p>Open any shell in the directory where you have placed unpacked archive (PowerShell will be used for demonstration below). Make sure that <code>Makefile</code> file is available there. Run Make utility by calling <code>make</code> with no additional arguments in the shell.</p>
+<div class="image" style="text-align:left"><img src="Installation_install_compile_Step2.png" alt="" class="inline"/></div><h4><a class="anchor" id="install_compile_3"></a>
+Step 3</h4>
+<p>After Make utility halts, you shall be able to find a new folder in the directory where you have placed unpacked archive called <code>Random Walks Emulator (build)</code>. Open it and find <code>random_walks_emulator.exe</code>. This is a console application, so you should run it via shell as well. </p>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->
 </div><!-- doc-content -->

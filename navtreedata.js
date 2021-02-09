@@ -29,7 +29,7 @@ var NAVTREE =
         [ "Metric graphs", "index.html#metric_graph", null ],
         [ "Random walk", "index.html#random_walk", null ]
       ] ],
-      [ "Copyright", "index.html#copyright", null ]
+      [ "License", "index.html#license", null ]
     ] ],
     [ "List of classes", "annotated.html", "annotated" ],
     [ "Installation", "installation.html", null ],
