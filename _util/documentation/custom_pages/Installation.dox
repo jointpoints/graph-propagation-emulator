@@ -1,0 +1,48 @@
+/**
+ * \page installation Installation
+ *
+ * \tableofcontents
+ *
+ * You may use Random Walks Emulator as a library embedded into your own piece of software, or as a
+ * stand-alone application.
+ *
+ * \note Due to early stages of development, possibilities of a stand-alone application are
+ * limited to running a single example, however, they will definitely be broadened in the
+ * future.
+ *
+ * At this moment, manual source code compilation is the only possible way to utilise this
+ * software as an application. As development goes further, the list of installation options
+ * will be enriched.
+ *
+ * \section install_compile Option #1. Manual compilation
+ *
+ * \subsection install_compile_prereq Prerequisites
+ *
+ * * Windows or any operating system from Unix family;
+ * * GCC 4.8.1 or newer (recommended GCC packages for Windows are [MinGW](https://sourceforge.net/projects/mingw/)
+ * and [MinGW-w64](http://mingw-w64.org/doku.php));
+ * * Make 3.81 or newer (visit [this](https://www.gnu.org/software/make/) or
+ * [this](http://gnuwin32.sourceforge.net/packages/make.htm) for more info).
+ *
+ * If you use Windows, both GCC and Make directories must be included into PATH variable.
+ *
+ * \subsection install_compile_manual Step-by-step manual
+ *
+ * \paragraph install_compile_1 Step 1
+ * Download the archive with the source code and unpack it.
+ *
+ * <div class="image" style="text-align:left"><img src="Installation_install_compile_Step1.png"></div>
+ *
+ * \paragraph install_compile_2 Step 2
+ * Open any shell in the directory where you have placed unpacked archive (PowerShell will
+ * be used for demonstration below). Make sure that \c Makefile file is available there.
+ * Run Make utility by calling \c make with no additional arguments in the shell.
+ *
+ * <div class="image" style="text-align:left"><img src="Installation_install_compile_Step2.png"></div>
+ *
+ * \paragraph install_compile_3 Step 3
+ * After Make utility halts, you shall be able to find a new folder in the directory where you have placed
+ * unpacked archive called <tt>Random Walks Emulator (build)</tt>. Open it and find
+ * <tt>random_walks_emulator.exe</tt>. This is a console application, so you should run it via shell as well.
+ *
+ */

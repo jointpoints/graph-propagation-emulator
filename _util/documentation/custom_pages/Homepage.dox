@@ -62,11 +62,12 @@
  *
  * However, it is usually inconvenient to consider a single instance of a random walk since it gives
  * little to no information about the general behaviour of the process. That is why a collection of all
- * possible random walks is preferrable to study instead. Such a collection can be seen below.
+ * possible random walks with the same initial conditions is preferrable to study instead. Such a
+ * collection can be seen below.
  *
  * \image html Homepage_RandomWander_example.gif
  *
- * Such a collection will be called a \b wander of a point on a metric graph. Please, note that
+ * This kind of a structure will be called a \b wander of a point on a metric graph. Please, note that
  * "wander" is a non-standard term, i.e. it may not be used widely among other people who study
  * random walks.
  *
