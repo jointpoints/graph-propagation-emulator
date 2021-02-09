@@ -71,7 +71,7 @@
  * "wander" is a non-standard term, i.e. it may not be used widely among other people who study
  * random walks.
  *
- * \section copyright Copyright
+ * \section license License
  *
- * Random Walks Emulator © Andrei Eliseev (JointPoints), 2021
+ * You may find the full text of the license [there](https://github.com/jointpoints/random-walks/blob/main/LICENSE.md).
  */
