@@ -11,6 +11,7 @@
 #include <algorithm>    // needed for "lower_bound"
 #include <cmath>        // needed for "fmod"
 #include <utility>      // needed for "swap"
+#include <thread>       // needed for "thread"
 
 
 
@@ -76,6 +77,7 @@ long double const rand_walks::Wander::run(uint32_t const start_vertex, long doub
 	auto            agent_comparator    = [](AgentInstance const &agent, long double const position){return agent.position < position;};
 	long double     runtime             = 0.0L;
 	bool            is_saturated        = false;
+	uint32_t const  threads_count       = (concurrency_type == Concurrency::cpu) ? (std::thread::hardware_concurrency()) : (0);
 
 	// 1.1. Check if wander state is "dead"
 	if (this->wander_state == WanderState::dead)
@@ -86,6 +88,9 @@ long double const rand_walks::Wander::run(uint32_t const start_vertex, long doub
 	// 1.3. Check if <start_vertex> is valid
 	if (!this->graph.checkVertex(start_vertex))
 		throw std::invalid_argument("Vetrex " + std::to_string(start_vertex) + " does not exist in the specified graph.");
+	// 1.4. Check if concurrency is supported
+	if ((threads_count < 3) && (concurrency_type == Concurrency::cpu))
+		throw std::runtime_error("CPU concurrency is not supported on this platform.");
 	
 	// 2. Update wander state
 	this->wander_state = WanderState::active;

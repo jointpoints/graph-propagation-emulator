@@ -127,6 +127,8 @@ namespace rand_walks
 		 * \throw logic_error if the Wander object is either in \c active, or \c invalid, or \c dead
 		 * states at the moment of function call.
 		 * \throw invalid_argument if initial vertex does not exist in the graph.
+		 * \throw runtime_error if CPU concurrency has been enabled, however, it is not supported
+		 * by the platform.
 		 */
 		long double const   run         (uint32_t const start_vertex, long double const epsilon, long double const time_delta = 1e-6L, Concurrency concurrency_type = none);
 
