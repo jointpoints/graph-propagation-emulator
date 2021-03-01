@@ -9,9 +9,10 @@
 
 #include <stdexcept>    // needed for exceptions
 #include <algorithm>    // needed for "lower_bound"
-#include <cmath>        // needed for "fmod"
+#include <cmath>        // needed for "fmod", "floor"
 #include <utility>      // needed for "swap"
 #include <thread>       // needed for "thread"
+#include <queue>        // needed for "queue"
 
 
 
@@ -72,12 +73,13 @@ void rand_walks::Wander::reset(void)
 
 
 
-long double const rand_walks::Wander::run(uint32_t const start_vertex, long double const epsilon, long double const time_delta, Concurrency concurrency_type)
+long double const rand_walks::Wander::run(uint32_t const start_vertex, long double const epsilon, long double const time_delta, bool const use_skip_forward, Concurrency concurrency_type)
 {
-	auto            agent_comparator    = [](AgentInstance const &agent, long double const position){return agent.position < position;};
-	long double     runtime             = 0.0L;
-	bool            is_saturated        = false;
-	uint32_t const  threads_count       = (concurrency_type == Concurrency::cpu) ? (std::thread::hardware_concurrency()) : (0);
+	auto                                agent_comparator    = [](AgentInstance const &agent, long double const position){return agent.position < position;};
+	long double                         runtime             = 0.0L;
+	bool                                is_saturated        = false;
+	std::priority_queue<long double, std::vector<long double>, std::greater<long double>>    skip_forward_timestamps;
+	uint32_t const                      threads_count       = (concurrency_type == Concurrency::cpu) ? (std::thread::hardware_concurrency()) : (0);
 
 	// 1.1. Check if wander state is "dead"
 	if (this->wander_state == WanderState::dead)
@@ -101,23 +103,81 @@ long double const rand_walks::Wander::run(uint32_t const start_vertex, long doub
 		{
 			MetricGraph::VertexView curr_vertex = this->graph.edges[vertex_1_i];
 			if (curr_vertex.id == start_vertex)
+			{
 				this->graph_state[vertex_1_i][vertex_2_i].agents.push_back({0.0L, true});
+				if (use_skip_forward)
+					skip_forward_timestamps.push(curr_vertex.lengths[vertex_2_i]);
+			}
 			if ((curr_vertex.adjacents[vertex_2_i] == start_vertex) && (curr_vertex.is_directed[vertex_2_i] == false))
+			{
 				this->graph_state[vertex_1_i][vertex_2_i].agents.push_back({curr_vertex.lengths[vertex_2_i], false});
+				if (use_skip_forward)
+					skip_forward_timestamps.push(curr_vertex.lengths[vertex_2_i]);
+			}
 		}
 	
 	// 4. Run simulation
-	while (!is_saturated)
+	// 4.1. Use "skip forward", if it is allowed
+	while ((use_skip_forward) && (!is_saturated))
 	{
-		AgentCreationRequest requests;
-		
+		EdgeUpdateResult update_results;
 		is_saturated = true;
 		
 		for (uint32_t vertex_1 = 0; vertex_1 < this->graph_state.size(); ++vertex_1)
 		{
 			for (uint32_t vertex_2 = 0; vertex_2 < this->graph_state[vertex_1].size(); ++vertex_2)
 			{
-				AgentCreationRequest curr_requests = this->updateEdgeState(vertex_1, vertex_2, epsilon, time_delta);
+				EdgeUpdateResult curr_results = this->updateEdgeState(vertex_1, vertex_2, epsilon, skip_forward_timestamps.top() - runtime);
+				if (curr_results.collision_occured)
+				{
+					update_results.target_edges.insert(update_results.target_edges.end(), curr_results.target_edges.begin(), curr_results.target_edges.end());
+					update_results.init_positions.insert(update_results.init_positions.end(), curr_results.init_positions.begin(), curr_results.init_positions.end());
+					update_results.init_directions.insert(update_results.init_directions.end(), curr_results.init_directions.begin(), curr_results.init_directions.end());
+					
+					skip_forward_timestamps.push(skip_forward_timestamps.top() + this->graph.edges[vertex_1].lengths[vertex_2]);
+				}
+				/*std::cout << this->graph.edges[vertex_1].id << ' ' << this->graph.edges[vertex_1].adjacents[vertex_2] << '\n';
+				for (uint32_t i = 0; i < this->graph_state[vertex_1][vertex_2].agents.size(); ++i)
+					std::cout << this->graph_state[vertex_1][vertex_2].agents[i].position << ' ';
+				std::cout << "\n---------------------------\n";*/
+			}
+		}
+		
+		while (!update_results.target_edges.empty())
+		{
+			MetricGraph::Edge const &curr_edge = update_results.target_edges.front();
+			auto agent_insert_position = std::lower_bound(this->graph_state[curr_edge.first][curr_edge.second].agents.begin(), this->graph_state[curr_edge.first][curr_edge.second].agents.end(), update_results.init_positions.front(), agent_comparator);
+			
+			this->graph_state[curr_edge.first][curr_edge.second].agents.insert(agent_insert_position, AgentInstance{update_results.init_positions.front(), update_results.init_directions.front()});
+
+			skip_forward_timestamps.push(skip_forward_timestamps.top() + this->graph.edges[curr_edge.first].lengths[curr_edge.second]);
+
+			update_results.target_edges.pop_front();
+			update_results.init_positions.pop_front();
+			update_results.init_directions.pop_front();
+		}
+
+		for (uint32_t vertex_1 = 0; vertex_1 < this->graph_state.size(); ++vertex_1)
+			for (uint32_t vertex_2 = 0; vertex_2 < this->graph_state[vertex_1].size(); ++vertex_2)
+				is_saturated &= (this->graph_state[vertex_1][vertex_2].agents.size() >= floor(this->graph.edges[vertex_1].lengths[vertex_2] / (2 * epsilon) + 1));
+
+		runtime = skip_forward_timestamps.top();
+		skip_forward_timestamps.pop();
+		
+		//std::cout << "Runtime ended: " << runtime << ' ' << skip_forward_timestamps.top() << "\n================================\n";
+	}
+	// 4.2. Precise emulation
+	is_saturated = false;
+	while (!is_saturated)
+	{
+		EdgeUpdateResult requests;
+		is_saturated = true;
+		
+		for (uint32_t vertex_1 = 0; vertex_1 < this->graph_state.size(); ++vertex_1)
+		{
+			for (uint32_t vertex_2 = 0; vertex_2 < this->graph_state[vertex_1].size(); ++vertex_2)
+			{
+				EdgeUpdateResult curr_requests = this->updateEdgeState(vertex_1, vertex_2, epsilon, time_delta);
 				requests.target_edges.insert(requests.target_edges.end(), curr_requests.target_edges.begin(), curr_requests.target_edges.end());
 				requests.init_positions.insert(requests.init_positions.end(), curr_requests.init_positions.begin(), curr_requests.init_positions.end());
 				requests.init_directions.insert(requests.init_directions.end(), curr_requests.init_directions.begin(), curr_requests.init_directions.end());
@@ -172,7 +232,7 @@ void rand_walks::Wander::kill(void)
 
 
 
-rand_walks::Wander::AgentCreationRequest rand_walks::Wander::updateEdgeState(uint32_t const vertex_1, uint32_t const vertex_2, long double const epsilon, long double const time_delta)
+rand_walks::Wander::EdgeUpdateResult rand_walks::Wander::updateEdgeState(uint32_t const vertex_1, uint32_t const vertex_2, long double const epsilon, long double const time_delta)
 {
 	// 1.1. Check if wander state is "dead"
 	if (this->wander_state == WanderState::dead)
@@ -186,7 +246,7 @@ rand_walks::Wander::AgentCreationRequest rand_walks::Wander::updateEdgeState(uin
 	bool const               is_directed        = this->graph.edges[vertex_1].is_directed[vertex_2];
 	bool                     is_saturated       = true;
 	uint32_t                 agent_j;
-	AgentCreationRequest     request;
+	EdgeUpdateResult         result;
 
 	// 2. Update position of each AgentInstance while preserving their ascending order
 	for (uint32_t agent_i = 0; agent_i < agents.size(); ++agent_i)
@@ -200,13 +260,14 @@ rand_walks::Wander::AgentCreationRequest rand_walks::Wander::updateEdgeState(uin
 			long double const               delta_distance      = (agents[agent_i].position <= 0) ? (-agents[agent_i].position) : (std::fmod(agents[agent_i].position, length));
 			std::deque<MetricGraph::Edge>   curr_departures     = this->graph.getDepartingEdges(hit_vertex);
 
+			result.collision_occured = true;
 			while (!curr_departures.empty())
 			{
 				if ((curr_departures.front().first != vertex_1) || (curr_departures.front().second != vertex_2))
 				{
-					request.init_positions.push_back((this->graph.edges[curr_departures.front().first].id == hit_vertex) ? (delta_distance) : (this->graph.edges[curr_departures.front().first].lengths[curr_departures.front().second] - delta_distance));
-					request.init_directions.push_back(this->graph.edges[curr_departures.front().first].id == hit_vertex);
-					request.target_edges.push_back(curr_departures.front());
+					result.init_positions.push_back((this->graph.edges[curr_departures.front().first].id == hit_vertex) ? (delta_distance) : (this->graph.edges[curr_departures.front().first].lengths[curr_departures.front().second] - delta_distance));
+					result.init_directions.push_back(this->graph.edges[curr_departures.front().first].id == hit_vertex);
+					result.target_edges.push_back(curr_departures.front());
 				}
 				curr_departures.pop_front();
 			}
@@ -230,5 +291,5 @@ rand_walks::Wander::AgentCreationRequest rand_walks::Wander::updateEdgeState(uin
 	is_saturated &= (agents.size() > 0) && (agents[0].position < epsilon) && (length - agents.back().position < epsilon);
 	this->graph_state[vertex_1][vertex_2].is_saturated = is_saturated;
 
-	return request;
+	return result;
 }

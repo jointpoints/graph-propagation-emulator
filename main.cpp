@@ -19,24 +19,26 @@ int main(void)
 	graph.fromFile("Saved files/Sample graph 1");
 	graph.outputEdgeList(std::cout);
 
+	bool use_skip_forward = false;
+
 	rand_walks::Wander my_wander(graph);
-	std::cout << "Epsilon = 0.1: " << my_wander.run(0, 0.1) << '\n';
+	std::cout << "Epsilon = 0.1: " << my_wander.run(0, 0.1, 1e-6L, use_skip_forward) << '\n';
 	my_wander.reset();
-	std::cout << "Epsilon = 0.2: " << my_wander.run(0, 0.2) << '\n';
+	std::cout << "Epsilon = 0.2: " << my_wander.run(0, 0.2, 1e-6L, use_skip_forward) << '\n';
 	my_wander.reset();
-	std::cout << "Epsilon = 0.3: " << my_wander.run(0, 0.3) << '\n';
+	std::cout << "Epsilon = 0.3: " << my_wander.run(0, 0.3, 1e-6L, use_skip_forward) << '\n';
 	my_wander.reset();
-	std::cout << "Epsilon = 0.4: " << my_wander.run(0, 0.4) << '\n';
+	std::cout << "Epsilon = 0.4: " << my_wander.run(0, 0.4, 1e-6L, use_skip_forward) << '\n';
 	my_wander.reset();
-	std::cout << "Epsilon = 0.5: " << my_wander.run(0, 0.5) << '\n';
+	std::cout << "Epsilon = 0.5: " << my_wander.run(0, 0.5, 1e-6L, use_skip_forward) << '\n';
 	my_wander.reset();
-	std::cout << "Epsilon = 0.6: " << my_wander.run(0, 0.6) << '\n';
+	std::cout << "Epsilon = 0.6: " << my_wander.run(0, 0.6, 1e-6L, use_skip_forward) << '\n';
 	my_wander.reset();
-	std::cout << "Epsilon = 0.7: " << my_wander.run(0, 0.7) << '\n';
+	std::cout << "Epsilon = 0.7: " << my_wander.run(0, 0.7, 1e-6L, use_skip_forward) << '\n';
 	my_wander.reset();
-	std::cout << "Epsilon = 0.8: " << my_wander.run(0, 0.8) << '\n';
+	std::cout << "Epsilon = 0.8: " << my_wander.run(0, 0.8, 1e-6L, use_skip_forward) << '\n';
 	my_wander.reset();
-	std::cout << "Epsilon = 0.9: " << my_wander.run(0, 0.9) << '\n';
+	std::cout << "Epsilon = 0.9: " << my_wander.run(0, 0.9, 1e-6L, use_skip_forward) << '\n';
 
 	return 0;
 }

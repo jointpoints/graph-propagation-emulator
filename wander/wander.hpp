@@ -60,6 +60,17 @@ namespace rand_walks
 		 */
 		using Concurrency = enum ConcurrencyEnum {none, cpu};
 
+		/**
+		 * Emulation parameters
+		 */
+		struct RunInfo
+		{
+			uint32_t start_vertex;
+			long double epsilon;
+			long double time_delta;
+			bool use_skip_forward;
+			Concurrency concurrency_type;
+		};
 
 
 		/// \name Constructors and destructors
@@ -112,6 +123,9 @@ namespace rand_walks
 		 * \param   start_vertex        Vertex where the initial agent instance will be spawned.
 		 * \param   epsilon             Parameter \f$\varepsilon\f$ of \f$\varepsilon\f$-saturation.
 		 * \param   time_delta          Time step of emulation.
+		 * \param   use_skip_forward    Enables a faster emulation algorithm; disable this option if
+		 *                              you need precise positions of agent instances at each time
+		 *                              step.
 		 * \param   concurrency_type    Emulation mode.
 		 * 
 		 * \return Time of the first \f$\varepsilon\f$-saturation moment; precision of the answer
@@ -130,7 +144,8 @@ namespace rand_walks
 		 * \throw runtime_error if CPU concurrency has been enabled, however, it is not supported
 		 * by the platform.
 		 */
-		long double const   run         (uint32_t const start_vertex, long double const epsilon, long double const time_delta = 1e-6L, Concurrency concurrency_type = none);
+		long double const   run         (uint32_t const start_vertex, long double const epsilon, long double const time_delta = 1e-6L, bool const use_skip_forward = true, Concurrency concurrency_type = none);
+		long double const   run         (RunInfo run_info);
 
 		/**
 		 * Invalidates the emulator
@@ -157,14 +172,14 @@ namespace rand_walks
 		using EdgeState             = struct {AgentInstanceList agents; bool is_saturated : 1;};
 		using NeighbourhoodState    = std::vector<EdgeState>;
 		using GraphState            = std::vector<NeighbourhoodState>;
-		using AgentCreationRequest  = struct {std::deque<MetricGraph::Edge> target_edges; std::deque<long double> init_positions; std::deque<bool> init_directions;};
+		using EdgeUpdateResult      = struct {bool collision_occured = false; std::deque<MetricGraph::Edge> target_edges; std::deque<long double> init_positions; std::deque<bool> init_directions;};
 
 		MetricGraph const   &graph;
 		GraphState           graph_state;
 		WanderState          wander_state;
 
 		// Modifiers
-		AgentCreationRequest updateEdgeState(uint32_t vertex_1, uint32_t vertex_2, long double const epsilon, long double const time_delta);
+		EdgeUpdateResult updateEdgeState(uint32_t vertex_1, uint32_t vertex_2, long double const epsilon, long double const time_delta);
 	};
 
 
