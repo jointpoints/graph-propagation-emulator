@@ -5,7 +5,7 @@
  * \author
  *       Andrei Eliseev (JointPoints), 2021
  */
-#include "wander/wander.hpp"
+#include "ui/ui.hpp"
 
 #include <iostream>
 
@@ -15,7 +15,7 @@
 
 int main(void)
 {
-	rand_walks::MetricGraph graph;
+	/*rand_walks::MetricGraph graph;
 	graph.fromFile("My graphs/Sample graph 1");
 	graph.outputEdgeList(std::cout);
 
@@ -38,7 +38,9 @@ int main(void)
 	my_wander.reset();
 	std::cout << "Epsilon = 0.8: " << my_wander.run(0, 0.8, 1e-6L, use_skip_forward) << '\n';
 	my_wander.reset();
-	std::cout << "Epsilon = 0.9: " << my_wander.run(0, 0.9, 1e-6L, use_skip_forward) << '\n';
+	std::cout << "Epsilon = 0.9: " << my_wander.run(0, 0.9, 1e-6L, use_skip_forward) << '\n';*/
+
+	run();
 
 	return 0;
 }

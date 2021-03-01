@@ -23,8 +23,8 @@ $compiler_min_version = '4.8.1'
 
 $object_folder = 'random_walks_emulator_obj'
 $out_folder = "Random Walks Emulator (build, v.$version)"
-$out_file = 'emulator.exe'
-$units = @('metric_graph', 'wander', 'main')
+$out_file = 'rwe.exe'
+$units = @('metric_graph', 'wander', 'ui', 'main')
 
 
 
@@ -288,7 +288,8 @@ Write-Host '4. Finalisation... ' -NoNewLine
 # Make folders
 (New-Item -Type Directory -Force -Path "$out_folder\My graphs") *> $NULL
 (New-Item -Type Directory -Force -Path "$out_folder\My scenarios") *> $NULL
-(Copy-Item -Force -Path _util\Sample1 -Destination "$out_folder\My graphs\Sample graph 1.rweg") *> $NULL
+(Copy-Item -Force -Path _util\gs1 -Destination "$out_folder\My graphs\Sample graph 1.rweg") *> $NULL
+(Copy-Item -Force -Path _util\ss1 -Destination "$out_folder\My scenarios\Epsilon wander on sample graph 1.rwes") *> $NULL
 Write-Host '(success)'
 
 
@@ -305,6 +306,6 @@ Write-Host 'https://jointpoints.github.io/random-walks/tutorials.html'
 Write-Host 'You may now exit the PowerShell or run the emulator by typing'
 Write-Host 'consecutively the following commands:'
 Write-Host ('    Set-Location "{0}"' -f $out_folder)
-Write-Host '    .\emulator.exe'
+Write-Host '    .\rwe.exe'
 Write-Host '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~' -ForegroundColor Green
 Write-Host

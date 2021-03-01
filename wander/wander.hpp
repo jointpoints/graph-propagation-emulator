@@ -5,8 +5,8 @@
  * \author
  *       Andrei Eliseev (JointPoints), 2021
  */
-#ifndef __WANDER_HPP__
-#define __WANDER_HPP__
+#ifndef RWE__WANDER_HPP__
+#define RWE__WANDER_HPP__
 
 
 
@@ -60,18 +60,6 @@ namespace rand_walks
 		 */
 		using Concurrency = enum ConcurrencyEnum {none, cpu};
 
-		/**
-		 * Emulation parameters
-		 */
-		struct RunInfo
-		{
-			uint32_t start_vertex;
-			long double epsilon;
-			long double time_delta;
-			bool use_skip_forward;
-			Concurrency concurrency_type;
-		};
-
 
 		/// \name Constructors and destructors
 		///@{
@@ -85,14 +73,19 @@ namespace rand_walks
 		 * 
 		 * \note Right after the end of construction the new Wander object will be in the \c ready state.
 		 */
-		Wander(MetricGraph const &graph);
+		explicit Wander     (MetricGraph const &graph);
 
 		/**
 		 * Default destructor
 		 * 
 		 * Destroys the emulator.
 		 */
-		~Wander(void);
+		~Wander             (void);
+
+		// Prevent implicit creation of copy- and move-constructors, as well as the assignment operator
+		Wander                  (Wander &)      = delete;
+		Wander                  (Wander &&)     = delete;
+		Wander &    operator =  (Wander &)      = delete;
 
 		///@}
 
@@ -145,7 +138,6 @@ namespace rand_walks
 		 * by the platform.
 		 */
 		long double const   run         (uint32_t const start_vertex, long double const epsilon, long double const time_delta = 1e-6L, bool const use_skip_forward = true, Concurrency concurrency_type = none);
-		long double const   run         (RunInfo run_info);
 
 		/**
 		 * Invalidates the emulator
@@ -192,4 +184,4 @@ namespace rand_walks
 
 
 
-#endif
+#endif // RWE__WANDER_HPP__

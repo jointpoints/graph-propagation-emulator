@@ -5,8 +5,8 @@
  * \author
  *       Andrei Eliseev (JointPoints), 2021
  */
-#ifndef __METRIC_GRAPH_HPP__
-#define __METRIC_GRAPH_HPP__
+#ifndef RWE__METRIC_GRAPH_HPP__
+#define RWE__METRIC_GRAPH_HPP__
 
 
 
@@ -83,6 +83,11 @@ namespace rand_walks
 		 * automatically transferred into the \c dead state.
 		 */
 		~MetricGraph    (void);
+
+		// Prevent implicit creation of copy- and move-constructors, as well as the assignment operator
+		MetricGraph                 (MetricGraph &)     = delete;
+		MetricGraph                 (MetricGraph &&)    = delete;
+		MetricGraph &   operator =  (MetricGraph &)     = delete;
 
 		///@}
 
@@ -299,4 +304,4 @@ namespace rand_walks
 
 
 
-#endif // __METRIC_GRAPH_HPP__
+#endif // RWE__METRIC_GRAPH_HPP__
