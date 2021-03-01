@@ -286,8 +286,9 @@ Write-Host '4. Finalisation... ' -NoNewLine
 # Remove object folder
 (powershell Remove-Item -Force -Recurse -Path $object_folder) *> $NULL
 # Make folders
-(New-Item -Type Directory -Force -Path "$out_folder\Saved files") *> $NULL
-(Copy-Item -Force -Path _util\Sample1 -Destination "$out_folder\Saved files\Sample graph 1.rweg") *> $NULL
+(New-Item -Type Directory -Force -Path "$out_folder\My graphs") *> $NULL
+(New-Item -Type Directory -Force -Path "$out_folder\My scenarios") *> $NULL
+(Copy-Item -Force -Path _util\Sample1 -Destination "$out_folder\My graphs\Sample graph 1.rweg") *> $NULL
 Write-Host '(success)'
 
 

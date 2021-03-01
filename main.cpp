@@ -16,10 +16,10 @@
 int main(void)
 {
 	rand_walks::MetricGraph graph;
-	graph.fromFile("Saved files/Sample graph 1");
+	graph.fromFile("My graphs/Sample graph 1");
 	graph.outputEdgeList(std::cout);
 
-	bool use_skip_forward = false;
+	bool use_skip_forward = true;
 
 	rand_walks::Wander my_wander(graph);
 	std::cout << "Epsilon = 0.1: " << my_wander.run(0, 0.1, 1e-6L, use_skip_forward) << '\n';
