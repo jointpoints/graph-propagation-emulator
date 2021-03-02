@@ -288,8 +288,10 @@ Write-Host '4. Finalisation... ' -NoNewLine
 # Make folders
 (New-Item -Type Directory -Force -Path "$out_folder\My graphs") *> $NULL
 (New-Item -Type Directory -Force -Path "$out_folder\My scenarios") *> $NULL
+(New-Item -Type Directory -Force -Path "$out_folder\Technical files") *> $NULL
 (Copy-Item -Force -Path _util\gs1 -Destination "$out_folder\My graphs\Sample graph 1.rweg") *> $NULL
-(Copy-Item -Force -Path _util\ss1 -Destination "$out_folder\My scenarios\Epsilon wander on sample graph 1.rwes") *> $NULL
+(Copy-Item -Force -Path _util\ss1 -Destination "$out_folder\My scenarios\Sample scenario 1.rwes") *> $NULL
+(Copy-Item -Force -Path _util\tfrm -Destination "$out_folder\Technical files\ReadMe.txt") *> $NULL
 Write-Host '(success)'
 
 

@@ -85,8 +85,8 @@ namespace rand_walks
 		~MetricGraph    (void);
 
 		// Prevent implicit creation of copy- and move-constructors, as well as the assignment operator
-		MetricGraph                 (MetricGraph &)     = delete;
-		MetricGraph                 (MetricGraph &&)    = delete;
+		//MetricGraph                 (MetricGraph &)     = delete;
+		//MetricGraph                 (MetricGraph &&)    = delete;
 		MetricGraph &   operator =  (MetricGraph &)     = delete;
 
 		///@}
