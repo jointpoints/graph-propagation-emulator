@@ -40,6 +40,29 @@ rand_walks::MetricGraph::~MetricGraph(void)
 
 
 
+// Operators
+
+
+
+
+
+rand_walks::MetricGraph & rand_walks::MetricGraph::operator=(rand_walks::MetricGraph &&other)
+{
+	// 1. Invalidate associated wanders
+	for (uint32_t wander_i = 0; wander_i < this->associated_wanders.size(); ++wander_i)
+		this->associated_wanders[wander_i]->invalidate();
+	
+	// 2. Copy data from <other>
+	this->edges = std::move(other.edges);
+	this->associated_wanders.insert(this->associated_wanders.end(), other.associated_wanders.begin(), other.associated_wanders.end());
+
+	return *this;
+}
+
+
+
+
+
 // Access
 
 

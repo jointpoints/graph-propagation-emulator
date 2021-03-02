@@ -24,9 +24,10 @@
 
 
 
-rand_walks::Wander::Wander(MetricGraph const &graph) :
+rand_walks::Wander::Wander(MetricGraph &graph) :
 	graph(graph), wander_state(invalid)
 {
+	graph.associated_wanders.push_back(this);
 	this->reset();
 }
 
@@ -34,7 +35,26 @@ rand_walks::Wander::Wander(MetricGraph const &graph) :
 
 rand_walks::Wander::~Wander(void)
 {
-	// Intended to be empty
+	for (uint32_t wander_i = 0; wander_i < this->graph.associated_wanders.size(); ++wander_i)
+		if (this->graph.associated_wanders[wander_i] == this)
+			this->graph.associated_wanders.erase(this->graph.associated_wanders.begin() + (wander_i--));
+}
+
+
+
+
+
+// Operators
+
+
+
+
+
+rand_walks::Wander & rand_walks::Wander::operator=(rand_walks::Wander &&other)
+{
+	*this = std::move(other);
+
+	return *this;
 }
 
 

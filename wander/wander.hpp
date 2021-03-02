@@ -73,7 +73,7 @@ namespace rand_walks
 		 * 
 		 * \note Right after the end of construction the new Wander object will be in the \c ready state.
 		 */
-		explicit Wander     (MetricGraph const &graph);
+		explicit Wander     (MetricGraph &graph);
 
 		/**
 		 * Default destructor
@@ -86,6 +86,15 @@ namespace rand_walks
 		Wander                  (Wander &)      = delete;
 		Wander                  (Wander &&)     = delete;
 		Wander &    operator =  (Wander &)      = delete;
+
+		///@}
+
+
+
+		/// \name Operators
+		///@{
+
+		Wander &    operator =  (Wander &&other);
 
 		///@}
 
@@ -166,7 +175,7 @@ namespace rand_walks
 		using GraphState            = std::vector<NeighbourhoodState>;
 		using EdgeUpdateResult      = struct {bool collision_occured = false; std::deque<MetricGraph::Edge> target_edges; std::deque<long double> init_positions; std::deque<bool> init_directions;};
 
-		MetricGraph const   &graph;
+		MetricGraph         &graph;
 		GraphState           graph_state;
 		WanderState          wander_state;
 

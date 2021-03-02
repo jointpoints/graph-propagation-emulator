@@ -84,10 +84,33 @@ namespace rand_walks
 		 */
 		~MetricGraph    (void);
 
-		// Prevent implicit creation of copy- and move-constructors, as well as the assignment operator
-		//MetricGraph                 (MetricGraph &)     = delete;
-		//MetricGraph                 (MetricGraph &&)    = delete;
+		// Prevent implicit creation of copy-constructor and copy-assignment
+		MetricGraph     (MetricGraph &)                 = delete;
 		MetricGraph &   operator =  (MetricGraph &)     = delete;
+
+		///@}
+
+
+
+		/// \name Operators
+		///@{
+
+		/**
+		 * Move assignment
+		 * 
+		 * Moves one metric graph instead of another.
+		 * 
+		 * \param   other   A metric graph to move from.
+		 * 
+		 * \note All \c Wander objects associated with the old metric graph will remain
+		 * associated (they will not be replaced), however, they will be automatically
+		 * transferred into the \c invalid state. All \c Wander objects associated with
+		 * the new metric graph will remain associated and their state will not be
+		 * changed.
+		 * 
+		 * \note The behaviour of \c other is undefined after the assignment.
+		 */
+		MetricGraph &   operator =  (MetricGraph &&other);
 
 		///@}
 
