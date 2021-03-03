@@ -344,7 +344,7 @@ void rand_walks::MetricGraph::fromFile(std::string const file_name)
 	std::fstream        in_file;
 
 	// 1. Open file and read data
-	in_file.open((file_name.substr(file_name.size() - file_format.size()) == file_format) ? (file_name) : (file_name + file_format), std::fstream::in | std::fstream::binary);
+	in_file.open(((file_name.size() >= file_format.size()) && (file_name.substr(file_name.size() - file_format.size()) == file_format)) ? (file_name) : (file_name + file_format), std::fstream::in | std::fstream::binary);
 	if (in_file.is_open())
 	{
 		uint32_t        out_vertex(0), in_vertex(0);
