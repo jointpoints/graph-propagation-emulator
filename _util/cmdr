@@ -1,0 +1,9 @@
+run - Runs the specified Random Walks Emulator Scenario file.
+USAGE: run <filename>
+WHERE: <filename>     - a path (relative to rwe.exe or absolute) to the .rwes file.
+                        If path contains whitespaces, you have to wrap it by
+                        quotation marks ("). You may also omit the format of the
+                        file, i.e. not specify the '.rwes' part.
+EXAMPLES:
+run "My scenarios/Sample scenario 1.rwes"     - runs one of the sample scenarios.
+run "My scenarios/Sample scenario 1"          - runs the same sample scenario.

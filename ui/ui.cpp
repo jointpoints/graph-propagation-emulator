@@ -181,7 +181,7 @@ void cmd_run(AppSettings const & settings, std::string scenario_path)
 	// 1. Open scenario file
 	in_file.open(((scenario_path.size() >= file_format.size()) && (scenario_path.substr(scenario_path.size() - file_format.size()) == file_format)) ? (scenario_path) : (scenario_path + file_format), std::fstream::in);
 	if (!in_file.is_open())
-		throw std::invalid_argument("Scenario was not found.");
+		throw std::invalid_argument("Scenario '" + scenario_path + "' was not found.");
 	
 	// 2. Read and tokenise scenario
 	while (in_file >> std::noskipws >> symbol)
@@ -465,6 +465,17 @@ void cmd_run(AppSettings const & settings, std::string scenario_path)
 
 
 #define PRINT_ERROR(error_type, what) {std::cerr << error_type << ". " << what << '\n'; continue;}
+#define PRINT_HELP(file)   {technical.open("Technical files/" + std::string(file), std::fstream::in); \
+                            if (!technical.is_open()) \
+                            { \
+                                technical.close(); \
+                                PRINT_ERROR("TECHNICAL FILES ERROR", "Some technical files are missing. Reinstall the program.") \
+                            } \
+                            std::string line; \
+                            while (std::getline(technical, line)) \
+                            std::cout << line << '\n'; \
+                            technical.close(); \
+                            continue;}
 void run(void)
 {
 	std::string                 command = "";
@@ -475,8 +486,13 @@ void run(void)
 	std::string                 token               = "";
 	std::vector<std::string>    command_tokens;
 
+	std::fstream technical;
+
 	// 1. Load settings
 	AppSettings settings = init();
+
+	std::cout << "Random Walks Emulator v.0.1 by Andrei Eliseev (JointPoints), 2021\nProject web-site: https://jointpoints.github.io/random-walks/\n";
+	std::cout << "Type 'help' to get the full list of available commands with their short descriptions.\n\n";
 
 	// 2. Await for the next command
 	while (command != "exit")
@@ -528,11 +544,24 @@ void run(void)
 		// 2.1. If nothing was entered
 		if (command_tokens.size() == 0)
 			continue;
-		// 2.2. If user wants to run a scenario
+		// 2.2. If user wants to get help
+		if (command_tokens[0] == "help")
+		{
+			if (command_tokens.size() > 1)
+				PRINT_ERROR("COMMAND LINE ERROR", "Unexpected command after 'help'.")
+
+			PRINT_HELP("cmdh")
+
+			continue;
+		}
+		// 2.3. If user wants to run a scenario
 		if (command_tokens[0] == "run")
 		{
 			if (command_tokens.size() < 2)
 				PRINT_ERROR("COMMAND LINE ERROR", "Scenario file name was expected after 'run'.")
+
+			if (command_tokens[1] == "?")
+				PRINT_HELP("cmdr")
 
 			try
 			{
