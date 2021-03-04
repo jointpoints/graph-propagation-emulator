@@ -2,7 +2,7 @@ graph "My graphs/Sample graph 1.rweg"
 {
 	epsilon-wander
 	{
-		start-vertex    : 0,
-		epsilon         : 0.1..0.1..0.9
+		start-vertex    : 0 1 2,
+		epsilon         : 0.2..0.2..0.8
 	}
 }

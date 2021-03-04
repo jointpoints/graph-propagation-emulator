@@ -13,6 +13,7 @@
 #include <sstream>      // needed for "istringstream"
 #include <iterator>     // needed for "istream_iterator"
 #include <regex>        // needed for "regex" and "regex_match"
+#include <chrono>       // needed for "chrono" and "duration_cast"
 
 
 
@@ -126,6 +127,102 @@ AppSettings init(void)
 
 
 
+// Auxiliary functions for command-line functions
+
+
+
+
+
+// TRANSITION FUNCTION
+// Run epsilon wander emulation
+#define EMULATION_ERROR(what)   throw std::domain_error(what);
+void runEpsilonWander(AppSettings const &settings, rand_walks::Wander &epsilon_wander,
+                      std::vector<uint32_t> &epsilon_wander_start_vertex, std::vector<long double> &epsilon_wander_epsilon,
+                      std::vector<long double> &epsilon_wander_time_delta, std::vector<bool> &epsilon_wander_use_skip_forward,
+                      uint8_t const verbosity_level)
+{
+	// 1. If some parameters were not set by user, set them by default values
+	if (epsilon_wander_start_vertex.size() == 0) epsilon_wander_start_vertex.push_back(settings.default_epsilon_wander_params.start_vertex);
+	if (epsilon_wander_epsilon.size() == 0) epsilon_wander_epsilon.push_back(settings.default_epsilon_wander_params.epsilon);
+	if (epsilon_wander_time_delta.size() == 0) epsilon_wander_time_delta.push_back(settings.default_epsilon_wander_params.time_delta);
+	if (epsilon_wander_use_skip_forward.size() == 0) epsilon_wander_use_skip_forward.push_back(settings.default_epsilon_wander_params.use_skip_forward);
+
+	// 2. Print header
+	switch (verbosity_level)
+	{
+	// raw output
+	case 0:
+		break;
+	// default output
+	case 1:
+		std::cout << "Epsilon saturation experiment:\n";
+		break;
+	// MarkDown output
+	case 2:
+		std::cout << "\n### Epsilon saturation experiment\n";
+		break;
+	}
+
+	// 3. Run emulations
+	auto time_start = std::chrono::high_resolution_clock::now();
+	for (uint32_t start_vertex_i = 0; start_vertex_i < epsilon_wander_start_vertex.size(); ++start_vertex_i)
+	for (uint32_t epsilon_i = 0; epsilon_i < epsilon_wander_epsilon.size(); ++epsilon_i)
+	for (uint32_t time_delta_i = 0; time_delta_i < epsilon_wander_time_delta.size(); ++time_delta_i)
+	for (uint32_t use_skip_forward_i = 0; use_skip_forward_i < epsilon_wander_use_skip_forward.size(); ++use_skip_forward_i)
+	{
+		epsilon_wander.reset();
+		try
+		{
+			long double saturation_time = epsilon_wander.run(epsilon_wander_start_vertex[start_vertex_i], epsilon_wander_epsilon[epsilon_i], epsilon_wander_time_delta[time_delta_i], epsilon_wander_use_skip_forward[use_skip_forward_i]); \
+			switch (verbosity_level)
+			{
+			// raw output
+			case 0:
+				std::cout << (((epsilon_i | time_delta_i | use_skip_forward_i) > 0) ? (",") : (  (start_vertex_i > 0) ? ("\n") : ("")  )) << saturation_time;
+				break;
+			// default output
+			case 1:
+				std::cout << (((epsilon_i | time_delta_i | use_skip_forward_i) > 0) ? ("") : ("\tStart vertex : " + std::to_string(epsilon_wander_start_vertex[start_vertex_i]) + "\n"));
+				std::cout << "\t\tEpsilon = " << epsilon_wander_epsilon[epsilon_i] << "(time delta = " << epsilon_wander_time_delta[time_delta_i] << ")\t: " << saturation_time << '\n';
+				break;
+			// MarkDown output
+			case 2:
+				std::cout << (((epsilon_i | time_delta_i | use_skip_forward_i) > 0) ? ("") : ("\n#### Start vertex : " + std::to_string(epsilon_wander_start_vertex[start_vertex_i]) + "\n\n"));
+				std::cout << (((epsilon_i | time_delta_i | use_skip_forward_i) > 0) ? ("") : ("| Epsilon | Time delta | Saturation time |\n|:-------:|:----------:|:---------------:|\n"));
+				std::cout << "| " << epsilon_wander_epsilon[epsilon_i] << " | " << epsilon_wander_time_delta[time_delta_i] << " | " << saturation_time << " |\n";
+				break;
+			}
+		}
+		catch (std::invalid_argument &e) {if (verbosity_level == 0) std::cout << '\n'; EMULATION_ERROR("The start vertex does not exist.");}
+		catch (std::logic_error &e) {if (verbosity_level == 0) std::cout << '\n'; EMULATION_ERROR("Unknown exception.");}
+	}
+	auto time_stop = std::chrono::high_resolution_clock::now();
+
+	// 4. Print footer
+	switch (verbosity_level)
+	{
+	// raw output
+	case 0:
+		std::cout << '\n';
+		break;
+	// default output
+	case 1:
+	// MarkDown output
+	case 2:
+		std::cout << "Completed in " << std::chrono::duration_cast<std::chrono::seconds>(time_stop - time_start).count() << " seconds.\n";
+		break;
+	}
+
+	epsilon_wander_start_vertex.clear(); epsilon_wander_epsilon.clear(); epsilon_wander_time_delta.clear(); epsilon_wander_use_skip_forward.clear();
+
+	return;
+}
+#undef EMULATION_ERROR
+
+
+
+
+
 // Command line functions
 
 
@@ -135,26 +232,10 @@ AppSettings init(void)
 // TRANSITION UNIT FUNCTION
 #define SYNTAX_ERROR(what)      throw std::runtime_error(what);
 #define EMULATION_ERROR(what)   throw std::domain_error(what);
-#define RUN_EMULATION           if (epsilon_wander_start_vertex.size() == 0) epsilon_wander_start_vertex.push_back(settings.default_epsilon_wander_params.start_vertex); \
-                                if (epsilon_wander_epsilon.size() == 0) epsilon_wander_epsilon.push_back(settings.default_epsilon_wander_params.epsilon); \
-                                if (epsilon_wander_time_delta.size() == 0) epsilon_wander_time_delta.push_back(settings.default_epsilon_wander_params.time_delta); \
-                                if (epsilon_wander_use_skip_forward.size() == 0) epsilon_wander_use_skip_forward.push_back(settings.default_epsilon_wander_params.use_skip_forward); \
-                                for (uint32_t start_vertex_i = 0; start_vertex_i < epsilon_wander_start_vertex.size(); ++start_vertex_i) \
-                                for (uint32_t epsilon_i = 0; epsilon_i < epsilon_wander_epsilon.size(); ++epsilon_i) \
-                                for (uint32_t time_delta_i = 0; time_delta_i < epsilon_wander_time_delta.size(); ++time_delta_i) \
-                                for (uint32_t use_skip_forward_i = 0; use_skip_forward_i < epsilon_wander_use_skip_forward.size(); ++use_skip_forward_i) \
-                                { \
-                                    epsilon_wander.reset(); \
-                                    try \
-                                    { \
-                                        std::cout << epsilon_wander.run(epsilon_wander_start_vertex[start_vertex_i], epsilon_wander_epsilon[epsilon_i], epsilon_wander_time_delta[time_delta_i], epsilon_wander_use_skip_forward[use_skip_forward_i]) << '\n'; \
-                                    } \
-                                    catch (std::invalid_argument &e) {EMULATION_ERROR("The start vertex does not exist.");} \
-                                    catch (std::logic_error &e) {EMULATION_ERROR("Unknown exception.");} \
-								} \
-                                epsilon_wander_start_vertex.clear(); epsilon_wander_epsilon.clear(); epsilon_wander_time_delta.clear(); epsilon_wander_use_skip_forward.clear();
-void cmd_run(AppSettings const & settings, std::string scenario_path)
+#define RUN_EMULATION           ....
+void cmd_run(AppSettings const &settings, std::vector<std::string> const &params)
 {
+	std::string                 scenario_path;
 	std::string const           file_format         = ".rwes";
 	std::fstream                in_file;
 	char                        symbol              = 0;
@@ -178,12 +259,35 @@ void cmd_run(AppSettings const & settings, std::string scenario_path)
 	std::vector<long double>   *curr_real_params    = nullptr;
 	std::vector<bool>          *curr_bool_params    = nullptr;
 
-	// 1. Open scenario file
+	uint8_t                     verbosity_level     = 1;
+
+	// 1. Process params
+	for (uint32_t param_i = 1; param_i < params.size(); ++param_i)
+	{
+		if (params[param_i] == "-d")
+		{
+			verbosity_level = 1;
+			continue;
+		}
+		if (params[param_i] == "-m")
+		{
+			verbosity_level = 2;
+			continue;
+		}
+		if (params[param_i] == "-r")
+		{
+			verbosity_level = 0;
+			continue;
+		}
+		scenario_path = params[param_i];
+	}
+
+	// 2. Open scenario file
 	in_file.open(((scenario_path.size() >= file_format.size()) && (scenario_path.substr(scenario_path.size() - file_format.size()) == file_format)) ? (scenario_path) : (scenario_path + file_format), std::fstream::in);
 	if (!in_file.is_open())
 		throw std::invalid_argument("Scenario '" + scenario_path + "' was not found.");
 	
-	// 2. Read and tokenise scenario
+	// 3. Read and tokenise scenario
 	while (in_file >> std::noskipws >> symbol)
 	{
 		switch (lexer_state)
@@ -229,8 +333,23 @@ void cmd_run(AppSettings const & settings, std::string scenario_path)
 	if (token != "")
 		tokens.push_back(token);
 	in_file.close();
+
+	switch(verbosity_level)
+	{
+	// raw output
+	case 0:
+		break;
+	// default output
+	case 1:
+		std::cout << "=== SCENARIO EXECUTION REPORT ===\n";
+		break;
+	// MarkDown output
+	case 2:
+		std::cout << "# SCENARIO EXECUTION REPORT\n";
+		break;
+	}
 	
-	// 3. Parse and execute scenario
+	// 4. Parse and execute scenario
 	for (uint32_t token_i = 0; token_i < tokens.size(); ++token_i)
 	{
 		switch (parser_state)
@@ -255,6 +374,20 @@ void cmd_run(AppSettings const & settings, std::string scenario_path)
 			in_file.close();
 			graph = rand_walks::MetricGraph();
 			graph.fromFile(tokens[token_i]);
+			switch (verbosity_level)
+			{
+			// raw output
+			case 0:
+				break;
+			// default output
+			case 1:
+				std::cout << "\n--- Graph " << tokens[token_i] << " ---\n";
+				break;
+			// MarkDown output
+			case 2:
+				std::cout << "\n## Graph " << tokens[token_i] << '\n';
+				break;
+			}
 			parser_state = GRAPH_BODY_BEGIN;
 			break;
 
@@ -313,7 +446,7 @@ void cmd_run(AppSettings const & settings, std::string scenario_path)
 			}
 			if (tokens[token_i] == "}")
 			{
-				RUN_EMULATION
+				runEpsilonWander(settings, epsilon_wander, epsilon_wander_start_vertex, epsilon_wander_epsilon, epsilon_wander_time_delta, epsilon_wander_use_skip_forward, verbosity_level);
 				parser_state = GRAPH_BODY;
 				break;
 			}
@@ -355,7 +488,7 @@ void cmd_run(AppSettings const & settings, std::string scenario_path)
 			}
 			if (tokens[token_i] == "}")
 			{
-				RUN_EMULATION
+				runEpsilonWander(settings, epsilon_wander, epsilon_wander_start_vertex, epsilon_wander_epsilon, epsilon_wander_time_delta, epsilon_wander_use_skip_forward, verbosity_level);
 				parser_state = GRAPH_BODY;
 				break;
 			}
@@ -396,7 +529,7 @@ void cmd_run(AppSettings const & settings, std::string scenario_path)
 			}
 			if (tokens[token_i] == "}")
 			{
-				RUN_EMULATION
+				runEpsilonWander(settings, epsilon_wander, epsilon_wander_start_vertex, epsilon_wander_epsilon, epsilon_wander_time_delta, epsilon_wander_use_skip_forward, verbosity_level);
 				parser_state = GRAPH_BODY;
 				break;
 			}
@@ -410,7 +543,7 @@ void cmd_run(AppSettings const & settings, std::string scenario_path)
 					long double array_step = std::stold(token.substr(0, token.find("..")));
 					token.erase(0, token.find("..") + 2);
 					long double array_stop = std::stold(token.substr(0, token.find("..")));
-					while (array_elem <= array_stop)
+					while (array_elem <= array_stop + array_step / 100)
 					{
 						curr_real_params->push_back(array_elem);
 						array_elem += array_step;
@@ -437,7 +570,7 @@ void cmd_run(AppSettings const & settings, std::string scenario_path)
 			}
 			if (tokens[token_i] == "}")
 			{
-				RUN_EMULATION
+				runEpsilonWander(settings, epsilon_wander, epsilon_wander_start_vertex, epsilon_wander_epsilon, epsilon_wander_time_delta, epsilon_wander_use_skip_forward, verbosity_level);
 				parser_state = GRAPH_BODY;
 				break;
 			}
@@ -459,6 +592,12 @@ void cmd_run(AppSettings const & settings, std::string scenario_path)
 }
 #undef SYNTAX_ERROR
 #undef EMULATION_ERROR
+
+
+
+
+
+// Public functions
 
 
 
@@ -565,7 +704,7 @@ void run(void)
 
 			try
 			{
-				cmd_run(settings, command_tokens[1]);
+				cmd_run(settings, command_tokens);
 			}
 			catch (std::invalid_argument &e) PRINT_ERROR("FILE ERROR", e.what())
 			catch (std::runtime_error &e) PRINT_ERROR("SYNTAX ERROR", e.what())

@@ -1,9 +1,18 @@
 run - Runs the specified Random Walks Emulator Scenario file.
-USAGE: run <filename>
+USAGE: run <filename> [-dmr]
 WHERE: <filename>     - a path (relative to rwe.exe or absolute) to the .rwes file.
                         If path contains whitespaces, you have to wrap it by
                         quotation marks ("). You may also omit the format of the
                         file, i.e. not specify the '.rwes' part.
+       Output format modifiers (optional):
+       -d             - default output format. Used when none of format modifiers
+                        is given.
+       -m             - MarkDown output format. Use this option if you want to
+                        convert the results of emulation into a nice .md page.
+       -r             - raw output format. Use this option if you want to get raw
+                        results with zero verbosity, e.g., for further visualisation
+                        in Python.
 EXAMPLES:
-run "My scenarios/Sample scenario 1.rwes"     - runs one of the sample scenarios.
-run "My scenarios/Sample scenario 1"          - runs the same sample scenario.
+run "My scenarios/Basic.rwes"                 - runs one of the sample scenarios.
+run "My scenarios/Basic" -m                   - runs the same sample scenario with
+                                                Markdown output.
