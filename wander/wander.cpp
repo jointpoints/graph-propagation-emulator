@@ -138,10 +138,17 @@ long double const rand_walks::Wander::run(uint32_t const start_vertex, long doub
 	
 	// 4. Run simulation
 	// 4.1. Use "skip forward", if it is allowed
-	while ((use_skip_forward) && (!is_saturated))
+	while (use_skip_forward)
 	{
 		EdgeUpdateResult update_results;
 		is_saturated = true;
+
+		// Check if current state satisfies the necessary condition
+		for (uint32_t vertex_1 = 0; (is_saturated) && (vertex_1 < this->graph_state.size()); ++vertex_1)
+			for (uint32_t vertex_2 = 0; (is_saturated) && (vertex_2 < this->graph_state[vertex_1].size()); ++vertex_2)
+				is_saturated &= (this->graph_state[vertex_1][vertex_2].agents.size() >= floor(this->graph.edges[vertex_1].lengths[vertex_2] / (2 * epsilon) + 1));
+		if (is_saturated)
+			break;
 		
 		for (uint32_t vertex_1 = 0; vertex_1 < this->graph_state.size(); ++vertex_1)
 		{
@@ -176,10 +183,6 @@ long double const rand_walks::Wander::run(uint32_t const start_vertex, long doub
 			update_results.init_positions.pop_front();
 			update_results.init_directions.pop_front();
 		}
-
-		for (uint32_t vertex_1 = 0; (is_saturated) && (vertex_1 < this->graph_state.size()); ++vertex_1)
-			for (uint32_t vertex_2 = 0; (is_saturated) && (vertex_2 < this->graph_state[vertex_1].size()); ++vertex_2)
-				is_saturated &= (this->graph_state[vertex_1][vertex_2].agents.size() >= floor(this->graph.edges[vertex_1].lengths[vertex_2] / (2 * epsilon) + 1));
 
 		runtime = skip_forward_timestamps.top();
 		skip_forward_timestamps.pop();
