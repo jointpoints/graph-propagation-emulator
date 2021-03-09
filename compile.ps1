@@ -182,7 +182,7 @@ function Create-Exe
 
 	Write-Host "$step_no Making a single executable... " -NoNewLine
 
-	$compilation_results = (g++ -o ('"{0}\{1}"' -f $out_folder, $out_file) ($units | % {"$object_folder\$_.o "}) 2>&1) | Out-String
+	$compilation_results = (g++ -o ('"{0}\{1}"' -f $out_folder, $out_file) ($units | % {"$object_folder\$_.o"}) 2>&1) | Out-String
 	if ($compilation_results -ne '')
 	{
 		Write-Host '(fail)'
@@ -284,7 +284,7 @@ if ((Create-Exe "    3.$($units.count + 1)") -eq $false)
 Write-Host
 Write-Host '4. Finalisation... ' -NoNewLine
 # Remove object folder
-(powershell Remove-Item -Force -Recurse -Path $object_folder) *> $NULL
+(Remove-Item -Force -Recurse -Path $object_folder) *> $NULL
 # Make folders
 (New-Item -Type Directory -Force -Path "$out_folder\My graphs") *> $NULL
 (New-Item -Type Directory -Force -Path "$out_folder\My scenarios") *> $NULL
