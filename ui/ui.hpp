@@ -21,8 +21,6 @@
 
 void    run             (void);
 
-void    runScenario     (std::string scenario_path);
-
 
 
 
