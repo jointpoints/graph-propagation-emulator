@@ -276,6 +276,7 @@ mkdir -p "$out_folder/Technical files"
 cp _util/gs1 "$out_folder/My graphs/Sample graph 1.rweg"
 cp _util/ss1 "$out_folder/My scenarios/Basic.rwes"
 cp _util/tfrm "$out_folder/Technical files/ReadMe.txt"
+cp _util/cmdgc "$out_folder/Technical files/cmdgc"
 cp _util/cmdh "$out_folder/Technical files/cmdh"
 cp _util/cmdr "$out_folder/Technical files/cmdr"
 echo '(success)'

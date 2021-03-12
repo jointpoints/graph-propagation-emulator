@@ -1,0 +1,2 @@
+getconfig - Prints current global parameters of emulator.
+USAGE: getconfig

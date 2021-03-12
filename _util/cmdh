@@ -2,7 +2,8 @@ List of available commands
 
 |  Command  |                       Description                       |
 |-----------|---------------------------------------------------------|
-|    run    | Runs the specified Random Walks Emulator Scenario file. |
-|    exit   | Exits the program.                                      |
+| getconfig | Prints current global parameters of emulator.           |
+| run       | Runs the specified Random Walks Emulator Scenario file. |
+| exit      | Exits the program.                                      |
 
 To get usage pattern for any command (besides 'exit'), type '<command> ?'.
