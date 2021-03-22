@@ -1,0 +1,18 @@
+setconfig - Alters global parameters of emulator.
+USAGE: setconfig <optname> [<optvalue>]
+WHERE: <optname>      - a name of the option to be changed or '*'. If name of the
+                        option is provided, its value will be changed. If '*' is
+                        provided, then values of all options will be changed.
+                        Names of options may be found in square brackets in the
+                        output of 'getconfig' command.
+       <optvalue>     - (optional) A new value for the <optname> option. If
+                        ommited, the default value for <optname> will be restored.
+                        If <optname> is '*', <optvalue> will be ignored anyway.
+EXAMPLES:
+setconfig ewtd 0.5                            - sets default epsilon wander time
+                                                delta to be 0.5.
+setconfig ewsf false                          - globally disables skip forward.
+setconfig ewsv                                - resets default value for default
+                                                epsilon wander start vertex.
+setconfig *                                   - reverts all options to their
+                                                default values.

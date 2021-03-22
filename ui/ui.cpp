@@ -9,6 +9,7 @@
 
 #include "cmd/cmd_getconfig.hpp"
 #include "cmd/cmd_run.hpp"
+#include "cmd/cmd_setconfig.hpp"
 
 #include <fstream>      // needed for "fstream"
 #include <stdexcept>    // needed for exceptions
@@ -107,9 +108,9 @@ void run(void)
 	std::string                 token               = "";
 	std::vector<std::string>    command_tokens;
 
-	std::vector<std::string> const              cmd_names{"getconfig", "run"};
-	void                                      (*cmd_functions[])(AppSettings const &, std::vector<std::string> const &) = {cmd_getconfig, cmd_run};
-	std::string const                           cmd_help[] = {"cmdgc", "cmdr"};
+	std::vector<std::string> const              cmd_names{"getconfig", "run", "setconfig"};
+	void                                      (*cmd_functions[])(AppSettings &, std::vector<std::string> const &) = {cmd_getconfig, cmd_run, cmd_setconfig};
+	std::string const                           cmd_help[] = {"cmdgc", "cmdr", "cmdsc"};
 	auto                                        cmd_position = cmd_names.end();
 
 	std::fstream technical;
@@ -196,7 +197,7 @@ void run(void)
 			{
 				cmd_functions[cmd_index](settings, command_tokens);
 			}
-			catch (std::invalid_argument &e) PRINT_ERROR("FILE ERROR", e.what())
+			catch (std::invalid_argument &e) PRINT_ERROR("EXECUTION ERROR", e.what())
 			catch (std::runtime_error &e) PRINT_ERROR("SYNTAX ERROR", e.what())
 			catch (std::domain_error &e) PRINT_ERROR("EMULATION ERROR", e.what())
 

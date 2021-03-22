@@ -21,7 +21,7 @@
 
 
 
-void cmd_getconfig(AppSettings const &settings, std::vector<std::string> const &params)
+void cmd_getconfig(AppSettings &settings, std::vector<std::string> const &params)
 {
 	std::cout << "=== RANDOM WALKS EMULATOR CONFIGURATION ===\n\n";
 	std::cout << "--- Default epsilon wander parameters ---\n";

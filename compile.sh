@@ -279,6 +279,7 @@ cp _util/tfrm "$out_folder/Technical files/ReadMe.txt"
 cp _util/cmdgc "$out_folder/Technical files/cmdgc"
 cp _util/cmdh "$out_folder/Technical files/cmdh"
 cp _util/cmdr "$out_folder/Technical files/cmdr"
+cp _util/cmdsc "$out_folder/Technical files/cmdsc"
 echo '(success)'
 
 

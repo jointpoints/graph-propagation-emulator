@@ -135,7 +135,7 @@ void runEpsilonWander(AppSettings const &settings, rand_walks::Wander &epsilon_w
 
 #define SYNTAX_ERROR(what)      throw std::runtime_error(what);
 #define EMULATION_ERROR(what)   throw std::domain_error(what);
-void cmd_run(AppSettings const &settings, std::vector<std::string> const &params)
+void cmd_run(AppSettings &settings, std::vector<std::string> const &params)
 {
 	std::string                 scenario_path;
 	std::string const           file_format         = ".rwes";
