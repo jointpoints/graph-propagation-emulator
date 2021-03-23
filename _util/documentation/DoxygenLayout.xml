@@ -1,23 +1,18 @@
 <doxygenlayout version="1.0">
 	<navindex>
 		<tab type="mainpage" visible="yes" title="Home page"/>
-		<tab type="classlist" visible="yes" title="List of classes"/>
-		<tab type="usergroup" visible="yes" title="Installation" url="@ref installation"/>
-		<tab type="usergroup" visible="yes" title="Tutorials" url="@ref tutorials"/>
+		<tab type="user" visible="yes" title="Installation" url="@ref installation"/>
+		<tab type="usergroup" visible="no" title="Stand-alone application resources">
+			<tab type="user" visible="yes" title="Tutorials" url="@ref saa_tutorials"/>
+			<tab type="user" visible="yes" title="Reference" url="@ref saa_reference"/>
+		</tab>
+		<tab type="usergroup" visible="no" title="C++ library resources">
+			<tab type="user" visible="yes" title="Tutorials" url="@ref lib_tutorials"/>
+			<tab type="classlist" visible="yes" title="Reference"/>
+		</tab>
+		<tab type="usergroup" visible="no" title="Additional resources">
+			<tab type="user" visible="yes" title=".rwes files specification" url="@ref rwes_spec"/>
+			<tab type="user" visible="yes" title=".rweg files specification" url="@ref rweg_spec"/>
+		</tab>
 	</navindex>
-<!--	<class>
-		...
-	</class>
-	<namespace>
-		...
-	</namespace>
-	<file>
-		...
-	</file>
-	<group>
-		...
-	</group>
-	<directory>
-		...
-	</directory>-->
 </doxygenlayout>
