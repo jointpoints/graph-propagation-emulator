@@ -112,6 +112,15 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a7ad36180b25f5a1b7dafaf2aa267ae28"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a741d961c44dd161559c29798e35a1699"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrand__walks_1_1_metric_graph.html#a741d961c44dd161559c29798e35a1699">~MetricGraph</a> (void)</td></tr>
 <tr class="separator:a741d961c44dd161559c29798e35a1699"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac65715c9b61abff87ba14368abc7a19e"><td class="memItemLeft" align="right" valign="top"><a id="ac65715c9b61abff87ba14368abc7a19e"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>MetricGraph</b> (<a class="el" href="classrand__walks_1_1_metric_graph.html">MetricGraph</a> &amp;)=delete</td></tr>
+<tr class="separator:ac65715c9b61abff87ba14368abc7a19e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a303aec62949879567e6f7fcae9fa80ba"><td class="memItemLeft" align="right" valign="top"><a id="a303aec62949879567e6f7fcae9fa80ba"></a>
+<a class="el" href="classrand__walks_1_1_metric_graph.html">MetricGraph</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classrand__walks_1_1_metric_graph.html">MetricGraph</a> &amp;)=delete</td></tr>
+<tr class="separator:a303aec62949879567e6f7fcae9fa80ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">Operators</div></td></tr>
+<tr class="memitem:a4a4f6cf7e315765658791c3cb90be4c4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classrand__walks_1_1_metric_graph.html">MetricGraph</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrand__walks_1_1_metric_graph.html#a4a4f6cf7e315765658791c3cb90be4c4">operator=</a> (<a class="el" href="classrand__walks_1_1_metric_graph.html">MetricGraph</a> &amp;&amp;other)</td></tr>
+<tr class="separator:a4a4f6cf7e315765658791c3cb90be4c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">Accessors</div></td></tr>
 <tr class="memitem:a71146202dfb983af76df04482f9257ca"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrand__walks_1_1_metric_graph.html#a71146202dfb983af76df04482f9257ca">checkVertex</a> (uint32_t const vertex) const</td></tr>
 <tr class="separator:a71146202dfb983af76df04482f9257ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -307,6 +316,35 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>Wander</b></td></tr>
 
 </div>
 </div>
+<a id="a4a4f6cf7e315765658791c3cb90be4c4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4a4f6cf7e315765658791c3cb90be4c4">&#9670;&nbsp;</a></span>operator=()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classrand__walks_1_1_metric_graph.html">rand_walks::MetricGraph</a> &amp; rand_walks::MetricGraph::operator= </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classrand__walks_1_1_metric_graph.html">rand_walks::MetricGraph</a> &amp;&amp;&#160;</td>
+          <td class="paramname"><em>other</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Move assignment</p>
+<p>Moves one metric graph instead of another.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">other</td><td>A metric graph to move from.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>All <code><a class="el" href="classrand__walks_1_1_wander.html" title="Emulator of random walks on metric graphs that calculates time of -saturation.">Wander</a></code> objects associated with the old metric graph will remain associated (they will not be replaced), however, they will be automatically transferred into the <code>invalid</code> state. All <code><a class="el" href="classrand__walks_1_1_wander.html" title="Emulator of random walks on metric graphs that calculates time of -saturation.">Wander</a></code> objects associated with the new metric graph will remain associated and their state will not be changed.</dd>
+<dd>
+The behaviour of <code>other</code> is undefined after the assignment. </dd></dl>
+
+</div>
+</div>
 <a id="a7d8c3cf7bcc193f5e8044611fe908f65"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7d8c3cf7bcc193f5e8044611fe908f65">&#9670;&nbsp;</a></span>outputEdgeList()</h2>
 
@@ -476,9 +514,9 @@ Example</h4>
 </div>
 </div><!-- contents -->
 </div><!-- doc-content -->
-<div class="ttc" id="aclassrand__walks_1_1_metric_graph_html_a7d8c3cf7bcc193f5e8044611fe908f65"><div class="ttname"><a href="classrand__walks_1_1_metric_graph.html#a7d8c3cf7bcc193f5e8044611fe908f65">rand_walks::MetricGraph::outputEdgeList</a></div><div class="ttdeci">void outputEdgeList(std::ostream &amp;output_stream) const</div><div class="ttdef"><b>Definition:</b> metric_graph.cpp:94</div></div>
+<div class="ttc" id="aclassrand__walks_1_1_metric_graph_html_a7d8c3cf7bcc193f5e8044611fe908f65"><div class="ttname"><a href="classrand__walks_1_1_metric_graph.html#a7d8c3cf7bcc193f5e8044611fe908f65">rand_walks::MetricGraph::outputEdgeList</a></div><div class="ttdeci">void outputEdgeList(std::ostream &amp;output_stream) const</div><div class="ttdef"><b>Definition:</b> metric_graph.cpp:117</div></div>
 <div class="ttc" id="aclassrand__walks_1_1_metric_graph_html"><div class="ttname"><a href="classrand__walks_1_1_metric_graph.html">rand_walks::MetricGraph</a></div><div class="ttdoc">A metric graph class.</div><div class="ttdef"><b>Definition:</b> metric_graph.hpp:58</div></div>
-<div class="ttc" id="aclassrand__walks_1_1_metric_graph_html_a2719a926f85bf442246e4b51c7ab73d2"><div class="ttname"><a href="classrand__walks_1_1_metric_graph.html#a2719a926f85bf442246e4b51c7ab73d2">rand_walks::MetricGraph::updateEdge</a></div><div class="ttdeci">void updateEdge(uint32_t const out_vertex, uint32_t const in_vertex, long double const length, bool const is_directed=false)</div><div class="ttdef"><b>Definition:</b> metric_graph.cpp:190</div></div>
+<div class="ttc" id="aclassrand__walks_1_1_metric_graph_html_a2719a926f85bf442246e4b51c7ab73d2"><div class="ttname"><a href="classrand__walks_1_1_metric_graph.html#a2719a926f85bf442246e4b51c7ab73d2">rand_walks::MetricGraph::updateEdge</a></div><div class="ttdeci">void updateEdge(uint32_t const out_vertex, uint32_t const in_vertex, long double const length, bool const is_directed=false)</div><div class="ttdef"><b>Definition:</b> metric_graph.cpp:213</div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>

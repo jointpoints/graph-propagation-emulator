@@ -24,16 +24,20 @@ var NAVTREE =
 [
   [ "Random Walks Emulator", "index.html", [
     [ "Home page", "index.html", [
-      [ "Introduction", "index.html#intoduction", null ],
-      [ "Basic theory and definitions", "index.html#theory", [
-        [ "Metric graphs", "index.html#metric_graph", null ],
+      [ "Welcome!", "index.html#home_welcome", null ],
+      [ "Basic theory and definitions", "index.html#home_theory", [
+        [ "Metric graphs", "index.html#home_theory_metric_graph", null ],
         [ "Random walk", "index.html#random_walk", null ]
       ] ],
-      [ "License", "index.html#license", null ]
+      [ "License", "index.html#home_license", null ]
     ] ],
-    [ "List of classes", "annotated.html", "annotated" ],
     [ "Installation", "installation.html", null ],
-    [ "Tutorials", "tutorials.html", null ]
+    [ "Tutorials", "@ref saa_tutorials", null ],
+    [ "Reference", "@ref saa_reference", null ],
+    [ "Tutorials", "@ref lib_tutorials", null ],
+    [ "Reference", "annotated.html", "annotated" ],
+    [ ".rwes files specification", "@ref rwes_spec", null ],
+    [ ".rweg files specification", "@ref rweg_spec", null ]
   ] ]
 ];
 

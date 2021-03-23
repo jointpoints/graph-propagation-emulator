@@ -97,21 +97,21 @@ $(document).ready(function(){initNavTree('index.html','');});
 </div><!--header-->
 <div class="contents">
 <div class="toc"><h3>Table of Contents</h3>
-<ul><li class="level1"><a href="#intoduction">Introduction</a></li>
-<li class="level1"><a href="#theory">Basic theory and definitions</a><ul><li class="level2"><a href="#metric_graph">Metric graphs</a></li>
+<ul><li class="level1"><a href="#home_welcome">Welcome!</a></li>
+<li class="level1"><a href="#home_theory">Basic theory and definitions</a><ul><li class="level2"><a href="#home_theory_metric_graph">Metric graphs</a></li>
 <li class="level2"><a href="#random_walk">Random walk</a></li>
 </ul>
 </li>
-<li class="level1"><a href="#license">License</a></li>
+<li class="level1"><a href="#home_license">License</a></li>
 </ul>
 </div>
-<div class="textblock"><h1><a class="anchor" id="intoduction"></a>
-Introduction</h1>
-<p>This website presents documentation and other additional materials for the random walks emulator that can be found in <a href="https://github.com/jointpoints/random-walks">this GitHub repository</a>. The latter houses a C++ computer program that emulates random walks of a point on a metric graph.</p>
-<dl class="section note"><dt>Note</dt><dd>The program is in pre-release stages, it can contain bugs and errors. Any of its contents may eventually become subjects to significant changes.</dd></dl>
-<h1><a class="anchor" id="theory"></a>
+<div class="textblock"><h1><a class="anchor" id="home_welcome"></a>
+Welcome!</h1>
+<p>This is the website of Random Walks Emulator project which provides tools for emulation and analysis of random walks on metric graphs.</p>
+<dl class="section note"><dt>Note</dt><dd>The program is in early stages of development, it can lack some useful features, contain bugs and errors. Any of its contents may eventually become subjects to significant changes.</dd></dl>
+<h1><a class="anchor" id="home_theory"></a>
 Basic theory and definitions</h1>
-<h2><a class="anchor" id="metric_graph"></a>
+<h2><a class="anchor" id="home_theory_metric_graph"></a>
 Metric graphs</h2>
 <p>The concept of <b>metric graph</b> extends the classical understanding of graphs in the following manner. <b>Metric graph</b> is defined as a graph \((V,E)\) where \(V\) is a set of <b>vertices</b>, \(E \subset V^2\) is a set of <b>edges</b> with each edge \(e \in E\) being associated with a certain interval \([0,l(e)]\), where \(l(e) &gt; 0\) is called a <b>length</b> of the edge. Edge \((v,w) \in E\) is called <b>directed</b> ('from \(v\) to \(w\)'), if \((w,v) \notin E\). Otherwise, if \((w,v) \in E\), the edge \((v,w) \in E\) is called <b>undirected</b> ('from \(v\) to \(w\)', or 'between \(v\) and \(w\)').</p>
 <p>This implementation also binds general theory by following additional restrictions:</p><ul>
@@ -120,7 +120,7 @@ Metric graphs</h2>
 </ul>
 <p>For undirected edges, any point \(a \in [0,l((v,w))]\) will be considered the same with the point \(l((w,v)) - a \in [0,l((w,v))]\).</p>
 <p>Thus, the main difference between metric graphs and non-metric graphs can be briefly stated by possibility of interpreting edges of a metric graph as geometric objects where distance can be measured not only between vertices of the graph itself, but also between points on intervals \([0,l(e)]\) that correspond to the edges. Collectively, they will be noted as <b>points of the graph</b>.</p>
-<p>You may read more about metric graphs <a href="https://en.wikipedia.org/wiki/Quantum_graph#Metric_graphs">here</a>.</p>
+<p>You may read more about metric graphs <a href="https://en.wikipedia.org/wiki/Quantum_graph#Metric_graphs"><b>here</b></a>.</p>
 <h2><a class="anchor" id="random_walk"></a>
 Random walk</h2>
 <p><b>Random walk</b> of an <b>agent</b> \(A(t)\) on a metric graph \(G\) is a continuous-time random process that is described as follows:</p><ol type="1">
@@ -140,9 +140,9 @@ Random walk</h2>
 <img src="Homepage_RandomWander_example.gif" alt=""/>
 </div>
 <p>This kind of a structure will be called a <b>wander</b> of a point on a metric graph. Please, note that "wander" is a non-standard term, i.e. it may not be used widely among other people who study random walks.</p>
-<h1><a class="anchor" id="license"></a>
+<h1><a class="anchor" id="home_license"></a>
 License</h1>
-<p>You may find the full text of the license <a href="https://github.com/jointpoints/random-walks/blob/main/LICENSE.md">there</a>. </p>
+<p>You may find the full text of the license <a href="https://github.com/jointpoints/random-walks/blob/main/LICENSE.md"><b>there</b></a>. </p>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->
 </div><!-- doc-content -->
