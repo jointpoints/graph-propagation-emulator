@@ -3,18 +3,17 @@
  *
  * \tableofcontents
  *
- * \section intoduction Introduction
+ * \section home_welcome Welcome!
  *
- * This website presents documentation and other additional materials for the random walks emulator
- * that can be found in [this GitHub repository](https://github.com/jointpoints/random-walks).
- * The latter houses a C++ computer program that emulates random walks of a point on a metric graph.
+ * This is the website of Random Walks Emulator project which provides tools for emulation and
+ * analysis of random walks on metric graphs.
  *
- * \note The program is in pre-release stages, it can contain bugs and errors. Any of its contents may
- * eventually become subjects to significant changes.
+ * \note The program is in early stages of development, it can lack some useful features, contain bugs
+ * and errors. Any of its contents may eventually become subjects to significant changes.
  *
- * \section theory Basic theory and definitions
+ * \section home_theory Basic theory and definitions
  *
- * \subsection metric_graph Metric graphs
+ * \subsection home_theory_metric_graph Metric graphs
  *
  * The concept of <b>metric graph</b> extends the classical understanding of graphs in the following
  * manner. <b>Metric graph</b> is defined as a graph \f$(V,E)\f$ where \f$V\f$ is a set of \b vertices,
@@ -39,7 +38,7 @@
  * \f$[0,l(e)]\f$ that correspond to the edges. Collectively, they will be noted as <b>points of the
  * graph</b>.
  *
- * You may read more about metric graphs [here](https://en.wikipedia.org/wiki/Quantum_graph#Metric_graphs).
+ * You may read more about metric graphs [<b>here</b>](https://en.wikipedia.org/wiki/Quantum_graph#Metric_graphs).
  *
  * \subsection random_walk Random walk
  *
@@ -71,7 +70,7 @@
  * "wander" is a non-standard term, i.e. it may not be used widely among other people who study
  * random walks.
  *
- * \section license License
+ * \section home_license License
  *
- * You may find the full text of the license [there](https://github.com/jointpoints/random-walks/blob/main/LICENSE.md).
+ * You may find the full text of the license [<b>there</b>](https://github.com/jointpoints/random-walks/blob/main/LICENSE.md).
  */

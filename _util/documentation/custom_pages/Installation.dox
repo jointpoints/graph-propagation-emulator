@@ -1,48 +1,105 @@
 /**
  * \page installation Installation
  *
- * \tableofcontents
  *
- * You may use Random Walks Emulator as a library embedded into your own piece of software, or as a
- * stand-alone application.
  *
- * \note Due to early stages of development, possibilities of a stand-alone application are
- * limited to running a single example, however, they will definitely be broadened in the
- * future.
  *
- * At this moment, manual source code compilation is the only possible way to utilise this
- * software as an application. As development goes further, the list of installation options
- * will be enriched.
  *
- * \section install_compile Option #1. Manual compilation
+ * Download the latest version of Random Walks Emulator below and use it for free! Do not forget to
+ * comply with the [<b>license</b>](https://github.com/jointpoints/random-walks/blob/main/LICENSE.md)
+ * and check whether your computer meets the requirements listed on this page.
  *
- * \subsection install_compile_prereq Prerequisites
+ * <table style="width:100%">
+ * <tr>
+ *     <td style="width:25%">
+ *     </td>
+ *     <td colspan="2" style="text-align:center; font-size:18pt">
+ *         <b>v.0.1 (latest release)</b>
+ *     </td>
+ *     <td style="width:25%">
+ *     </td>
+ * </tr>
+ * <tr>
+ *     <td style="width:25%">
+ *     </td>
+ *     <td colspan="2" style="text-align:center">
+ *         <div class="memproto" style="border:1px solid #A8B8D9; border-radius:4px; -moz-border-radius:4px; -webkit-border-radius:4px; text-align:center">
+ *             <i>Stand-alone application</i>
+ *         </div>
+ *     </td>
+ *     <td style="width:25%">
+ *     </td>
+ * </tr>
+ * <tr>
+ *     <td style="width:25%">
+ *     </td>
+ *     <td style="width:25%">
+ *         <div class="memproto" style="border:1px solid #A8B8D9; border-radius:4px; -moz-border-radius:4px; -webkit-border-radius:4px">
+ *             <table style="width:100%">
+ *                 <tr><td align="center"><img src="Installation_Windows.png"></td></tr>
+ *                 <tr><td align="center">[<b>Download for Windows</b>]()</td></tr>
+ *             </table>
+ *         </div>
+ *     </td>
+ *     <td style="width:25%">
+ *         <div class="memproto" style="border:1px solid #A8B8D9; border-radius:4px; -moz-border-radius:4px; -webkit-border-radius:4px">
+ *             <table style="width:100%">
+ *                 <tr><td align="center"><img src="Installation_Linux.png"></td></tr>
+ *                 <tr><td align="center">[<b>Download for Linux</b>]()</td></tr>
+ *             </table>
+ *         </div>
+ *     </td>
+ *     <td style="width:25%">
+ *     </td>
+ * </tr>
+ * <tr>
+ *     <td style="width:25%">
+ *     </td>
+ *     <td colspan="2" style="text-align:center">
+ *         <div class="memproto" style="border:1px solid #A8B8D9; border-radius:4px; -moz-border-radius:4px; -webkit-border-radius:4px; text-align:center">
+ *             <i>Source code</i>
+ *         </div>
+ *     </td>
+ *     <td style="width:25%">
+ *     </td>
+ * </tr>
+ * <tr>
+ *     <td style="width:25%">
+ *     </td>
+ *     <td style="width:25%">
+ *         <div class="memproto" style="border:1px solid #A8B8D9; border-radius:4px; -moz-border-radius:4px; -webkit-border-radius:4px; text-align:center">
+ *             [<b>Download as .zip</b>]()
+ *         </div>
+ *     </td>
+ *     <td style="width:25%">
+ *         <div class="memproto" style="border:1px solid #A8B8D9; border-radius:4px; -moz-border-radius:4px; -webkit-border-radius:4px; text-align:center">
+ *             [<b>Download as .tar.gz</b>]()
+ *         </div>
+ *     </td>
+ *     <td style="width:25%">
+ *     </td>
+ * </tr>
+ * </table>
  *
- * * Windows or any operating system from Unix family;
- * * GCC 4.8.1 or newer (recommended GCC packages for Windows are [MinGW](https://sourceforge.net/projects/mingw/)
- * and [MinGW-w64](http://mingw-w64.org/doku.php));
- * * Make 3.81 or newer (visit [this](https://www.gnu.org/software/make/) or
- * [this](http://gnuwin32.sourceforge.net/packages/make.htm) for more info).
  *
- * If you use Windows, both GCC and Make directories must be included into PATH variable.
  *
- * \subsection install_compile_manual Step-by-step manual
  *
- * \paragraph install_compile_1 Step 1
- * Download the archive with the source code and unpack it.
  *
- * <div class="image" style="text-align:left"><img src="Installation_install_compile_Step1.png"></div>
+ * \section installation_requirements Minimum system requirements
  *
- * \paragraph install_compile_2 Step 2
- * Open any shell in the directory where you have placed unpacked archive (PowerShell will
- * be used for demonstration below). Make sure that \c Makefile file is available there.
- * Run Make utility by calling \c make with no additional arguments in the shell.
- *
- * <div class="image" style="text-align:left"><img src="Installation_install_compile_Step2.png"></div>
- *
- * \paragraph install_compile_3 Step 3
- * After Make utility halts, you shall be able to find a new folder in the directory where you have placed
- * unpacked archive called <tt>Random Walks Emulator (build)</tt>. Open it and find
- * <tt>random_walks_emulator.exe</tt>. This is a console application, so you should run it via shell as well.
+ * <table>
+ * <tr>
+ *     <td>Operating system</td>
+ *     <td align="center">Windows 10 x64 build 10.0.10586 or newer, or Linux-based OS</td>
+ * </tr>
+ * <tr>
+ *     <td>HDD/SSD free space</td>
+ *     <td align="center">500 KB</td>
+ * </tr>
+ * <tr>
+ *     <td>RAM capacity</td>
+ *     <td align="center">8 MB</td>
+ * </tr>
+ * </table>
  *
  */
