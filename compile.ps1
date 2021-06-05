@@ -182,7 +182,7 @@ function Create-Exe
 
 	Write-Host "$step_no Making a single executable... " -NoNewLine
 
-	$compilation_results = (g++ -o ('"{0}\{1}"' -f $out_folder, $out_file) ($units | % {"$object_folder\$_.o"}) 2>&1) | Out-String
+	$compilation_results = (g++ -static -o ('"{0}\{1}"' -f $out_folder, $out_file) ($units | % {"$object_folder\$_.o"}) 2>&1) | Out-String
 	if ($compilation_results -ne '')
 	{
 		Write-Host '(fail)'

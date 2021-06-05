@@ -169,7 +169,7 @@ function Create-Exe {
 	echo -n "$1 Making a single executable... "
 
 	obj_files_list=$(printf "$object_folder/%s.o " "${units[@]}")
-	compilation_results=$(g++ -o "$out_folder/$out_file" $obj_files_list 2>&1)
+	compilation_results=$(g++ -static -o "$out_folder/$out_file" $obj_files_list 2>&1)
 	if (( $compilation_results -ne '' )); then
 		echo '(fail)'
 		echo
