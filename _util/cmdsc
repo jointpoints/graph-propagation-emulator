@@ -5,7 +5,7 @@ WHERE: <optname>      - a name of the option to be changed or '*'. If name of th
                         provided, then values of all options will be changed.
                         Names of options may be found in square brackets in the
                         output of 'getconfig' command.
-       <optvalue>     - (optional) A new value for the <optname> option. If
+       <optvalue>     - (optional) a new value for the <optname> option. If
                         ommited, the default value for <optname> will be restored.
                         If <optname> is '*', <optvalue> will be ignored anyway.
 EXAMPLES:

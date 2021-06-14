@@ -295,6 +295,7 @@ Write-Host '4. Finalisation... ' -NoNewLine
 (Copy-Item -Force -Path _util\cmdgc -Destination "$out_folder\Technical files\cmdgc") *> $NULL
 (Copy-Item -Force -Path _util\cmdh -Destination "$out_folder\Technical files\cmdh") *> $NULL
 (Copy-Item -Force -Path _util\cmdr -Destination "$out_folder\Technical files\cmdr") *> $NULL
+(Copy-Item -Force -Path _util\cmdrtg -Destination "$out_folder\Technical files\cmdrtg") *> $NULL
 (Copy-Item -Force -Path _util\cmdsc -Destination "$out_folder\Technical files\cmdsc") *> $NULL
 Write-Host '(success)'
 
