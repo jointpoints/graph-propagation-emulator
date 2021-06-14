@@ -22,15 +22,15 @@
 
 
 
-namespace rand_walks
+namespace rwe
 {
 
 
 
 
 
-	// Forward declaration of Wander class
-	class Wander;
+	// Forward declaration of RWSpace class
+	class RWSpace;
 
 
 
@@ -79,7 +79,7 @@ namespace rand_walks
 		 * 
 		 * Destroys the metric graph.
 		 * 
-		 * \note All \c Wander objects associated with the respective metric graph will be
+		 * \note All \c RWSpace objects associated with the respective metric graph will be
 		 * automatically transferred into the \c dead state.
 		 */
 		~MetricGraph    (void);
@@ -102,9 +102,9 @@ namespace rand_walks
 		 * 
 		 * \param   other   A metric graph to move from.
 		 * 
-		 * \note All \c Wander objects associated with the old metric graph will remain
+		 * \note All \c RWSpace objects associated with the old metric graph will remain
 		 * associated (they will not be replaced), however, they will be automatically
-		 * transferred into the \c invalid state. All \c Wander objects associated with
+		 * transferred into the \c invalid state. All \c RWSpace objects associated with
 		 * the new metric graph will remain associated and their state will not be
 		 * changed.
 		 * 
@@ -254,7 +254,7 @@ namespace rand_walks
 		 * \param   is_directed     If \c true, desired type of edge will be \f$v \rightarrow w\f$,
 		 *                          if \c false, desired type of edge will be \f$v-w\f$.
 		 * 
-		 * \note All \c Wander objects associated with the respective metric graph will be
+		 * \note All \c RWSpace objects associated with the respective metric graph will be
 		 * automatically transferred into the \c invalid state.
 		 * 
 		 * \throw invalid_argument if desired length is non-positive.
@@ -274,6 +274,31 @@ namespace rand_walks
 		///@{
 
 		/**
+		 * Save graph to \c gexf file
+		 * 
+		 * This function saves respective metric graph to an XML-like file of \c gexf format with
+		 * the name specified by user. If the last five symbols of target file name are not
+		 * <tt>.gexf</tt>, they will be added automatically. If a file with the specified name
+		 * already exists, it will not be rewritten but the ordinal number will be added to the
+		 * name in parentheses (like <em>'My file name (1).gexf'</em>, <em>'My file name (2).gexf'</em>
+		 * and so on).
+		 * 
+		 * \param   file_name   Name of a target \c gexf file.
+		 */
+		void    toGEXF      (std::string const file_name = "Saved files/My metric graph")   const;
+
+		/**
+		 * Load graph from \c gexf file
+		 * 
+		 * This function loads graph from the specified \c gexf file and merges it with the existing
+		 * one by adding all absent vertices, edges and updating their lengths and directions. If a
+		 * file with the specified name does not exist, the original data is left unchanged.
+		 * 
+		 * \param   file_name   Name of a source \c gexf file.
+		 */
+		void    fromGEXF    (std::string const file_name);
+
+		/**
 		 * Save graph to \c rweg file
 		 * 
 		 * This function saves respective metric graph to a binary file of \c rweg format with
@@ -285,7 +310,7 @@ namespace rand_walks
 		 * 
 		 * \param   file_name   Name of a target \c rweg file.
 		 */
-		void    toFile      (std::string const file_name = "Saved files/My metric graph")   const;
+		void    toRWEG      (std::string const file_name = "Saved files/My metric graph")   const;
 
 		/**
 		 * Load graph from \c rweg file
@@ -296,11 +321,11 @@ namespace rand_walks
 		 * 
 		 * \param   file_name   Name of a source \c rweg file.
 		 */
-		void    fromFile    (std::string const file_name);
+		void    fromRWEG    (std::string const file_name);
 
 		///@}
 	private:
-		friend class Wander;
+		friend class RWSpace;
 
 		using VertexList            = std::vector<uint32_t>;
 		using LengthList            = std::vector<long double>;
@@ -310,7 +335,7 @@ namespace rand_walks
 		using Edge                  = std::pair<uint32_t, uint32_t>;
 
 		EdgeList                edges;
-		std::vector<Wander *>   associated_wanders;
+		std::vector<RWSpace *>   associated_wanders;
 
 		// Access
 		Edge                getEdge             (uint32_t const out_vertex, uint32_t const in_vertex, bool const is_directed = true, bool const strict_mode = false) const;
@@ -321,7 +346,7 @@ namespace rand_walks
 
 
 
-} // rand_walks
+} // rwe
 
 
 

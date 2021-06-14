@@ -1,11 +1,11 @@
 /**
  * \file
- *       wander.cpp
+ *       rw_space.cpp
  *
  * \author
  *       Andrei Eliseev (JointPoints), 2021
  */
-#include "wander.hpp"
+#include "rw_space.hpp"
 
 #include <stdexcept>    // needed for exceptions
 #include <algorithm>    // needed for "lower_bound"
@@ -24,7 +24,7 @@
 
 
 
-rand_walks::Wander::Wander(MetricGraph &graph) :
+rwe::RWSpace::RWSpace(MetricGraph &graph) :
 	graph(graph), wander_state(invalid)
 {
 	graph.associated_wanders.push_back(this);
@@ -33,7 +33,7 @@ rand_walks::Wander::Wander(MetricGraph &graph) :
 
 
 
-rand_walks::Wander::~Wander(void)
+rwe::RWSpace::~RWSpace(void)
 {
 	for (uint32_t wander_i = 0; wander_i < this->graph.associated_wanders.size(); ++wander_i)
 		if (this->graph.associated_wanders[wander_i] == this)
@@ -50,7 +50,7 @@ rand_walks::Wander::~Wander(void)
 
 
 
-rand_walks::Wander & rand_walks::Wander::operator=(rand_walks::Wander &&other)
+rwe::RWSpace & rwe::RWSpace::operator=(rwe::RWSpace &&other)
 {
 	*this = std::move(other);
 
@@ -67,22 +67,22 @@ rand_walks::Wander & rand_walks::Wander::operator=(rand_walks::Wander &&other)
 
 
 
-void rand_walks::Wander::reset(void)
+void rwe::RWSpace::reset(void)
 {
-	// 1. Process the Wander object accordingly
+	// 1. Process the RWSpace object accordingly
 	switch (this->wander_state)
 	{
 		case ready:
 			break;
 		case active:
-			throw std::logic_error("Active Wander object cannot be reset. Invalidate it, if you want to interrupt the emulation.");
+			throw std::logic_error("Active RWSpace object cannot be reset. Invalidate it, if you want to interrupt the emulation.");
 		case invalid:
 			this->graph_state = GraphState(graph.edges.size());
 			for (uint32_t vertex_1 = 0; vertex_1 < this->graph_state.size(); ++vertex_1)
 				this->graph_state[vertex_1] = NeighbourhoodState(graph.edges[vertex_1].adjacents.size(), EdgeState{AgentInstanceList(), false});
 			break;
 		case dead:
-			throw std::logic_error("Wander object is dead.");
+			throw std::logic_error("RWSpace object is dead.");
 	}
 
 	// 2. Update wander state
@@ -93,7 +93,7 @@ void rand_walks::Wander::reset(void)
 
 
 
-long double const rand_walks::Wander::run(uint32_t const start_vertex, long double const epsilon, long double const time_delta, bool const use_skip_forward, Concurrency concurrency_type)
+long double const rwe::RWSpace::run_saturation(uint32_t const start_vertex, long double const epsilon, long double const time_delta, bool const use_skip_forward, Concurrency concurrency_type)
 {
 	auto                                agent_comparator    = [](AgentInstance const &agent, long double const position){return agent.position < position;};
 	long double                         runtime             = 0.0L;
@@ -103,10 +103,10 @@ long double const rand_walks::Wander::run(uint32_t const start_vertex, long doub
 
 	// 1.1. Check if wander state is "dead"
 	if (this->wander_state == WanderState::dead)
-		throw std::logic_error("Wander object is dead.");
+		throw std::logic_error("RWSpace object is dead.");
 	// 1.2. Check if wander state is "ready"
 	if (this->wander_state != WanderState::ready)
-		throw std::logic_error("Wander object needs to be reset before running the emulation.");
+		throw std::logic_error("RWSpace object needs to be reset before running the emulation.");
 	// 1.3. Check if <start_vertex> is valid
 	if (!this->graph.checkVertex(start_vertex))
 		throw std::invalid_argument("Vetrex " + std::to_string(start_vertex) + " does not exist in the specified graph.");
@@ -236,7 +236,7 @@ long double const rand_walks::Wander::run(uint32_t const start_vertex, long doub
 
 
 
-void rand_walks::Wander::invalidate(void)
+void rwe::RWSpace::invalidate(void)
 {
 	if (this->wander_state != WanderState::dead)
 		this->wander_state = WanderState::invalid;
@@ -246,7 +246,7 @@ void rand_walks::Wander::invalidate(void)
 
 
 
-void rand_walks::Wander::kill(void)
+void rwe::RWSpace::kill(void)
 {
 	this->wander_state = WanderState::dead;
 
@@ -255,14 +255,14 @@ void rand_walks::Wander::kill(void)
 
 
 
-rand_walks::Wander::EdgeUpdateResult rand_walks::Wander::updateEdgeState(uint32_t const vertex_1, uint32_t const vertex_2, long double const epsilon, long double const time_delta)
+rwe::RWSpace::EdgeUpdateResult rwe::RWSpace::updateEdgeState(uint32_t const vertex_1, uint32_t const vertex_2, long double const epsilon, long double const time_delta)
 {
 	// 1.1. Check if wander state is "dead"
 	if (this->wander_state == WanderState::dead)
-		throw std::logic_error("Wander object is dead.");
+		throw std::logic_error("RWSpace object is dead.");
 	// 1.2. Check if wander state is "active"
 	if (this->wander_state != WanderState::active)
-		throw std::logic_error("Wander object needs to be reset before running the emulation.");
+		throw std::logic_error("RWSpace object needs to be reset before running the emulation.");
 	
 	AgentInstanceList       &agents             = this->graph_state[vertex_1][vertex_2].agents;
 	long double const        length             = this->graph.edges[vertex_1].lengths[vertex_2];

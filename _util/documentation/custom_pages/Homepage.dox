@@ -66,8 +66,8 @@
  *
  * \image html Homepage_RandomWander_example.gif
  *
- * This kind of a structure will be called a \b wander of a point on a metric graph. Please, note that
- * "wander" is a non-standard term, i.e. it may not be used widely among other people who study
+ * This kind of a structure will be called an \b RW-space over a metric graph. Please, note that
+ * "RW-space" is a non-standard term, i.e. it may not be used widely among other people who study
  * random walks.
  *
  * \section home_license License

@@ -12,7 +12,7 @@
 
 
 
-#include "../../wander/wander.hpp"
+#include "../../rw_space/rw_space.hpp"
 #include "../ui_common.hpp"
 #include <chrono>   // needed for "chrono" and "duration_cast"
 #include <fstream>  // needed for "fstream" and "regex_match"
@@ -44,7 +44,7 @@ enum ScenarioParseStates
 
 // Run epsilon wander emulation
 #define EMULATION_ERROR(what)   throw std::domain_error(what);
-void runEpsilonWander(AppSettings const &settings, rand_walks::Wander &epsilon_wander,
+void runEpsilonWander(AppSettings const &settings, rwe::RWSpace &rw_space,
                       std::vector<uint32_t> &epsilon_wander_start_vertex, std::vector<long double> &epsilon_wander_epsilon,
                       std::vector<long double> &epsilon_wander_time_delta, std::vector<bool> &epsilon_wander_use_skip_forward,
                       uint8_t const verbosity_level)
@@ -78,10 +78,10 @@ void runEpsilonWander(AppSettings const &settings, rand_walks::Wander &epsilon_w
 	for (uint32_t time_delta_i = 0; time_delta_i < epsilon_wander_time_delta.size(); ++time_delta_i)
 	for (uint32_t use_skip_forward_i = 0; use_skip_forward_i < epsilon_wander_use_skip_forward.size(); ++use_skip_forward_i)
 	{
-		epsilon_wander.reset();
+		rw_space.reset();
 		try
 		{
-			long double saturation_time = epsilon_wander.run(epsilon_wander_start_vertex[start_vertex_i], epsilon_wander_epsilon[epsilon_i], epsilon_wander_time_delta[time_delta_i], epsilon_wander_use_skip_forward[use_skip_forward_i]); \
+			long double saturation_time = rw_space.run_saturation(epsilon_wander_start_vertex[start_vertex_i], epsilon_wander_epsilon[epsilon_i], epsilon_wander_time_delta[time_delta_i], epsilon_wander_use_skip_forward[use_skip_forward_i]); \
 			switch (verbosity_level)
 			{
 			// raw output
@@ -149,9 +149,9 @@ void cmd_run(AppSettings &settings, std::vector<std::string> const &params)
 	std::string                 curr_argument_string;
 	ScenarioParseStates         parser_state = TOP;
 
-	rand_walks::MetricGraph     graph;
+	rwe::MetricGraph     graph;
 
-	rand_walks::Wander          epsilon_wander(graph);
+	rwe::RWSpace         rw_space(graph);
 	std::vector<uint32_t>       epsilon_wander_start_vertex;
 	std::vector<long double>    epsilon_wander_epsilon;
 	std::vector<long double>    epsilon_wander_time_delta;
@@ -274,8 +274,8 @@ void cmd_run(AppSettings &settings, std::vector<std::string> const &params)
 				EMULATION_ERROR("Graph '" + tokens[token_i] + "' does not exist.");
 			}
 			in_file.close();
-			graph = rand_walks::MetricGraph();
-			graph.fromFile(tokens[token_i]);
+			graph = rwe::MetricGraph();
+			graph.fromRWEG(tokens[token_i]);
 			switch (verbosity_level)
 			{
 			// raw output
@@ -348,7 +348,7 @@ void cmd_run(AppSettings &settings, std::vector<std::string> const &params)
 			}
 			if (tokens[token_i] == "}")
 			{
-				runEpsilonWander(settings, epsilon_wander, epsilon_wander_start_vertex, epsilon_wander_epsilon, epsilon_wander_time_delta, epsilon_wander_use_skip_forward, verbosity_level);
+				runEpsilonWander(settings, rw_space, epsilon_wander_start_vertex, epsilon_wander_epsilon, epsilon_wander_time_delta, epsilon_wander_use_skip_forward, verbosity_level);
 				parser_state = GRAPH_BODY;
 				break;
 			}
@@ -390,7 +390,7 @@ void cmd_run(AppSettings &settings, std::vector<std::string> const &params)
 			}
 			if (tokens[token_i] == "}")
 			{
-				runEpsilonWander(settings, epsilon_wander, epsilon_wander_start_vertex, epsilon_wander_epsilon, epsilon_wander_time_delta, epsilon_wander_use_skip_forward, verbosity_level);
+				runEpsilonWander(settings, rw_space, epsilon_wander_start_vertex, epsilon_wander_epsilon, epsilon_wander_time_delta, epsilon_wander_use_skip_forward, verbosity_level);
 				parser_state = GRAPH_BODY;
 				break;
 			}
@@ -431,7 +431,7 @@ void cmd_run(AppSettings &settings, std::vector<std::string> const &params)
 			}
 			if (tokens[token_i] == "}")
 			{
-				runEpsilonWander(settings, epsilon_wander, epsilon_wander_start_vertex, epsilon_wander_epsilon, epsilon_wander_time_delta, epsilon_wander_use_skip_forward, verbosity_level);
+				runEpsilonWander(settings, rw_space, epsilon_wander_start_vertex, epsilon_wander_epsilon, epsilon_wander_time_delta, epsilon_wander_use_skip_forward, verbosity_level);
 				parser_state = GRAPH_BODY;
 				break;
 			}
@@ -472,7 +472,7 @@ void cmd_run(AppSettings &settings, std::vector<std::string> const &params)
 			}
 			if (tokens[token_i] == "}")
 			{
-				runEpsilonWander(settings, epsilon_wander, epsilon_wander_start_vertex, epsilon_wander_epsilon, epsilon_wander_time_delta, epsilon_wander_use_skip_forward, verbosity_level);
+				runEpsilonWander(settings, rw_space, epsilon_wander_start_vertex, epsilon_wander_epsilon, epsilon_wander_time_delta, epsilon_wander_use_skip_forward, verbosity_level);
 				parser_state = GRAPH_BODY;
 				break;
 			}

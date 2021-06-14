@@ -25,7 +25,7 @@ compiler_min_version='4.8.1'
 object_folder='random_walks_emulator_obj'
 out_folder="Random Walks Emulator (build, v.$version)"
 out_file='rwe'
-units=('metric_graph' 'wander' 'ui' 'main')
+units=('metric_graph' 'rw_space' 'ui' 'main')
 
 
 

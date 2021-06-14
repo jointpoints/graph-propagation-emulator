@@ -5,7 +5,7 @@
  * \author
  *       Andrei Eliseev (JointPoints), 2021
  */
-#include "../wander/wander.hpp"
+#include "../rw_space/rw_space.hpp"
 
 #include <stdexcept>    // needed for exceptions
 #include <algorithm>    // needed for "find_if", "find", "min", "max", "lower_bound"
@@ -21,7 +21,7 @@
 
 
 
-rand_walks::MetricGraph::MetricGraph(void) :
+rwe::MetricGraph::MetricGraph(void) :
 	edges(), associated_wanders()
 {
 	// Intended to be empty
@@ -29,7 +29,7 @@ rand_walks::MetricGraph::MetricGraph(void) :
 
 
 
-rand_walks::MetricGraph::~MetricGraph(void)
+rwe::MetricGraph::~MetricGraph(void)
 {
 	// 1. Kill all associated wanders
 	for (uint32_t wander_i = 0; wander_i < this->associated_wanders.size(); ++wander_i)
@@ -46,7 +46,7 @@ rand_walks::MetricGraph::~MetricGraph(void)
 
 
 
-rand_walks::MetricGraph & rand_walks::MetricGraph::operator=(rand_walks::MetricGraph &&other)
+rwe::MetricGraph & rwe::MetricGraph::operator=(rwe::MetricGraph &&other)
 {
 	// 1. Invalidate associated wanders
 	for (uint32_t wander_i = 0; wander_i < this->associated_wanders.size(); ++wander_i)
@@ -69,7 +69,7 @@ rand_walks::MetricGraph & rand_walks::MetricGraph::operator=(rand_walks::MetricG
 
 
 
-bool const rand_walks::MetricGraph::checkVertex(uint32_t const vertex) const
+bool const rwe::MetricGraph::checkVertex(uint32_t const vertex) const
 {
 	// 1. Check if <vertex> is present in the <id>'s of neighbourhoods
 	auto    comparator          = [](VertexView const curr_vertex, uint32_t const value){return curr_vertex.id < value;};
@@ -93,14 +93,14 @@ bool const rand_walks::MetricGraph::checkVertex(uint32_t const vertex) const
 
 
 
-uint32_t const rand_walks::MetricGraph::getVertexCount(void) const
+uint32_t const rwe::MetricGraph::getVertexCount(void) const
 {
 	return 0; // TODO
 }
 
 
 
-long double const rand_walks::MetricGraph::getEdgeLength(uint32_t const out_vertex, uint32_t in_vertex) const
+long double const rwe::MetricGraph::getEdgeLength(uint32_t const out_vertex, uint32_t in_vertex) const
 {
 	// 1. Try to find corresponding edge
 	Edge edge = this->getEdge(out_vertex, in_vertex);
@@ -114,7 +114,7 @@ long double const rand_walks::MetricGraph::getEdgeLength(uint32_t const out_vert
 
 
 
-void rand_walks::MetricGraph::outputEdgeList(std::ostream &output_stream) const
+void rwe::MetricGraph::outputEdgeList(std::ostream &output_stream) const
 {
 	for (uint32_t vertex_1 = 0; vertex_1 < this->edges.size(); ++vertex_1)
 	{
@@ -128,7 +128,7 @@ void rand_walks::MetricGraph::outputEdgeList(std::ostream &output_stream) const
 
 
 
-rand_walks::MetricGraph::Edge rand_walks::MetricGraph::getEdge(uint32_t const out_vertex, uint32_t const in_vertex, bool const is_directed, bool const strict_mode) const
+rwe::MetricGraph::Edge rwe::MetricGraph::getEdge(uint32_t const out_vertex, uint32_t const in_vertex, bool const is_directed, bool const strict_mode) const
 {
 	uint32_t const  out_vertex_new      = (is_directed) ? (out_vertex) : (std::min(out_vertex, in_vertex));
 	uint32_t const  in_vertex_new       = (is_directed) ? (in_vertex)  : (std::max(out_vertex, in_vertex));
@@ -174,7 +174,7 @@ rand_walks::MetricGraph::Edge rand_walks::MetricGraph::getEdge(uint32_t const ou
 
 
 
-std::deque<rand_walks::MetricGraph::Edge> rand_walks::MetricGraph::getDepartingEdges(uint32_t const out_vertex) const
+std::deque<rwe::MetricGraph::Edge> rwe::MetricGraph::getDepartingEdges(uint32_t const out_vertex) const
 {
 	auto                out_comparator  = [](VertexView const curr_vertex, uint32_t const value){return curr_vertex.id < value;};
 	uint32_t const      max_index       = std::distance(this->edges.begin(), std::lower_bound(this->edges.begin(), this->edges.end(), out_vertex, out_comparator));
@@ -210,7 +210,7 @@ std::deque<rand_walks::MetricGraph::Edge> rand_walks::MetricGraph::getDepartingE
 
 
 
-void rand_walks::MetricGraph::updateEdge(uint32_t const out_vertex, uint32_t const in_vertex, long double const length, bool const is_directed)
+void rwe::MetricGraph::updateEdge(uint32_t const out_vertex, uint32_t const in_vertex, long double const length, bool const is_directed)
 {
 	// 1. <length> must be positive
 	if (length <= 0)
@@ -293,7 +293,54 @@ void rand_walks::MetricGraph::updateEdge(uint32_t const out_vertex, uint32_t con
 
 
 
-void rand_walks::MetricGraph::toFile(std::string const file_name) const
+void rwe::MetricGraph::toGEXF(std::string const file_name) const
+{
+	std::string const   file_format     = ".gexf";
+	std::string         file_name_new   = file_name;
+	std::fstream        out_file;
+
+	// 1. Check if specified file already exists
+	out_file.open(file_name_new + file_format, std::fstream::in | std::fstream::binary);
+	if (out_file.is_open())
+	{
+		uint8_t file_number = 1;
+
+		out_file.close();
+		file_name_new += " (1)";
+		out_file.open(file_name_new + file_format, std::fstream::in | std::fstream::binary);
+		while (out_file.is_open())
+		{
+			out_file.close();
+			file_name_new = file_name + " (" + std::to_string(++file_number) + ")";
+			out_file.open(file_name_new + file_format, std::fstream::in | std::fstream::binary);
+		}
+	}
+	out_file.close();
+
+	// 2. Dump information about graph into this file
+	out_file.open(file_name_new + file_format, std::fstream::out | std::fstream::binary);
+	for (uint32_t vertex_1 = 0; vertex_1 < this->edges.size(); ++vertex_1)
+	{
+		VertexView const &curr_vertex = this->edges[vertex_1];
+		for (uint32_t vertex_2 = 0; vertex_2 < curr_vertex.adjacents.size(); ++vertex_2)
+		{
+			bool const is_directed = curr_vertex.is_directed[vertex_2];
+			out_file.write(reinterpret_cast<char const *const>(&curr_vertex.id), sizeof(curr_vertex.id));
+			out_file.write(reinterpret_cast<char const *const>(&curr_vertex.adjacents[vertex_2]), sizeof(curr_vertex.adjacents[vertex_2]));
+			out_file.write(reinterpret_cast<char const *const>(&curr_vertex.lengths[vertex_2]), sizeof(curr_vertex.lengths[vertex_2]));
+			out_file.write(reinterpret_cast<char const *const>(&is_directed), sizeof(curr_vertex.is_directed[vertex_2]));
+		}
+	}
+	out_file.close();
+	
+	return;
+}
+
+
+
+
+
+void rwe::MetricGraph::toRWEG(std::string const file_name) const
 {
 	std::string const   file_format     = ".rweg";
 	std::string         file_name_new   = file_name;
@@ -338,7 +385,7 @@ void rand_walks::MetricGraph::toFile(std::string const file_name) const
 
 
 
-void rand_walks::MetricGraph::fromFile(std::string const file_name)
+void rwe::MetricGraph::fromRWEG(std::string const file_name)
 {
 	std::string const   file_format     = ".rweg";
 	std::fstream        in_file;
