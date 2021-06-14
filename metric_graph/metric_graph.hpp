@@ -278,14 +278,17 @@ namespace rwe
 		 * 
 		 * This function saves respective metric graph to an XML-like file of \c gexf format with
 		 * the name specified by user. If the last five symbols of target file name are not
-		 * <tt>.gexf</tt>, they will be added automatically. If a file with the specified name
-		 * already exists, it will not be rewritten but the ordinal number will be added to the
-		 * name in parentheses (like <em>'My file name (1).gexf'</em>, <em>'My file name (2).gexf'</em>
-		 * and so on).
+		 * <tt>.gexf</tt>, they will be added automatically.
+		 * 
+		 * The lengths of edges will be stored in the \c weight attribute of corresponding edges.
 		 * 
 		 * \param   file_name   Name of a target \c gexf file.
+		 * \param   rewrite     If \c false and a file with the specified name already exists, then
+		 *                      it will not be rewritten but the ordinal number will be added to the
+		 *                      name in parentheses (like <em>'My file name (1).gexf'</em>, <em>'My
+		 *                      file name (2).gexf'</em> and so on).
 		 */
-		void    toGEXF      (std::string const file_name = "Saved files/My metric graph")   const;
+		void    toGEXF      (std::string const file_name = "Saved files/My metric graph", bool const rewrite = false)   const;
 
 		/**
 		 * Load graph from \c gexf file
@@ -296,21 +299,22 @@ namespace rwe
 		 * 
 		 * \param   file_name   Name of a source \c gexf file.
 		 */
-		void    fromGEXF    (std::string const file_name);
+		//void    fromGEXF    (std::string const file_name);
 
 		/**
 		 * Save graph to \c rweg file
 		 * 
 		 * This function saves respective metric graph to a binary file of \c rweg format with
 		 * the name specified by user. If the last five symbols of target file name are not
-		 * <tt>.rweg</tt>, they will be added automatically. If a file with the specified name
-		 * already exists, it will not be rewritten but the ordinal number will be added to the
-		 * name in parentheses (like <em>'My file name (1).rweg'</em>, <em>'My file name (2).rweg'</em>
-		 * and so on).
+		 * <tt>.rweg</tt>, they will be added automatically.
 		 * 
 		 * \param   file_name   Name of a target \c rweg file.
+		 * \param   rewrite     If \c false and a file with the specified name already exists, then
+		 *                      it will not be rewritten but the ordinal number will be added to the
+		 *                      name in parentheses (like <em>'My file name (1).rweg'</em>, <em>'My
+		 *                      file name (2).rweg'</em> and so on).
 		 */
-		void    toRWEG      (std::string const file_name = "Saved files/My metric graph")   const;
+		void    toRWEG      (std::string const file_name = "Saved files/My metric graph", bool const rewrite = false)   const;
 
 		/**
 		 * Load graph from \c rweg file

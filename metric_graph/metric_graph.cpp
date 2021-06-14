@@ -293,44 +293,58 @@ void rwe::MetricGraph::updateEdge(uint32_t const out_vertex, uint32_t const in_v
 
 
 
-void rwe::MetricGraph::toGEXF(std::string const file_name) const
+void rwe::MetricGraph::toGEXF(std::string const file_name, bool const rewrite) const
 {
 	std::string const   file_format     = ".gexf";
 	std::string         file_name_new   = file_name;
 	std::fstream        out_file;
+	uint64_t            edge_id         = 0;
 
 	// 1. Check if specified file already exists
-	out_file.open(file_name_new + file_format, std::fstream::in | std::fstream::binary);
-	if (out_file.is_open())
+	if (!rewrite)
 	{
-		uint8_t file_number = 1;
-
-		out_file.close();
-		file_name_new += " (1)";
-		out_file.open(file_name_new + file_format, std::fstream::in | std::fstream::binary);
-		while (out_file.is_open())
+		out_file.open(file_name_new + file_format, std::fstream::in);
+		if (out_file.is_open())
 		{
+			uint8_t file_number = 1;
+
 			out_file.close();
-			file_name_new = file_name + " (" + std::to_string(++file_number) + ")";
-			out_file.open(file_name_new + file_format, std::fstream::in | std::fstream::binary);
+			file_name_new += " (1)";
+			out_file.open(file_name_new + file_format, std::fstream::in);
+			while (out_file.is_open())
+			{
+				out_file.close();
+				file_name_new = file_name + " (" + std::to_string(++file_number) + ")";
+				out_file.open(file_name_new + file_format, std::fstream::in);
+			}
 		}
+		out_file.close();
 	}
-	out_file.close();
 
 	// 2. Dump information about graph into this file
-	out_file.open(file_name_new + file_format, std::fstream::out | std::fstream::binary);
+	out_file.open(file_name_new + file_format, std::fstream::out);
+	out_file << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+	out_file << "<gexf xmlns=\"http://www.gexf.net/1.2draft\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.gexf.net/1.2draft\" version=\"1.2\">\n";
+	out_file << "\t<meta>\n";
+	out_file << "\t\t<creator>Random Walks Emulator v.0.2 by Andrei Eliseev (JointPoints, https://jointpoints.github.io/random-walks/)</creator>\n";
+	out_file << "\t</meta>\n";
+	out_file << "\t<graph>\n";
+	out_file << "\t\t<nodes>\n";
+	for (uint32_t vertex_i = 0; vertex_i < this->edges.size(); ++vertex_i)
+		out_file << "\t\t\t<node id=\"" + std::to_string(this->edges[vertex_i].id) + "\"/>\n";
+	out_file << "\t\t</nodes>\n";
+	out_file << "\t\t<edges>\n";
 	for (uint32_t vertex_1 = 0; vertex_1 < this->edges.size(); ++vertex_1)
 	{
 		VertexView const &curr_vertex = this->edges[vertex_1];
 		for (uint32_t vertex_2 = 0; vertex_2 < curr_vertex.adjacents.size(); ++vertex_2)
-		{
-			bool const is_directed = curr_vertex.is_directed[vertex_2];
-			out_file.write(reinterpret_cast<char const *const>(&curr_vertex.id), sizeof(curr_vertex.id));
-			out_file.write(reinterpret_cast<char const *const>(&curr_vertex.adjacents[vertex_2]), sizeof(curr_vertex.adjacents[vertex_2]));
-			out_file.write(reinterpret_cast<char const *const>(&curr_vertex.lengths[vertex_2]), sizeof(curr_vertex.lengths[vertex_2]));
-			out_file.write(reinterpret_cast<char const *const>(&is_directed), sizeof(curr_vertex.is_directed[vertex_2]));
-		}
+			out_file << "\t\t\t<edge id=\"" + std::to_string(edge_id++) + "\" source=\"" + std::to_string(curr_vertex.id) + "\" target=\"" + \
+			            std::to_string(curr_vertex.adjacents[vertex_2]) + "\" type=\"" + ((curr_vertex.is_directed[vertex_2]) ? ("directed") : ("undirected")) + \
+			            "\" weight=\"" + std::to_string(curr_vertex.lengths[vertex_2]) + "\" />\n";
 	}
+	out_file << "\t\t</edges>\n";
+	out_file << "\t</graph>\n";
+	out_file << "</gexf>\n";
 	out_file.close();
 	
 	return;
@@ -340,29 +354,32 @@ void rwe::MetricGraph::toGEXF(std::string const file_name) const
 
 
 
-void rwe::MetricGraph::toRWEG(std::string const file_name) const
+void rwe::MetricGraph::toRWEG(std::string const file_name, bool const rewrite) const
 {
 	std::string const   file_format     = ".rweg";
 	std::string         file_name_new   = file_name;
 	std::fstream        out_file;
 
 	// 1. Check if specified file already exists
-	out_file.open(file_name_new + file_format, std::fstream::in | std::fstream::binary);
-	if (out_file.is_open())
+	if (!rewrite)
 	{
-		uint8_t file_number = 1;
-
-		out_file.close();
-		file_name_new += " (1)";
 		out_file.open(file_name_new + file_format, std::fstream::in | std::fstream::binary);
-		while (out_file.is_open())
+		if (out_file.is_open())
 		{
+			uint8_t file_number = 1;
+
 			out_file.close();
-			file_name_new = file_name + " (" + std::to_string(++file_number) + ")";
+			file_name_new += " (1)";
 			out_file.open(file_name_new + file_format, std::fstream::in | std::fstream::binary);
+			while (out_file.is_open())
+			{
+				out_file.close();
+				file_name_new = file_name + " (" + std::to_string(++file_number) + ")";
+				out_file.open(file_name_new + file_format, std::fstream::in | std::fstream::binary);
+			}
 		}
+		out_file.close();
 	}
-	out_file.close();
 
 	// 2. Dump information about graph into this file
 	out_file.open(file_name_new + file_format, std::fstream::out | std::fstream::binary);

@@ -122,7 +122,7 @@ void run(void)
 	SetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE), ENABLE_PROCESSED_OUTPUT | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
 #	endif
 
-	std::cout << "Random Walks Emulator v.0.1 by Andrei Eliseev (JointPoints), 2021\nProject web-site: https://jointpoints.github.io/random-walks/\n";
+	std::cout << "Random Walks Emulator v.0.2 by Andrei Eliseev (JointPoints), 2021\nProject web-site: https://jointpoints.github.io/random-walks/\n";
 	std::cout << "Type 'help' to get the full list of available commands with their short descriptions.\n\n";
 
 	// 2. Await for the next command
