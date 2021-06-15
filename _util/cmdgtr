@@ -1,0 +1,13 @@
+gexf2rweg - Converts gexf file into rweg file.
+USAGE: gexf2rweg <infile> [<outfile>]
+WHERE: <infile>       - a path to the original gexf file. If does not exist,
+                        this command will put the empty graph into rweg file.
+       <outfile>      - (optional) a path to the rweg file where results are to be
+                        saved (might not exist initially). If ommited, the file
+                        will be saved with the same name as <infile> but with rweg
+                        format instead of gexf.
+EXAMPLES:
+gexf2rweg "My graphs/Sample graph 1"          - converts the initial file called
+                                                "My graphs/Sample graph 1.gexf"
+                                                into a new file called
+                                                "My graphs/Sample graph 1.rweg".

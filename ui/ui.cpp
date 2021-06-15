@@ -8,6 +8,7 @@
 #include "ui.hpp"
 
 #include "cmd/cmd_getconfig.hpp"
+#include "cmd/cmd_gexf2rweg.hpp"
 #include "cmd/cmd_run.hpp"
 #include "cmd/cmd_rweg2gexf.hpp"
 #include "cmd/cmd_setconfig.hpp"
@@ -109,9 +110,9 @@ void run(void)
 	std::string                 token               = "";
 	std::vector<std::string>    command_tokens;
 
-	std::vector<std::string> const              cmd_names{"getconfig", "run", "rweg2gexf", "setconfig"};
-	void                                      (*cmd_functions[])(AppSettings &, std::vector<std::string> const &) = {cmd_getconfig, cmd_run, cmd_rweg2gexf, cmd_setconfig};
-	std::string const                           cmd_help[] = {"cmdgc", "cmdr", "cmdrtg", "cmdsc"};
+	std::vector<std::string> const              cmd_names{"getconfig", "gexf2rweg", "run", "rweg2gexf", "setconfig"};
+	void                                      (*cmd_functions[])(AppSettings &, std::vector<std::string> const &) = {cmd_getconfig, cmd_gexf2rweg, cmd_run, cmd_rweg2gexf, cmd_setconfig};
+	std::string const                           cmd_help[] = {"cmdgc", "cmdgtr", "cmdr", "cmdrtg", "cmdsc"};
 	auto                                        cmd_position = cmd_names.end();
 
 	std::fstream technical;
