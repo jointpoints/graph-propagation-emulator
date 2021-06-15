@@ -10,6 +10,7 @@
 #include <stdexcept>    // needed for exceptions
 #include <algorithm>    // needed for "find_if", "find", "min", "max", "lower_bound"
 #include <fstream>      // needed for "fstream"
+#include <set>          // needed for "set"
 
 
 
@@ -93,9 +94,17 @@ bool const rwe::MetricGraph::checkVertex(uint32_t const vertex) const
 
 
 
-uint32_t const rwe::MetricGraph::getVertexCount(void) const
+std::vector<uint32_t> const rwe::MetricGraph::getVertexList(void) const
 {
-	return 0; // TODO
+	std::set<uint32_t> vertices;
+
+	for (uint32_t vertex_i = 0; vertex_i < this->edges.size(); ++vertex_i)
+	{
+		vertices.insert(vertex_i);
+		vertices.insert(this->edges[vertex_i].adjacents.begin(), this->edges[vertex_i].adjacents.end());
+	}
+
+	return std::vector<uint32_t>(vertices.begin(), vertices.end());
 }
 
 
@@ -298,7 +307,9 @@ void rwe::MetricGraph::toGEXF(std::string const file_name, bool const rewrite) c
 	std::string const   file_format     = ".gexf";
 	std::string         file_name_new   = ((file_name.size() >= file_format.size()) && (file_name.substr(file_name.size() - file_format.size()) == file_format)) ? (file_name.substr(0, file_name.size() - file_format.size())) : (file_name);
 	std::fstream        out_file;
-	uint64_t            edge_id         = 0;
+
+	std::vector<uint32_t>   vertex_list;
+	uint64_t                edge_id         = 0;
 
 	// 1. Check if specified file already exists
 	if (!rewrite)
@@ -324,14 +335,15 @@ void rwe::MetricGraph::toGEXF(std::string const file_name, bool const rewrite) c
 	// 2. Dump information about graph into this file
 	out_file.open(file_name_new + file_format, std::fstream::out);
 	out_file << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-	out_file << "<gexf xmlns=\"http://www.gexf.net/1.2draft\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.gexf.net/1.2draft\" version=\"1.2\">\n";
+	out_file << "<gexf xmlns=\"http://www.gexf.net/1.2draft\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.gexf.net/1.2draft http://www.gexf.net/1.2draft/gexf.xsd\" version=\"1.2\">\n";
 	out_file << "\t<meta>\n";
 	out_file << "\t\t<creator>Random Walks Emulator v.0.2 by Andrei Eliseev (JointPoints, https://jointpoints.github.io/random-walks/)</creator>\n";
 	out_file << "\t</meta>\n";
 	out_file << "\t<graph>\n";
 	out_file << "\t\t<nodes>\n";
-	for (uint32_t vertex_i = 0; vertex_i < this->edges.size(); ++vertex_i)
-		out_file << "\t\t\t<node id=\"" + std::to_string(this->edges[vertex_i].id) + "\"/>\n";
+	vertex_list = this->getVertexList();
+	for (uint32_t vertex_i = 0; vertex_i < vertex_list.size(); ++vertex_i)
+		out_file << "\t\t\t<node id=\"" + std::to_string(vertex_list[vertex_i]) + "\"/>\n";
 	out_file << "\t\t</nodes>\n";
 	out_file << "\t\t<edges>\n";
 	for (uint32_t vertex_1 = 0; vertex_1 < this->edges.size(); ++vertex_1)

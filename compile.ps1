@@ -289,7 +289,8 @@ Write-Host '4. Finalisation... ' -NoNewLine
 (New-Item -Type Directory -Force -Path "$out_folder\My graphs") *> $NULL
 (New-Item -Type Directory -Force -Path "$out_folder\My scenarios") *> $NULL
 (New-Item -Type Directory -Force -Path "$out_folder\Technical files") *> $NULL
-(Copy-Item -Force -Path _util\gs1 -Destination "$out_folder\My graphs\Sample graph 1.rweg") *> $NULL
+(Copy-Item -Force -Path _util\gs2 -Destination "$out_folder\My graphs\Star2.rweg") *> $NULL
+(Copy-Item -Force -Path _util\gs3 -Destination "$out_folder\My graphs\Star3.rweg") *> $NULL
 (Copy-Item -Force -Path _util\ss1 -Destination "$out_folder\My scenarios\Basic.rwes") *> $NULL
 (Copy-Item -Force -Path _util\tfrm -Destination "$out_folder\Technical files\ReadMe.txt") *> $NULL
 (Copy-Item -Force -Path _util\cmdgc -Destination "$out_folder\Technical files\cmdgc") *> $NULL

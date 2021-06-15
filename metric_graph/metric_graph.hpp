@@ -131,18 +131,16 @@ namespace rwe
 		 * * \c true if vertex is found in graph;
 		 * * \c false otherwise.
 		 */
-		bool const          checkVertex     (uint32_t const vertex)                             const;
+		bool const                      checkVertex     (uint32_t const vertex)                             const;
 
 		/**
-		 * Gets number of vertices in the graph
+		 * Get vector of vertices IDs
 		 * 
-		 * This function helps to find out how many vertices there are in the corresponding graph.
+		 * This function helps to find out the IDs of the vertices in the corresponding graph.
 		 * 
-		 * \return Number of vertices, i.e. \f$|V|\f$.
-		 * 
-		 * \warning This is a future feature, currently it has no effect.
+		 * \return \c std::vector of vertices IDs, i.e. \f$V\f$.
 		 */
-		uint32_t const      getVertexCount  (void)                                              const;
+		std::vector<uint32_t> const     getVertexList   (void)                                              const;
 
 		/**
 		 * Gets length of the edge
@@ -158,7 +156,7 @@ namespace rwe
 		 * \f$v \rightarrow w\f$ edge exists;
 		 * * Positive infinity, otherwise.
 		 */
-		long double const   getEdgeLength   (uint32_t const out_vertex, uint32_t in_vertex)     const;
+		long double const               getEdgeLength   (uint32_t const out_vertex, uint32_t in_vertex)     const;
 
 		/**
 		 * Prints edge list into the stream
@@ -173,7 +171,7 @@ namespace rwe
 		 * Expected output:
 		 * \include MetricGraph_outputEdgeList_output.txt
 		 */
-		void                outputEdgeList  (std::ostream &output_stream)                       const;
+		void                            outputEdgeList  (std::ostream &output_stream)                       const;
 
 		///@}
 
