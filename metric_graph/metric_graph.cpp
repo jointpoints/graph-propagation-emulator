@@ -356,6 +356,9 @@ void rwe::MetricGraph::toGEXF(std::string const file_name, bool const rewrite) c
 
 void rwe::MetricGraph::fromGEXF(std::string const file_name)
 {
+	enum GEXFLexStates{SPACE, TOKEN};
+	enum GEXFParserStates{EDGE_BEGIN, ATTR_BEGIN, SOURCE_VALUE, TARGET_VALUE, TYPE_VALUE, WEIGHT_VALUE, SKIP_VALUE};
+
 	std::string const   file_format     = ".gexf";
 	std::fstream        in_file;
 
@@ -363,21 +366,201 @@ void rwe::MetricGraph::fromGEXF(std::string const file_name)
 	in_file.open(((file_name.size() >= file_format.size()) && (file_name.substr(file_name.size() - file_format.size()) == file_format)) ? (file_name) : (file_name + file_format), std::fstream::in);
 	if (in_file.is_open())
 	{
-		uint32_t        out_vertex(0), in_vertex(0);
-		long double     length(0.0);
-		bool            is_directed(false);
+		GEXFLexStates                       lexer_state         = SPACE;
+		bool                                ignore_ws_regime    = false;
+		char                                symbol;
+		std::string                         token               = "";
+		std::vector<std::string>            tokens;
+		std::vector<std::string>::iterator  default_type_begin;
+		std::vector<std::string>::iterator  edges_begin;
+		std::vector<std::string>::iterator  edges_end;
 
-		in_file.read(reinterpret_cast<char *>(&out_vertex), sizeof(out_vertex));
-		in_file.read(reinterpret_cast<char *>(&in_vertex), sizeof(in_vertex));
-		in_file.read(reinterpret_cast<char *>(&length), sizeof(length));
-		in_file.read(reinterpret_cast<char *>(&is_directed), sizeof(is_directed));
-		while (!in_file.fail())
+		GEXFParserStates                    parser_state        = EDGE_BEGIN;
+		uint32_t                            out_vertex(0), in_vertex(0);
+		long double                         length(0.0);
+		bool                                is_directed(false);
+		bool                                default_is_directed(false);
+		bool                                source_specified    = false;
+		bool                                target_specified    = false;
+		bool                                weight_specified    = false;
+
+		// 1.1. Tokenise the text from file
+		while (in_file >> std::noskipws >> symbol)
 		{
-			this->updateEdge(out_vertex, in_vertex, length, is_directed);
-			in_file.read(reinterpret_cast<char *>(&out_vertex), sizeof(out_vertex));
-			in_file.read(reinterpret_cast<char *>(&in_vertex), sizeof(in_vertex));
-			in_file.read(reinterpret_cast<char *>(&length), sizeof(length));
-			in_file.read(reinterpret_cast<char *>(&is_directed), sizeof(is_directed));
+			switch (lexer_state)
+			{
+			// expect space
+			case SPACE:
+				if ((symbol == ' ') || (symbol == '\t') || (symbol == '\n') || (symbol == '\r'))
+					break;
+				lexer_state = TOKEN;
+			// expect token
+			case TOKEN:
+				if (!ignore_ws_regime)
+				{
+					if ((symbol == '>') || (symbol == '='))
+					{
+						if (token != "")
+						{
+							tokens.push_back(token);
+							token = "";
+						}
+						lexer_state = SPACE;
+						break;
+					}
+					if ((symbol == ' ') || (symbol == '\t') || (symbol == '\n') || (symbol == '\r'))
+					{
+						if (token != "")
+						{
+							tokens.push_back(token);
+							token = "";
+						}
+						lexer_state = SPACE;
+						break;
+					}
+				}
+				if (symbol == '"')
+					ignore_ws_regime = !ignore_ws_regime;
+				else
+					token += symbol;
+				break;
+			}
+		}
+
+		// 1.2. Find out the default edge type
+		default_type_begin = std::find(tokens.begin(), tokens.end(), "defaultedgetype");
+		if (default_type_begin == tokens.end() - 1)
+			throw std::runtime_error("Unable to find out the default edge type.");
+		if (default_type_begin != tokens.end())
+		{
+			if ((*(default_type_begin + 1) == "undirected") || (*(default_type_begin + 1) == "mutual"))
+				default_is_directed = false;
+			else
+				if (*(default_type_begin + 1) == "directed")
+					default_is_directed = true;
+				else
+					throw std::runtime_error("Unknown default type of the edge '" + *(default_type_begin + 1) + "'.");
+		}
+
+		// 1.3. We don't really care about anything but the "edges" section
+		edges_begin = std::find(tokens.begin(), tokens.end(), "<edges");
+		edges_end = std::find(tokens.begin(), tokens.end(), "</edges");
+		if ((edges_begin == tokens.end()) || (edges_end == tokens.end()))
+		{
+			in_file.close();
+			return;
+		}
+		for (auto token_i = edges_begin + 1; token_i < edges_end; ++token_i)
+		{
+			switch (parser_state)
+			{
+			// expect beginning of a new edge
+			case EDGE_BEGIN:
+				if (*token_i != "<edge")
+					throw std::runtime_error("Unexpected token '" + *token_i + "' in the 'edges' section of the gexf file.");
+				source_specified = target_specified = weight_specified = false;
+				out_vertex = in_vertex = 0;
+				length = 0.0;
+				is_directed = default_is_directed;
+				parser_state = ATTR_BEGIN;
+				break;
+			// expect beginning of an attribute
+			case ATTR_BEGIN:
+				if (*token_i == "source")
+				{
+					parser_state = SOURCE_VALUE;
+					break;
+				}
+				if (*token_i == "target")
+				{
+					parser_state = TARGET_VALUE;
+					break;
+				}
+				if (*token_i == "type")
+				{
+					parser_state = TYPE_VALUE;
+					break;
+				}
+				if (*token_i == "weight")
+				{
+					parser_state = WEIGHT_VALUE;
+					break;
+				}
+				if ((*token_i == "<edge") || (*token_i == "/"))
+				{
+					if (source_specified && target_specified && weight_specified)
+					{
+						this->updateEdge(out_vertex, in_vertex, length, is_directed);
+						if (*token_i == "<edge")
+						{
+							source_specified = target_specified = weight_specified = false;
+							out_vertex = in_vertex = 0;
+							length = 0.0;
+							is_directed = default_is_directed;
+							break;
+						}
+						parser_state = EDGE_BEGIN;
+						break;
+					}
+					throw std::runtime_error("Each edge must contain 'source', 'target' and 'weight' attributes.");
+				}
+				if ((*token_i)[0] == '<')
+					throw std::runtime_error("Unexpected token '" + *token_i + "' in the 'edges' section of the gexf file.");
+				parser_state = SKIP_VALUE;
+				break;
+			// expect the source value
+			case SOURCE_VALUE:
+				try
+				{
+					out_vertex = std::stoi(*token_i);
+					source_specified = true;
+					parser_state = ATTR_BEGIN;
+					break;
+				}
+				catch(...){}
+				throw std::runtime_error("Vertex ID '" + *token_i + "' do not comply with the requirements of emulator.");
+			// expect the target value
+			case TARGET_VALUE:
+				try
+				{
+					in_vertex = std::stoi(*token_i);
+					target_specified = true;
+					parser_state = ATTR_BEGIN;
+					break;
+				}
+				catch(...){}
+				throw std::runtime_error("Vertex ID '" + *token_i + "' do not comply with the requirements of emulator.");
+			// expect the type value
+			case TYPE_VALUE:
+				if ((*token_i == "undirected") || (*token_i == "mutual"))
+				{
+					is_directed = false;
+					parser_state = ATTR_BEGIN;
+					break;
+				}
+				if (*token_i == "directed")
+				{
+					is_directed = true;
+					parser_state = ATTR_BEGIN;
+					break;
+				}
+				throw std::runtime_error("Unknown type of the edge '" + *token_i + "'.");
+			// expect the weight value
+			case WEIGHT_VALUE:
+				try
+				{
+					length = std::stold(*token_i);
+					weight_specified = true;
+					parser_state = ATTR_BEGIN;
+					break;
+				}
+				catch(...){}
+				throw std::runtime_error("Unable to interpret weight value '" + *token_i + "'.");
+			// skip the value
+			case SKIP_VALUE:
+				parser_state = ATTR_BEGIN;
+				break;
+			}
 		}
 	}
 	in_file.close();

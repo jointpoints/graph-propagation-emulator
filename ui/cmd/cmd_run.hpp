@@ -282,6 +282,10 @@ void cmd_run(AppSettings &settings, std::vector<std::string> const &params)
 
 		// expect a file name with a graph
 		case GRAPH_FILE:
+			if (tokens[token_i].size() < 5)
+				EMULATION_ERROR("Unsupported file format.");
+			if ((tokens[token_i].substr(tokens[token_i].size() - 5) != ".rweg") && (tokens[token_i].substr(tokens[token_i].size() - 5) != ".gexf"))
+				EMULATION_ERROR("Unsupported file format.");
 			in_file.open(tokens[token_i], std::fstream::in);
 			if (!in_file.is_open())
 			{
@@ -290,7 +294,10 @@ void cmd_run(AppSettings &settings, std::vector<std::string> const &params)
 			}
 			in_file.close();
 			graph = rwe::MetricGraph();
-			graph.fromRWEG(tokens[token_i]);
+			if (tokens[token_i].substr(tokens[token_i].size() - 5) == ".rweg")
+				graph.fromRWEG(tokens[token_i]);
+			else
+				graph.fromGEXF(tokens[token_i]);
 			switch (verbosity_level)
 			{
 			// raw output
@@ -340,7 +347,7 @@ void cmd_run(AppSettings &settings, std::vector<std::string> const &params)
 			}
 			SYNTAX_ERROR("Expected an opening of epsilon-saturation block. Found '" + tokens[token_i] + "' instead.");
 
-		// expect an epsilon-wander argument ("start-vertex", "epsilon", "time-delta", "use-skip-forward") or a '}' character
+		// expect an epsilon-saturation argument ("start-vertex", "epsilon", "time-delta", "use-skip-forward") or a '}' character
 		case EPSILON_WANDER_ARG:
 			curr_argument_string = tokens[token_i];
 			if (tokens[token_i] == "start-vertex")
