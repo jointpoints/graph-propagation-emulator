@@ -168,6 +168,9 @@ void run(void)
 				else
 					token += command_symbol;
 				break;
+			// DO NOT expect comments
+			case COMMENT:
+				break;
 			}
 		}
 		if (token != "")

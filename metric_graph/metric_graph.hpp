@@ -297,9 +297,19 @@ namespace rwe
 		 * one by adding all absent vertices, edges and updating their lengths and directions. If a
 		 * file with the specified name does not exist, the original data is left unchanged.
 		 * 
+		 * The following additional requirements need to be met:
+		 * 
+		 * * Version of the file must be <em>1.2draft</em>;
+		 * * Length of each edge must be stored in the \c weight attribute;
+		 * * IDs of vertices must meet the requirements mentioned at the top of this page.
+		 * 
+		 * Isolated vertices are omitted. Mutual edges are treated as undirected. If edge with the same
+		 * \c source and \c target is repeated multiple times, it will be treated as it is described in
+		 * a table for \ref updateEdge function in the respective order of repetitions.
+		 * 
 		 * \param   file_name   Name of a source \c gexf file.
 		 */
-		//void    fromGEXF    (std::string const file_name);
+		void    fromGEXF    (std::string const file_name);
 
 		/**
 		 * Save graph to \c rweg file

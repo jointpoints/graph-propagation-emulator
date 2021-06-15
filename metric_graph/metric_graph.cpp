@@ -296,7 +296,7 @@ void rwe::MetricGraph::updateEdge(uint32_t const out_vertex, uint32_t const in_v
 void rwe::MetricGraph::toGEXF(std::string const file_name, bool const rewrite) const
 {
 	std::string const   file_format     = ".gexf";
-	std::string         file_name_new   = file_name;
+	std::string         file_name_new   = ((file_name.size() >= file_format.size()) && (file_name.substr(file_name.size() - file_format.size()) == file_format)) ? (file_name.substr(0, file_name.size() - file_format.size())) : (file_name);
 	std::fstream        out_file;
 	uint64_t            edge_id         = 0;
 
@@ -354,10 +354,45 @@ void rwe::MetricGraph::toGEXF(std::string const file_name, bool const rewrite) c
 
 
 
+void rwe::MetricGraph::fromGEXF(std::string const file_name)
+{
+	std::string const   file_format     = ".gexf";
+	std::fstream        in_file;
+
+	// 1. Open file and read data
+	in_file.open(((file_name.size() >= file_format.size()) && (file_name.substr(file_name.size() - file_format.size()) == file_format)) ? (file_name) : (file_name + file_format), std::fstream::in);
+	if (in_file.is_open())
+	{
+		uint32_t        out_vertex(0), in_vertex(0);
+		long double     length(0.0);
+		bool            is_directed(false);
+
+		in_file.read(reinterpret_cast<char *>(&out_vertex), sizeof(out_vertex));
+		in_file.read(reinterpret_cast<char *>(&in_vertex), sizeof(in_vertex));
+		in_file.read(reinterpret_cast<char *>(&length), sizeof(length));
+		in_file.read(reinterpret_cast<char *>(&is_directed), sizeof(is_directed));
+		while (!in_file.fail())
+		{
+			this->updateEdge(out_vertex, in_vertex, length, is_directed);
+			in_file.read(reinterpret_cast<char *>(&out_vertex), sizeof(out_vertex));
+			in_file.read(reinterpret_cast<char *>(&in_vertex), sizeof(in_vertex));
+			in_file.read(reinterpret_cast<char *>(&length), sizeof(length));
+			in_file.read(reinterpret_cast<char *>(&is_directed), sizeof(is_directed));
+		}
+	}
+	in_file.close();
+
+	return;
+}
+
+
+
+
+
 void rwe::MetricGraph::toRWEG(std::string const file_name, bool const rewrite) const
 {
 	std::string const   file_format     = ".rweg";
-	std::string         file_name_new   = file_name;
+	std::string         file_name_new   = ((file_name.size() >= file_format.size()) && (file_name.substr(file_name.size() - file_format.size()) == file_format)) ? (file_name.substr(0, file_name.size() - file_format.size())) : (file_name);;
 	std::fstream        out_file;
 
 	// 1. Check if specified file already exists

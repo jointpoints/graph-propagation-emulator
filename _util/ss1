@@ -1,8 +1,13 @@
+# Basic.rwes
+#
+# This scenario demonstrates basic possibilities of Random Walks
+# Emulator.
+
 graph "My graphs/Sample graph 1.rweg"
 {
-	epsilon-wander
+	epsilon-saturation                      # this command will run an epsilon saturation experiment
 	{
-		start-vertex    : 0 1 2,
-		epsilon         : 0.2..0.2..0.8
+		start-vertex    : 0 1 2,            # this is an array of multiple values
+		epsilon         : 0.2..0.2..0.8     # this is an array generator, equivalent to "0.2 0.4 0.6 0.8"
 	}
 }

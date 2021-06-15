@@ -27,12 +27,12 @@ enum ScenarioParseStates
 	TOP,                                // expect a top-level command ("graph")
 	GRAPH_FILE,                         // expect a file name with a graph
 	GRAPH_BODY_BEGIN,                   // expect a '{' character for a graph block
-	GRAPH_BODY,                         // expect a graph command ("epsilon-wander") or a '}' character
-	EPSILON_WANDER_BEGIN,               // expect a '{' character for an epsilon-wander block
-	EPSILON_WANDER_ARG,                 // expect an epsilon-wander argument ("start-vertex", "epsilon", "time-delta", "use-skip-forward") or a '}' character
-	EPSILON_WANDER_INT_VALUES_BEGIN,    // expect a ':' character before integer values inside an epsilon-wander block
-	EPSILON_WANDER_REAL_VALUES_BEGIN,   // expect a ':' character before real values inside an epsilon-wander block
-	EPSILON_WANDER_BOOL_VALUES_BEGIN,   // expect a ':' character before bool values inside an epsilon-wander block
+	GRAPH_BODY,                         // expect a graph command ("epsilon-saturation") or a '}' character
+	EPSILON_WANDER_BEGIN,               // expect a '{' character for an epsilon-saturation block
+	EPSILON_WANDER_ARG,                 // expect an epsilon-saturation argument ("start-vertex", "epsilon", "time-delta", "use-skip-forward") or a '}' character
+	EPSILON_WANDER_INT_VALUES_BEGIN,    // expect a ':' character before integer values inside an epsilon-saturation block
+	EPSILON_WANDER_REAL_VALUES_BEGIN,   // expect a ':' character before real values inside an epsilon-saturation block
+	EPSILON_WANDER_BOOL_VALUES_BEGIN,   // expect a ':' character before bool values inside an epsilon-saturation block
 	EPSILON_WANDER_INT_VALUES,          // expect an integer value, an array of integer values, or generator of integer values
 	EPSILON_WANDER_REAL_VALUES,         // expect a real value, an array of real values, or generator of real values
 	EPSILON_WANDER_BOOL_VALUES,         // expect a bool value or an array of bool values
@@ -225,10 +225,25 @@ void cmd_run(AppSettings &settings, std::vector<std::string> const &params)
 					break;
 				}
 			}
+			if (symbol == '#')
+			{
+				if (token != "")
+				{
+					tokens.push_back(token);
+					token = "";
+				}
+				lexer_state = COMMENT;
+				break;
+			}
 			if (symbol == '"')
 				ignore_ws_regime = !ignore_ws_regime;
 			else
 				token += symbol;
+			break;
+		// expect comment
+		case COMMENT:
+			if ((symbol == '\n') || (symbol == '\r'))
+				lexer_state = SPACE;
 			break;
 		}
 	}
@@ -302,9 +317,9 @@ void cmd_run(AppSettings &settings, std::vector<std::string> const &params)
 			}
 			SYNTAX_ERROR("Expected an opening of graph block. Found '" + tokens[token_i] + "' instead.");
 		
-		// expect a graph command ("epsilon-wander") or a '}' character
+		// expect a graph command ("epsilon-saturation") or a '}' character
 		case GRAPH_BODY:
-			if (tokens[token_i] == "epsilon-wander")
+			if (tokens[token_i] == "epsilon-saturation")
 			{
 				parser_state = EPSILON_WANDER_BEGIN;
 				break;
@@ -316,14 +331,14 @@ void cmd_run(AppSettings &settings, std::vector<std::string> const &params)
 			}
 			SYNTAX_ERROR("Graph block contains unknown command '" + tokens[token_i] + "'.");
 		
-		// expect a '{' character for an epsilon-wander block
+		// expect a '{' character for an epsilon-saturation block
 		case EPSILON_WANDER_BEGIN:
 			if (tokens[token_i] == "{")
 			{
 				parser_state = EPSILON_WANDER_ARG;
 				break;
 			}
-			SYNTAX_ERROR("Expected an opening of epsilon-wander block. Found '" + tokens[token_i] + "' instead.");
+			SYNTAX_ERROR("Expected an opening of epsilon-saturation block. Found '" + tokens[token_i] + "' instead.");
 
 		// expect an epsilon-wander argument ("start-vertex", "epsilon", "time-delta", "use-skip-forward") or a '}' character
 		case EPSILON_WANDER_ARG:
@@ -352,9 +367,9 @@ void cmd_run(AppSettings &settings, std::vector<std::string> const &params)
 				parser_state = GRAPH_BODY;
 				break;
 			}
-			SYNTAX_ERROR("Epsilon wander block contains unknown command '" + tokens[token_i] + "'.");
+			SYNTAX_ERROR("Epsilon saturation block contains unknown command '" + tokens[token_i] + "'.");
 
-		// expect a ':' character before integer values inside an epsilon-wander block
+		// expect a ':' character before integer values inside an epsilon-saturation block
 		case EPSILON_WANDER_INT_VALUES_BEGIN:
 			if (tokens[token_i] == ":")
 			{
@@ -363,7 +378,7 @@ void cmd_run(AppSettings &settings, std::vector<std::string> const &params)
 			}
 			SYNTAX_ERROR("Expected a colon after the name of the parameter '" + curr_argument_string + "'. Found '" + tokens[token_i] + "' instead.");
 		
-		// expect a ':' character before real values inside an epsilon-wander block
+		// expect a ':' character before real values inside an epsilon-saturation block
 		case EPSILON_WANDER_REAL_VALUES_BEGIN:
 			if (tokens[token_i] == ":")
 			{
@@ -372,7 +387,7 @@ void cmd_run(AppSettings &settings, std::vector<std::string> const &params)
 			}
 			SYNTAX_ERROR("Expected a colon after the name of the parameter '" + curr_argument_string + "'. Found '" + tokens[token_i] + "' instead.");
 		
-		// expect a ':' character before bool values inside an epsilon-wander block
+		// expect a ':' character before bool values inside an epsilon-saturation block
 		case EPSILON_WANDER_BOOL_VALUES_BEGIN:
 			if (tokens[token_i] == ":")
 			{

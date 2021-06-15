@@ -22,7 +22,8 @@
 enum LexStates
 {
 	SPACE,
-	TOKEN
+	TOKEN,
+	COMMENT
 };
 
 

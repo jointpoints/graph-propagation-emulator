@@ -1,7 +1,7 @@
 run - Runs the specified Random Walks Emulator Scenario file.
 USAGE: run <filename> [-dmr]
 WHERE: <filename>     - a path (relative to rwe.exe or absolute) to the .rwes file.
-                        If path contains whitespaces, you have to wrap it by
+                        If path contains whitespaces, you have to wrap it with
                         quotation marks ("). You may also omit the format of the
                         file, i.e. not specify the '.rwes' part.
        Output format modifiers (optional):
