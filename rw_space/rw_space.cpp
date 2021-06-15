@@ -100,6 +100,9 @@ long double const rwe::RWSpace::run_saturation(uint32_t const start_vertex, long
 	bool                                is_saturated        = false;
 	std::priority_queue<long double, std::vector<long double>, std::greater<long double>>    skip_forward_timestamps;
 	uint32_t const                      threads_count       = (concurrency_type == Concurrency::cpu) ? (std::thread::hardware_concurrency()) : (0);
+	
+	EdgeUpdateResult                    update_results;
+	EdgeUpdateResult                    curr_results;
 
 	// 1.1. Check if wander state is "dead"
 	if (this->wander_state == WanderState::dead)
@@ -140,7 +143,6 @@ long double const rwe::RWSpace::run_saturation(uint32_t const start_vertex, long
 	// 4.1. Use "skip forward", if it is allowed
 	while (use_skip_forward)
 	{
-		EdgeUpdateResult update_results;
 		is_saturated = true;
 
 		// Check if current state satisfies the necessary condition
@@ -154,7 +156,7 @@ long double const rwe::RWSpace::run_saturation(uint32_t const start_vertex, long
 		{
 			for (uint32_t vertex_2 = 0; vertex_2 < this->graph_state[vertex_1].size(); ++vertex_2)
 			{
-				EdgeUpdateResult curr_results = this->updateEdgeState(vertex_1, vertex_2, epsilon, skip_forward_timestamps.top() - runtime);
+				this->updateEdgeState(vertex_1, vertex_2, epsilon, skip_forward_timestamps.top() - runtime, curr_results);
 				if (curr_results.collision_occured)
 				{
 					update_results.target_edges.insert(update_results.target_edges.end(), curr_results.target_edges.begin(), curr_results.target_edges.end());
@@ -193,14 +195,13 @@ long double const rwe::RWSpace::run_saturation(uint32_t const start_vertex, long
 	is_saturated = false;
 	while (!is_saturated)
 	{
-		EdgeUpdateResult update_results;
 		is_saturated = true;
 		
 		for (uint32_t vertex_1 = 0; vertex_1 < this->graph_state.size(); ++vertex_1)
 		{
 			for (uint32_t vertex_2 = 0; vertex_2 < this->graph_state[vertex_1].size(); ++vertex_2)
 			{
-				EdgeUpdateResult curr_results = this->updateEdgeState(vertex_1, vertex_2, epsilon, time_delta);
+				this->updateEdgeState(vertex_1, vertex_2, epsilon, time_delta, curr_results);
 				update_results.target_edges.insert(update_results.target_edges.end(), curr_results.target_edges.begin(), curr_results.target_edges.end());
 				update_results.init_positions.insert(update_results.init_positions.end(), curr_results.init_positions.begin(), curr_results.init_positions.end());
 				update_results.init_directions.insert(update_results.init_directions.end(), curr_results.init_directions.begin(), curr_results.init_directions.end());
@@ -255,7 +256,7 @@ void rwe::RWSpace::kill(void)
 
 
 
-rwe::RWSpace::EdgeUpdateResult rwe::RWSpace::updateEdgeState(uint32_t const vertex_1, uint32_t const vertex_2, long double const epsilon, long double const time_delta)
+void rwe::RWSpace::updateEdgeState(uint32_t const vertex_1, uint32_t const vertex_2, long double const epsilon, long double const time_delta, EdgeUpdateResult &result)
 {
 	// 1.1. Check if wander state is "dead"
 	if (this->wander_state == WanderState::dead)
@@ -269,7 +270,11 @@ rwe::RWSpace::EdgeUpdateResult rwe::RWSpace::updateEdgeState(uint32_t const vert
 	bool const               is_directed        = this->graph.edges[vertex_1].is_directed[vertex_2];
 	bool                     is_saturated       = true;
 	uint32_t                 agent_j;
-	EdgeUpdateResult         result;
+	//EdgeUpdateResult         result;
+
+	result.init_directions.clear();
+	result.init_positions.clear();
+	result.target_edges.clear();
 
 	// 2. Update position of each AgentInstance while preserving their ascending order
 	for (uint32_t agent_i = 0; agent_i < agents.size(); ++agent_i)
@@ -314,5 +319,5 @@ rwe::RWSpace::EdgeUpdateResult rwe::RWSpace::updateEdgeState(uint32_t const vert
 	is_saturated &= (agents.size() > 0) && (agents[0].position < epsilon) && (length - agents.back().position < epsilon);
 	this->graph_state[vertex_1][vertex_2].is_saturated = is_saturated;
 
-	return result;
+	return;
 }

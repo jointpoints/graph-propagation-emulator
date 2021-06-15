@@ -185,7 +185,7 @@ namespace rwe
 		WanderState          wander_state;
 
 		// Modifiers
-		EdgeUpdateResult updateEdgeState(uint32_t vertex_1, uint32_t vertex_2, long double const epsilon, long double const time_delta);
+		void updateEdgeState(uint32_t vertex_1, uint32_t vertex_2, long double const epsilon, long double const time_delta, EdgeUpdateResult &result);
 	};
 
 
