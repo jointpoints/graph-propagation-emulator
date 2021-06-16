@@ -337,8 +337,16 @@ long double const rwe::RWSpace::run_saturation(uint32_t const start_vertex, long
 			MetricGraph::Edge const &curr_edge = update_results.target_edges.front();
 			auto agent_insert_position = std::lower_bound(this->graph_state[curr_edge.first][curr_edge.second].agents.begin(), this->graph_state[curr_edge.first][curr_edge.second].agents.end(), update_results.init_positions.front(), agent_comparator);
 			
-			this->graph_state[curr_edge.first][curr_edge.second].agents.insert(agent_insert_position, AgentInstance{update_results.init_positions.front(), update_results.init_directions.front()});
-			max_agent_count = std::max(this->graph_state[curr_edge.first][curr_edge.second].agents.size(), max_agent_count);
+			bool check_uniqueness_front = true, check_uniqueness_end = true;
+			if (agent_insert_position != this->graph_state[curr_edge.first][curr_edge.second].agents.begin())
+				check_uniqueness_front = ((std::abs((agent_insert_position - 1)->position - update_results.init_positions.front()) > time_delta / 10) || ((agent_insert_position - 1)->direction != update_results.init_directions.front()));
+			if (agent_insert_position != this->graph_state[curr_edge.first][curr_edge.second].agents.end())
+				check_uniqueness_end = ((std::abs(agent_insert_position->position - update_results.init_positions.front()) > time_delta / 10) || (agent_insert_position->direction != update_results.init_directions.front()));
+			if (check_uniqueness_front && check_uniqueness_end)
+			{
+				this->graph_state[curr_edge.first][curr_edge.second].agents.insert(agent_insert_position, AgentInstance{update_results.init_positions.front(), update_results.init_directions.front()});
+				max_agent_count = std::max(this->graph_state[curr_edge.first][curr_edge.second].agents.size(), max_agent_count);
+			}
 			
 			update_results.target_edges.pop_front();
 			update_results.init_positions.pop_front();
