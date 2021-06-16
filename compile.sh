@@ -248,14 +248,14 @@ echo '3. Compilation...'
 mkdir -p $object_folder
 for unit_i in `seq 0 $((${#units[@]} - 1))`
 do
-	Create-Object-File "    3.$(($unit_i + 1))" $unit_i
+	Create-Object-File "    3.$(($unit_i + 1))." $unit_i
 	if [ $? -eq 1 ]; then
 		exit
 	fi
 done
 # Linker
 mkdir -p "$out_folder"
-Create-Exe "    3.$((${#units[@]} + 1))"
+Create-Exe "    3.$((${#units[@]} + 1))."
 if [ $? -eq 1 ]; then
 	exit
 fi

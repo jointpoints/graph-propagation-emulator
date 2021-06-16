@@ -264,14 +264,14 @@ Write-Host '3. Compilation...'
 (New-Item -Type Directory -Force -Path $object_folder) *> $NULL
 for ($unit_i = 0; $unit_i -lt $units.count; $unit_i++)
 {
-	if ((Create-Object-File "    3.$($unit_i + 1)" $unit_i) -eq $false)
+	if ((Create-Object-File "    3.$($unit_i + 1)." $unit_i) -eq $false)
 	{
 		Return
 	}
 }
 # Linker
 (New-Item -Type Directory -Force -Path "$out_folder") *> $NULL
-if ((Create-Exe "    3.$($units.count + 1)") -eq $false)
+if ((Create-Exe "    3.$($units.count + 1).") -eq $false)
 {
 	Return
 }

@@ -364,8 +364,6 @@ void rwe::MetricGraph::toGEXF(std::string const file_name, bool const rewrite) c
 
 
 
-
-
 void rwe::MetricGraph::fromGEXF(std::string const file_name)
 {
 	enum GEXFLexStates{SPACE, TOKEN};
@@ -579,8 +577,6 @@ void rwe::MetricGraph::fromGEXF(std::string const file_name)
 
 	return;
 }
-
-
 
 
 

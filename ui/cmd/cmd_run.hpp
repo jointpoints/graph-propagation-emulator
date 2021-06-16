@@ -81,7 +81,7 @@ void runEpsilonWander(AppSettings const &settings, rwe::RWSpace &rw_space,
 		rw_space.reset();
 		try
 		{
-			long double saturation_time = rw_space.run_saturation(epsilon_wander_start_vertex[start_vertex_i], epsilon_wander_epsilon[epsilon_i], epsilon_wander_time_delta[time_delta_i], epsilon_wander_use_skip_forward[use_skip_forward_i]); \
+			long double saturation_time = rw_space.run_saturation(epsilon_wander_start_vertex[start_vertex_i], epsilon_wander_epsilon[epsilon_i], epsilon_wander_time_delta[time_delta_i], epsilon_wander_use_skip_forward[use_skip_forward_i]);
 			switch (verbosity_level)
 			{
 			// raw output
@@ -103,6 +103,7 @@ void runEpsilonWander(AppSettings const &settings, rwe::RWSpace &rw_space,
 		}
 		catch (std::invalid_argument &e) {if (verbosity_level == 0) std::cout << '\n'; EMULATION_ERROR("The start vertex does not exist.");}
 		catch (std::logic_error &e) {if (verbosity_level == 0) std::cout << '\n'; EMULATION_ERROR("Unknown exception.");}
+		catch (...) {if (verbosity_level == 0) std::cout << '\n'; EMULATION_ERROR("Unknown exception.");}
 	}
 	auto time_stop = std::chrono::high_resolution_clock::now();
 
