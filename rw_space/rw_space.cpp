@@ -206,10 +206,10 @@ long double const rwe::RWSpace::run_saturation(uint32_t const start_vertex, long
 								skip_forward_timestamps.push(skip_forward_timestamps.top() + this->graph.edges[threads_curr_results[thread_i].updated_edge.first].lengths[threads_curr_results[thread_i].updated_edge.second]);
 							}
 							/// DEBUG
-							std::cout << this->graph.edges[threads_curr_results[thread_i].updated_edge.first].id << ' ' << this->graph.edges[threads_curr_results[thread_i].updated_edge.first].adjacents[threads_curr_results[thread_i].updated_edge.second] << '\n';
+							/*std::cout << this->graph.edges[threads_curr_results[thread_i].updated_edge.first].id << ' ' << this->graph.edges[threads_curr_results[thread_i].updated_edge.first].adjacents[threads_curr_results[thread_i].updated_edge.second] << '\n';
 							for (uint32_t i = 0; i < this->graph_state[threads_curr_results[thread_i].updated_edge.first][threads_curr_results[thread_i].updated_edge.second].agents.size(); ++i)
 								std::cout << this->graph_state[threads_curr_results[thread_i].updated_edge.first][threads_curr_results[thread_i].updated_edge.second].agents[i].position << ' ';
-							std::cout << "\n---------------------------\n";
+							std::cout << "\n---------------------------\n";*/
 						}
 						threads.clear();
 						threads.emplace_back(&RWSpace::updateEdgeState, this, vertex_1, vertex_2, epsilon, skip_forward_timestamps.top() - runtime, std::ref(threads_curr_results[threads.size()]));
@@ -237,9 +237,9 @@ long double const rwe::RWSpace::run_saturation(uint32_t const start_vertex, long
 			
 			bool check_uniqueness_front = true, check_uniqueness_end = true;
 			if (agent_insert_position != this->graph_state[curr_edge.first][curr_edge.second].agents.begin())
-				check_uniqueness_front = (std::abs((agent_insert_position - 1)->position - update_results.init_positions.front()) > time_delta) && ((agent_insert_position - 1)->direction != update_results.init_directions.front());
+				check_uniqueness_front = ((std::abs((agent_insert_position - 1)->position - update_results.init_positions.front()) > time_delta / 10) || ((agent_insert_position - 1)->direction != update_results.init_directions.front()));
 			if (agent_insert_position != this->graph_state[curr_edge.first][curr_edge.second].agents.end())
-				check_uniqueness_end = (std::abs(agent_insert_position->position - update_results.init_positions.front()) > time_delta) && (agent_insert_position->direction != update_results.init_directions.front());
+				check_uniqueness_end = ((std::abs(agent_insert_position->position - update_results.init_positions.front()) > time_delta / 10) || (agent_insert_position->direction != update_results.init_directions.front()));
 			if (check_uniqueness_front && check_uniqueness_end)
 			{
 				this->graph_state[curr_edge.first][curr_edge.second].agents.insert(agent_insert_position, AgentInstance{update_results.init_positions.front(), update_results.init_directions.front()});
@@ -253,11 +253,21 @@ long double const rwe::RWSpace::run_saturation(uint32_t const start_vertex, long
 			update_results.init_directions.pop_front();
 		}
 
-		runtime = skip_forward_timestamps.top();
-		skip_forward_timestamps.pop();
+		/// DEBUG
+		//std::cout << "Runtime ended: " << runtime << '\n';
+
+		while ((!skip_forward_timestamps.empty()) && (skip_forward_timestamps.top() - runtime < time_delta))
+			skip_forward_timestamps.pop();
+		if (!skip_forward_timestamps.empty())
+		{
+			runtime = skip_forward_timestamps.top();
+			skip_forward_timestamps.pop();
+		}
+		else
+			break;
 		
 		/// DEBUG
-		//std::cout << "Runtime ended: " << runtime << ' ' << skip_forward_timestamps.top() << "\n================================\n";
+		//std::cout << "\n================================\n";
 	}
 	// 4.2. Precise emulation
 	is_saturated = false;
@@ -384,6 +394,7 @@ void rwe::RWSpace::updateEdgeState(uint32_t const vertex_1, uint32_t const verte
 
 	//std::set<AgentInstance>  updated_agents;
 
+	result.collision_occured = false;
 	result.updated_edge = std::make_pair(vertex_1, vertex_2);
 	result.init_directions.clear();
 	result.init_positions.clear();
