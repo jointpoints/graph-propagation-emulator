@@ -113,8 +113,8 @@ long double const rwe::RWSpace::run_saturation(uint32_t const start_vertex, long
 	uint32_t const                      threads_count           = std::thread::hardware_concurrency();
 	uint32_t const                      free_threads_count      = 3;
 	bool const                          use_concurrency         = (threads_count > free_threads_count);
-	uint64_t const                      concurrency_threshold   = 20;
-	uint64_t                            max_agent_count         = 0;
+	uint64_t const                      concurrency_threshold   = 50;
+	uint64_t                            min_agent_count         = std::numeric_limits<uint64_t>::max();
 	
 	EdgeUpdateResult                    update_results;
 	EdgeUpdateResult                    curr_results;
@@ -152,22 +152,26 @@ long double const rwe::RWSpace::run_saturation(uint32_t const start_vertex, long
 					skip_forward_timestamps.push(curr_vertex.lengths[vertex_2_i]);
 			}
 		}
-	max_agent_count = 1;
+	min_agent_count = 1;
 	
 	// 4. Run simulation
 	// 4.1. Use "skip forward", if it is allowed
 	while (use_skip_forward)
 	{
 		is_saturated = true;
+		min_agent_count = std::numeric_limits<uint64_t>::max();
 
 		// Check if current state satisfies the necessary condition
-		for (uint32_t vertex_1 = 0; (is_saturated) && (vertex_1 < this->graph_state.size()); ++vertex_1)
-			for (uint32_t vertex_2 = 0; (is_saturated) && (vertex_2 < this->graph_state[vertex_1].size()); ++vertex_2)
+		for (uint32_t vertex_1 = 0; vertex_1 < this->graph_state.size(); ++vertex_1)
+			for (uint32_t vertex_2 = 0; vertex_2 < this->graph_state[vertex_1].size(); ++vertex_2)
+			{
 				is_saturated &= (this->graph_state[vertex_1][vertex_2].agents.size() >= floor(this->graph.edges[vertex_1].lengths[vertex_2] / (2 * epsilon) + 1));
+				min_agent_count = std::min(min_agent_count, this->graph_state[vertex_1][vertex_2].agents.size());
+			}
 		if (is_saturated)
 			break;
 		
-		if ((use_concurrency) || (max_agent_count < concurrency_threshold))
+		if (true || (!use_concurrency) || (min_agent_count < concurrency_threshold))
 			for (uint32_t vertex_1 = 0; vertex_1 < this->graph_state.size(); ++vertex_1)
 				for (uint32_t vertex_2 = 0; vertex_2 < this->graph_state[vertex_1].size(); ++vertex_2)
 				{
@@ -243,7 +247,7 @@ long double const rwe::RWSpace::run_saturation(uint32_t const start_vertex, long
 			if (check_uniqueness_front && check_uniqueness_end)
 			{
 				this->graph_state[curr_edge.first][curr_edge.second].agents.insert(agent_insert_position, AgentInstance{update_results.init_positions.front(), update_results.init_directions.front()});
-				max_agent_count = std::max(this->graph_state[curr_edge.first][curr_edge.second].agents.size(), max_agent_count);
+				//min_agent_count = std::max(this->graph_state[curr_edge.first][curr_edge.second].agents.size(), min_agent_count);
 
 				skip_forward_timestamps.push(skip_forward_timestamps.top() + this->graph.edges[curr_edge.first].lengths[curr_edge.second]);
 			}
@@ -275,7 +279,10 @@ long double const rwe::RWSpace::run_saturation(uint32_t const start_vertex, long
 	{
 		is_saturated = true;
 		
-		if ((use_concurrency) || (max_agent_count < concurrency_threshold))
+		if (true || (!use_concurrency) || (min_agent_count < concurrency_threshold))
+		{
+			min_agent_count = std::numeric_limits<uint64_t>::max();
+
 			for (uint32_t vertex_1 = 0; vertex_1 < this->graph_state.size(); ++vertex_1)
 				for (uint32_t vertex_2 = 0; vertex_2 < this->graph_state[vertex_1].size(); ++vertex_2)
 				{
@@ -284,11 +291,13 @@ long double const rwe::RWSpace::run_saturation(uint32_t const start_vertex, long
 					update_results.init_positions.insert(update_results.init_positions.end(), curr_results.init_positions.begin(), curr_results.init_positions.end());
 					update_results.init_directions.insert(update_results.init_directions.end(), curr_results.init_directions.begin(), curr_results.init_directions.end());
 					is_saturated &= this->graph_state[vertex_1][vertex_2].is_saturated;
+					min_agent_count = std::min(min_agent_count, this->graph_state[vertex_1][vertex_2].agents.size());
 					/*std::cout << this->graph.edges[vertex_1].id << ' ' << this->graph.edges[vertex_1].adjacents[vertex_2] << '\n';
 					for (uint32_t i = 0; i < this->graph_state[vertex_1][vertex_2].agents.size(); ++i)
 						std::cout << this->graph_state[vertex_1][vertex_2].agents[i].position << ' ';
 					std::cout << "\n---------------------------\n";*/
 				}
+		}
 		else
 		{
 			for (uint32_t vertex_1 = 0; vertex_1 < this->graph_state.size(); ++vertex_1)
@@ -301,33 +310,39 @@ long double const rwe::RWSpace::run_saturation(uint32_t const start_vertex, long
 						for (uint32_t thread_i = 0; thread_i < threads.size(); ++thread_i)
 						{
 							threads[thread_i].join();
-							if (threads_curr_results[thread_i].collision_occured)
-							{
+							//if (threads_curr_results[thread_i].collision_occured)
+							//{
 								update_results.target_edges.insert(update_results.target_edges.end(), threads_curr_results[thread_i].target_edges.begin(), threads_curr_results[thread_i].target_edges.end());
 								update_results.init_positions.insert(update_results.init_positions.end(), threads_curr_results[thread_i].init_positions.begin(), threads_curr_results[thread_i].init_positions.end());
 								update_results.init_directions.insert(update_results.init_directions.end(), threads_curr_results[thread_i].init_directions.begin(), threads_curr_results[thread_i].init_directions.end());
-								is_saturated &= this->graph_state[threads_curr_results[thread_i].updated_edge.first][threads_curr_results[thread_i].updated_edge.second].is_saturated;
-							}
+							//}
+							is_saturated &= this->graph_state[threads_curr_results[thread_i].updated_edge.first][threads_curr_results[thread_i].updated_edge.second].is_saturated;
+							/// DEBUG
+							/*std::cout << this->graph.edges[threads_curr_results[thread_i].updated_edge.first].id << ' ' << this->graph.edges[threads_curr_results[thread_i].updated_edge.first].adjacents[threads_curr_results[thread_i].updated_edge.second] << '\n';
+							for (uint32_t i = 0; i < this->graph_state[threads_curr_results[thread_i].updated_edge.first][threads_curr_results[thread_i].updated_edge.second].agents.size(); ++i)
+								std::cout << this->graph_state[threads_curr_results[thread_i].updated_edge.first][threads_curr_results[thread_i].updated_edge.second].agents[i].position << ' ';
+							std::cout << "\n---------------------------\n";*/
 						}
 						threads.clear();
 						threads.emplace_back(&RWSpace::updateEdgeState, this, vertex_1, vertex_2, epsilon, time_delta, std::ref(threads_curr_results[threads.size()]));
 					}
-					/// DEBUG
-					std::cout << this->graph.edges[vertex_1].id << ' ' << this->graph.edges[vertex_1].adjacents[vertex_2] << '\n';
-					for (uint32_t i = 0; i < this->graph_state[vertex_1][vertex_2].agents.size(); ++i)
-						std::cout << this->graph_state[vertex_1][vertex_2].agents[i].position << ' ';
-					std::cout << "\n---------------------------\n";
 				}
 			for (uint32_t thread_i = 0; thread_i < threads.size(); ++thread_i)
 			{
 				threads[thread_i].join();
-				if (threads_curr_results[thread_i].collision_occured)
-				{
+				//if (threads_curr_results[thread_i].collision_occured)
+				//{
 					update_results.target_edges.insert(update_results.target_edges.end(), threads_curr_results[thread_i].target_edges.begin(), threads_curr_results[thread_i].target_edges.end());
 					update_results.init_positions.insert(update_results.init_positions.end(), threads_curr_results[thread_i].init_positions.begin(), threads_curr_results[thread_i].init_positions.end());
 					update_results.init_directions.insert(update_results.init_directions.end(), threads_curr_results[thread_i].init_directions.begin(), threads_curr_results[thread_i].init_directions.end());
-					is_saturated &= this->graph_state[threads_curr_results[thread_i].updated_edge.first][threads_curr_results[thread_i].updated_edge.second].is_saturated;
-				}
+				//}
+				is_saturated &= this->graph_state[threads_curr_results[thread_i].updated_edge.first][threads_curr_results[thread_i].updated_edge.second].is_saturated;
+				/// DEBUG
+				/*std::cout << this->graph.edges[threads_curr_results[thread_i].updated_edge.first].id << ' ' << this->graph.edges[threads_curr_results[thread_i].updated_edge.first].adjacents[threads_curr_results[thread_i].updated_edge.second] << '\n';
+				for (uint32_t i = 0; i < this->graph_state[threads_curr_results[thread_i].updated_edge.first][threads_curr_results[thread_i].updated_edge.second].agents.size(); ++i)
+					std::cout << this->graph_state[threads_curr_results[thread_i].updated_edge.first][threads_curr_results[thread_i].updated_edge.second].agents[i].position << ' ';
+				std::cout << '\n' << this->graph_state[threads_curr_results[thread_i].updated_edge.first][threads_curr_results[thread_i].updated_edge.second].is_saturated << '\n';
+				std::cout << "---------------------------\n";*/
 			}
 			threads.clear();
 		}
@@ -345,7 +360,7 @@ long double const rwe::RWSpace::run_saturation(uint32_t const start_vertex, long
 			if (check_uniqueness_front && check_uniqueness_end)
 			{
 				this->graph_state[curr_edge.first][curr_edge.second].agents.insert(agent_insert_position, AgentInstance{update_results.init_positions.front(), update_results.init_directions.front()});
-				max_agent_count = std::max(this->graph_state[curr_edge.first][curr_edge.second].agents.size(), max_agent_count);
+				//min_agent_count = std::max(this->graph_state[curr_edge.first][curr_edge.second].agents.size(), min_agent_count);
 			}
 			
 			update_results.target_edges.pop_front();

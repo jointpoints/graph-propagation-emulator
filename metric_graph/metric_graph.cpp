@@ -343,7 +343,7 @@ void rwe::MetricGraph::toGEXF(std::string const file_name, bool const rewrite) c
 	out_file << "\t\t<nodes>\n";
 	vertex_list = this->getVertexList();
 	for (uint32_t vertex_i = 0; vertex_i < vertex_list.size(); ++vertex_i)
-		out_file << "\t\t\t<node id=\"" + std::to_string(vertex_list[vertex_i]) + "\"/>\n";
+		out_file << "\t\t\t<node id=\"" + std::to_string(vertex_list[vertex_i]) + "\" />\n";
 	out_file << "\t\t</nodes>\n";
 	out_file << "\t\t<edges>\n";
 	for (uint32_t vertex_1 = 0; vertex_1 < this->edges.size(); ++vertex_1)
