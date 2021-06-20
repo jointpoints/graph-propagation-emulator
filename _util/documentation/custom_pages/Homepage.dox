@@ -11,64 +11,7 @@
  * \note The program is in early stages of development, it can lack some useful features, contain bugs
  * and errors. Any of its contents may eventually become subjects to significant changes.
  *
- * \section home_theory Basic theory and definitions
- *
- * \subsection home_theory_metric_graph Metric graphs
- *
- * The concept of <b>metric graph</b> extends the classical understanding of graphs in the following
- * manner. <b>Metric graph</b> is defined as a graph \f$(V,E)\f$ where \f$V\f$ is a set of \b vertices,
- * \f$E \subset V^2\f$ is a set of \b edges with each edge \f$e \in E\f$ being associated with
- * a certain interval \f$[0,l(e)]\f$, where \f$l(e) > 0\f$ is called a \b length of the edge.
- * Edge \f$(v,w) \in E\f$ is called \b directed ('from \f$v\f$ to \f$w\f$'), if \f$(w,v) \notin E\f$.
- * Otherwise, if \f$(w,v) \in E\f$, the edge \f$(v,w) \in E\f$ is called \b undirected
- * ('from \f$v\f$ to \f$w\f$', or 'between \f$v\f$ and \f$w\f$').
- *
- * This implementation also binds general theory by following additional restrictions:
- * * \f$V \subset \{0,1,2,...,2^{32}-1\}\f$ (i.e., vertices can only be represented as
- * non-negative integers up to \f$2^{32}-1\f$);
- * * \f$\{(v,w),(w,v)\} \subset E \Rightarrow l((v,w)) = l((w,v))\f$ (i.e., if one
- * can go both ways, the distance between end points is the same).
- *
- * For undirected edges, any point \f$a \in [0,l((v,w))]\f$ will be considered the same with the point
- * \f$l((w,v)) - a \in [0,l((w,v))]\f$.
- *
- * Thus, the main difference between metric graphs and non-metric graphs can be briefly stated
- * by possibility of interpreting edges of a metric graph as geometric objects where distance
- * can be measured not only between vertices of the graph itself, but also between points on intervals
- * \f$[0,l(e)]\f$ that correspond to the edges. Collectively, they will be noted as <b>points of the
- * graph</b>.
- *
- * You may read more about metric graphs [<b>here</b>](https://en.wikipedia.org/wiki/Quantum_graph#Metric_graphs).
- *
- * \subsection random_walk Random walk
- *
- * <b>Random walk</b> of an \b agent \f$A(t)\f$ on a metric graph \f$G\f$ is a continuous-time random process
- * that is described as follows:
- * 1. \f$t \in T = \{\tau \in \mathbb{R} | \tau \ge 0\}\f$ (time is non-negative);
- * 2. \f$A(t)\f$ maps a moment of time to some point of the graph;
- * 3. \f$A(t)\f$ is continuous;
- * 4. if \f$A(t) = v \in V\f$, the point \f$A(t + \delta t)\f$ is chosen randomly among all points of
- * all edges outgoing from \f$v\f$;
- * 5. if \f$A(t) = p \notin V\f$, \f$A(t + \delta t) - A(t) = A(t) - A(t - \delta t)\f$ (direction
- * of a walk cannot be changed while on edge, the speed of a point is constant);
- * 6. if \f$A(t) = v \in V\f$ and \f$A(t + \delta t) = p \notin V, p \in [0, l((v,w))]\f$ where
- * \f$(v,w) \in E\f$, then \f$\min \{\tau \in T | \tau > t, A(\tau) = w\} = t + l(e)\f$ (the time that
- * it takes to walk from vertex \f$v\f$ to vertex \f$w\f$ equals the length of the corresponding edge).
- *
- * An example of a random walk of a point on a metric graph can be seen below.
- *
- * \image html Homepage_RandomWalk_example.gif
- *
- * However, it is usually inconvenient to consider a single instance of a random walk since it gives
- * little to no information about the general behaviour of the process. That is why a collection of all
- * possible random walks with the same initial conditions is preferrable to study instead. Such a
- * collection can be seen below.
- *
- * \image html Homepage_RandomWander_example.gif
- *
- * This kind of a structure will be called an \b RW-space over a metric graph. Please, note that
- * "RW-space" is a non-standard term, i.e. it may not be used widely among other people who study
- * random walks.
+ * \image html Homepage_window.png
  *
  * \section home_license License
  *

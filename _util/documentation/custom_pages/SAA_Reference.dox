@@ -1,0 +1,133 @@
+/**
+ * \page saa_reference Quick reference
+ *
+ *
+ *
+ *
+ *
+ * \section saa_reference_getting_started Getting started
+ *
+ * The pipeline for Random Walks Emulator is quite simple and straightforward:
+ *
+ * 1. Save your graph as a .gexf file. This format is supported by virtually all
+ * toolkits for graph processing, like Gephi or NetworkX.
+ * 2. Write a [scenario](@ref rwes_spec) of your emulation.
+ * 3. Run it and save the results.
+ *
+ * \warning Know that:
+ * * your graph must contain less than \f$2^{32}\f$ vertices;
+ * * your vertex IDs must be non-negative integer numbers less than \f$2^{32}\f$;
+ * * each edge must contain the `weight` attribute, it will be interpreted as a length
+ * of the edge;
+ * * isolated vertices will be ignored.
+ *
+ *
+ *
+ * \section saa_reference_rweg What is a .rweg file?
+ *
+ * When you unpack the archive with the program and open the `My graphs` folder,
+ * you will see that it already contains two files:
+ *
+ * * `Star2.rweg`;
+ * * `Star3.rweg`.
+ *
+ * These are sample star graphs saved in a special format .rweg (Random Walks
+ * Emulator Graph). Here is a brief comparison of .rweg with .gexf:
+ *
+ * <table>
+ * <tr align="center">
+ *     <th>Criterion</th>
+ *     <th>.gexf</th>
+ *     <th>.rweg</th>
+ * </tr>
+ * <tr align="center">
+ *     <td>File type</td>
+ *     <td>XML-like plain text file</td>
+ *     <td>Binary file</td>
+ * </tr>
+ * <tr align="center">
+ *     <td>Perception by humans</td>
+ *     <td>Human-readable</td>
+ *     <td>Impossible to be read by humans</td>
+ * </tr>
+ * <tr align="center">
+ *     <td>Memory consumption</td>
+ *     <td>Files may have huge size</td>
+ *     <td>Always considerably less than .gexf</td>
+ * </tr>
+ * <tr align="center">
+ *     <td>Processing by Random Walks Emulator</td>
+ *     <td>Fast</td>
+ *     <td>Very fast</td>
+ * </tr>
+ * </table>
+ *
+ * Basically, .rweg files only contain information necessary for emulation
+ * while .gexf files have various applications and, hence, may contain additional
+ * data related to visualisation, labelling, etc. All in all, the general rule is the
+ * following: if you want to always be able to look through the structure of your graph,
+ * keep it in the .gexf format; if you want to save space on your hard drive, keep it in
+ * the .rweg format.
+ *
+ * Luckily, Random Walks Emulator is capable of converting files of these formats into
+ * each other. See [Command list](\ref saa_reference_command_list) section below.
+ *
+ * If you want to write your own program that works with .rweg format, consider the
+ * [format specification](\ref rweg_spec).
+ *
+ *
+ *
+ * \section saa_reference_capabilities What can this emulator do?
+ *
+ * Currently Random Walks Emulator serves to only achieve one certain goal:
+ *
+ * * to compute the first moment of \f$\varepsilon\f$-saturation.
+ *
+ * You may briefly read about \f$\varepsilon\f$-saturation [here](\ref rwe::RWSpace::run_saturation).
+ * More references are coming soon.
+ *
+ *
+ *
+ * \section saa_reference_command_list Command list
+ *
+ * Here is the full list of currently implemented commands of Random Walks Emulator.
+ *
+ * <table>
+ * <tr align="center">
+ *     <th>Command</th>
+ *     <th>Brief</th>
+ * </tr>
+ * <tr align="center">
+ *     <td>`getconfig`</td>
+ *     <td>Prints current global parameters of emulator.</td>
+ * </tr>
+ * <tr align="center">
+ *     <td>`gexf2rweg`</td>
+ *     <td>Converts .gexf file into .rweg file.</td>
+ * </tr>
+ * <tr align="center">
+ *     <td>`help`</td>
+ *     <td>Prints the list of currently implemented commands.</td>
+ * </tr>
+ * <tr align="center">
+ *     <td>`run`</td>
+ *     <td>Runs the specified Random Walks Emulator Scenario file.</td>
+ * </tr>
+ * <tr align="center">
+ *     <td>`rweg2gexf`</td>
+ *     <td>Converts .rweg file into .gexf file.</td>
+ * </tr>
+ * <tr align="center">
+ *     <td>`setconfig`</td>
+ *     <td>Alters global parameters of emulator.</td>
+ * </tr>
+ * <tr align="center">
+ *     <td>`exit`</td>
+ *     <td>Exits the program.</td>
+ * </tr>
+ * </table>
+ *
+ * Type `<command> ?` in Random Walks Emulator console to receive a full reference
+ * for a specific command.
+ *
+ */

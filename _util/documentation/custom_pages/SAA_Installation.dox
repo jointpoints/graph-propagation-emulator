@@ -1,0 +1,159 @@
+/**
+ * \page saa_installation Install Random Walks Emulator
+ *
+ *
+ *
+ *
+ *
+ * Download the latest version of Random Walks Emulator below and use it for free! Do not forget to
+ * comply with the [<b>license</b>](https://github.com/jointpoints/random-walks/blob/main/LICENSE.md)
+ * and check whether your computer meets the [requirements](\ref installation_requirements) listed on this page.
+ *
+ * \htmlonly
+ * <table style="width:100%">
+ * <tr>
+ *     <td style="width:25%">
+ *     </td>
+ *     <td colspan="2" style="text-align:center; font-size:18pt">
+ *         <b>v.0.2 (20.06.2021, latest release)</b>
+ *     </td>
+ *     <td style="width:25%">
+ *     </td>
+ * </tr>
+ * <tr>
+ *     <td style="width:25%">
+ *     </td>
+ *     <td colspan="2" style="text-align:center">
+ *         <div class="memproto" style="border:1px solid #A8B8D9; border-radius:4px; -moz-border-radius:4px; -webkit-border-radius:4px; text-align:center">
+ *             <i>Stand-alone application</i>
+ *         </div>
+ *     </td>
+ *     <td style="width:25%">
+ *     </td>
+ * </tr>
+ * <tr>
+ *     <td style="width:25%">
+ *     </td>
+ *     <td style="width:25%">
+ *         <div class="memproto" style="border:1px solid #A8B8D9; border-radius:4px; -moz-border-radius:4px; -webkit-border-radius:4px">
+ *             <table style="width:100%">
+ *                 <tr><td align="center"><img src="Installation_Windows.png"></td></tr>
+ *                 <tr><td align="center"><a href="https://github.com/jointpoints/random-walks/releases/download/0.1/Random.Walks.Emulator.build.v.0.2.Windows.zip"><b>Download for Windows</b></a></td></tr>
+ *             </table>
+ *         </div>
+ *     </td>
+ *     <td style="width:25%">
+ *         <div class="memproto" style="border:1px solid #A8B8D9; border-radius:4px; -moz-border-radius:4px; -webkit-border-radius:4px">
+ *             <table style="width:100%">
+ *                 <tr><td align="center"><img src="Installation_Linux.png"></td></tr>
+ *                 <tr><td align="center"><a href="https://github.com/jointpoints/random-walks/releases/download/0.1/Random.Walks.Emulator.build.v.0.2.Linux.tar"><b>Download for Linux</b></a></td></tr>
+ *             </table>
+ *         </div>
+ *     </td>
+ *     <td style="width:25%">
+ *     </td>
+ * </tr>
+ * <tr>
+ *     <td style="width:25%">
+ *     </td>
+ *     <td colspan="2" style="text-align:center">
+ *         <div class="memproto" style="border:1px solid #A8B8D9; border-radius:4px; -moz-border-radius:4px; -webkit-border-radius:4px; text-align:center">
+ *             <i>Source code</i>
+ *         </div>
+ *     </td>
+ *     <td style="width:25%">
+ *     </td>
+ * </tr>
+ * <tr>
+ *     <td style="width:25%">
+ *     </td>
+ *     <td style="width:25%">
+ *         <div class="memproto" style="border:1px solid #A8B8D9; border-radius:4px; -moz-border-radius:4px; -webkit-border-radius:4px; text-align:center">
+ *             <a href="https://github.com/jointpoints/random-walks/archive/refs/tags/0.2.zip"><b>Download as .zip</b></a>
+ *         </div>
+ *     </td>
+ *     <td style="width:25%">
+ *         <div class="memproto" style="border:1px solid #A8B8D9; border-radius:4px; -moz-border-radius:4px; -webkit-border-radius:4px; text-align:center">
+ *             <a href="https://github.com/jointpoints/random-walks/archive/refs/tags/0.2.tar.gz"><b>Download as .tar.gz</b></a>
+ *         </div>
+ *     </td>
+ *     <td style="width:25%">
+ *     </td>
+ * </tr>
+ * <tr>
+ *     <td style="width:25%">
+ *     </td>
+ *     <td colspan="2" style="text-align:center">
+ *         <div class="memproto" style="border:1px solid #A8B8D9; border-radius:4px; -moz-border-radius:4px; -webkit-border-radius:4px; text-align:center">
+ *             <div id="show_change_log">
+ *                 <a onclick="showChangeLog()" style="cursor: pointer;"><b>Show change log</b></a>
+ *             </div>
+ *             <div id="hide_change_log" style="display: none;">
+ *                 <a onclick="hideChangeLog()" style="cursor: pointer;"><b>Hide change log</b></a>
+ *             </div>
+ *             <div id="change_log" align="left" style="display: none;">
+ *                 <ul>
+ *                     <li><i>Improved performance. </i>Emulations work more than 10 times faster now.</li>
+ *                     <li><i>GEXF support. </i>You can now use your own graphs from third-party applications.</li>
+ *                     <li><i>New commands. </i>New commands to work with files have been added.</li>
+ *                 </ul>
+ *             </div>
+ *         </div>
+ *     </td>
+ *     <td style="width:25%">
+ *     </td>
+ * </tr>
+ * </table>
+ *
+ * <script>
+ * function showChangeLog()
+ * {
+ *     document.getElementById("show_change_log").style.display = "none";
+ *     document.getElementById("hide_change_log").style.display = "block";
+ *     document.getElementById("change_log").style.display = "block";
+ * }
+ * function hideChangeLog()
+ * {
+ *     document.getElementById("show_change_log").style.display = "block";
+ *     document.getElementById("hide_change_log").style.display = "none";
+ *     document.getElementById("change_log").style.display = "none";
+ * }
+ * </script>
+ * \endhtmlonly
+ *
+ * Run script `compile.ps1` (on Windows) or `compile.sh` (on Linux) to build the program on your own, if you download the source code.
+ *
+ *
+ *
+ *
+ *
+ * \section installation_requirements Minimum system requirements
+ *
+ * <table>
+ * <tr>
+ *     <td>Operating system</td>
+ *     <td align="center">Windows 10 x64 build 10.0.10586 or newer, or Linux-based OS</td>
+ * </tr>
+ * <tr>
+ *     <td>HDD/SSD free space</td>
+ *     <td align="center">500 KB</td>
+ * </tr>
+ * <tr>
+ *     <td>RAM capacity</td>
+ *     <td align="center">8 MB</td>
+ * </tr>
+ * </table>
+ *
+ *
+ *
+ *
+ *
+ * \section installation_archive Versions archive
+ *
+ * * v.0.1 (23.03.2021)
+ *   * [<b>Download for Windows</b>](https://github.com/jointpoints/random-walks/releases/download/0.1/Random.Walks.Emulator.build.v.0.1.Windows.zip)
+ *   * [<b>Download for Linux</b>](https://github.com/jointpoints/random-walks/releases/download/0.1/Random.Walks.Emulator.build.v.0.1.Linux.tar)
+ *   * [<b>Download source as .zip</b>](https://github.com/jointpoints/random-walks/archive/refs/tags/0.1.zip)
+ *   * [<b>Download source as .tar.gz</b>](https://github.com/jointpoints/random-walks/archive/refs/tags/0.1.tar.gz)
+ *
+ */

@@ -209,7 +209,7 @@ long double const rwe::RWSpace::run_saturation(uint32_t const start_vertex, long
 								
 								skip_forward_timestamps.push(skip_forward_timestamps.top() + this->graph.edges[threads_curr_results[thread_i].updated_edge.first].lengths[threads_curr_results[thread_i].updated_edge.second]);
 							}
-							/// DEBUG
+							// DEBUG
 							/*std::cout << this->graph.edges[threads_curr_results[thread_i].updated_edge.first].id << ' ' << this->graph.edges[threads_curr_results[thread_i].updated_edge.first].adjacents[threads_curr_results[thread_i].updated_edge.second] << '\n';
 							for (uint32_t i = 0; i < this->graph_state[threads_curr_results[thread_i].updated_edge.first][threads_curr_results[thread_i].updated_edge.second].agents.size(); ++i)
 								std::cout << this->graph_state[threads_curr_results[thread_i].updated_edge.first][threads_curr_results[thread_i].updated_edge.second].agents[i].position << ' ';
@@ -257,7 +257,7 @@ long double const rwe::RWSpace::run_saturation(uint32_t const start_vertex, long
 			update_results.init_directions.pop_front();
 		}
 
-		/// DEBUG
+		// DEBUG
 		//std::cout << "Runtime ended: " << runtime << '\n';
 
 		while ((!skip_forward_timestamps.empty()) && (skip_forward_timestamps.top() - runtime < time_delta))
@@ -270,7 +270,7 @@ long double const rwe::RWSpace::run_saturation(uint32_t const start_vertex, long
 		else
 			break;
 		
-		/// DEBUG
+		// DEBUG
 		//std::cout << "\n================================\n";
 	}
 	// 4.2. Precise emulation
@@ -317,7 +317,7 @@ long double const rwe::RWSpace::run_saturation(uint32_t const start_vertex, long
 								update_results.init_directions.insert(update_results.init_directions.end(), threads_curr_results[thread_i].init_directions.begin(), threads_curr_results[thread_i].init_directions.end());
 							//}
 							is_saturated &= this->graph_state[threads_curr_results[thread_i].updated_edge.first][threads_curr_results[thread_i].updated_edge.second].is_saturated;
-							/// DEBUG
+							// DEBUG
 							/*std::cout << this->graph.edges[threads_curr_results[thread_i].updated_edge.first].id << ' ' << this->graph.edges[threads_curr_results[thread_i].updated_edge.first].adjacents[threads_curr_results[thread_i].updated_edge.second] << '\n';
 							for (uint32_t i = 0; i < this->graph_state[threads_curr_results[thread_i].updated_edge.first][threads_curr_results[thread_i].updated_edge.second].agents.size(); ++i)
 								std::cout << this->graph_state[threads_curr_results[thread_i].updated_edge.first][threads_curr_results[thread_i].updated_edge.second].agents[i].position << ' ';
@@ -337,7 +337,7 @@ long double const rwe::RWSpace::run_saturation(uint32_t const start_vertex, long
 					update_results.init_directions.insert(update_results.init_directions.end(), threads_curr_results[thread_i].init_directions.begin(), threads_curr_results[thread_i].init_directions.end());
 				//}
 				is_saturated &= this->graph_state[threads_curr_results[thread_i].updated_edge.first][threads_curr_results[thread_i].updated_edge.second].is_saturated;
-				/// DEBUG
+				// DEBUG
 				/*std::cout << this->graph.edges[threads_curr_results[thread_i].updated_edge.first].id << ' ' << this->graph.edges[threads_curr_results[thread_i].updated_edge.first].adjacents[threads_curr_results[thread_i].updated_edge.second] << '\n';
 				for (uint32_t i = 0; i < this->graph_state[threads_curr_results[thread_i].updated_edge.first][threads_curr_results[thread_i].updated_edge.second].agents.size(); ++i)
 					std::cout << this->graph_state[threads_curr_results[thread_i].updated_edge.first][threads_curr_results[thread_i].updated_edge.second].agents[i].position << ' ';

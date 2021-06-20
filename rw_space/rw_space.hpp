@@ -112,7 +112,7 @@ namespace rwe
 		 * \f$\varepsilon\f$-saturation occurs.
 		 * 
 		 * RW-space is said to be \f$\varepsilon\f$<b>-saturated</b> at time moment \f$t_0\f$, if agents
-		 * form an \f$\varepsilon\f$-net on each edge of the graph.
+		 * form an \f$\varepsilon\f$-net on each edge of the graph at \f$t_0\f$.
 		 * 
 		 * No explicit checks of existence of the \f$\varepsilon\f$-saturation moments are made.
 		 * 
@@ -122,12 +122,9 @@ namespace rwe
 		 * \param   use_skip_forward    Enables a faster emulation algorithm; disable this option if
 		 *                              you need precise positions of agent instances at each time
 		 *                              step.
-		 * \param   concurrency_type    Emulation mode.
 		 * 
 		 * \return Time of the first \f$\varepsilon\f$-saturation moment; precision of the answer
 		 * depends on the time step of emulation.
-		 * 
-		 * \warning \c concurrency_type is a future feature, currently it has no effect.
 		 * 
 		 * \note The RWSpace object needs to be in the \c ready state in order to be run.
 		 * 
