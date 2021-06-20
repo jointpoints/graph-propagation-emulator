@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['reset_12',['reset',['../classrand__walks_1_1_wander.html#a02003ad585d964815e357163fc38df71',1,'rand_walks::Wander']]],
-  ['run_13',['run',['../classrand__walks_1_1_wander.html#a1658941c8fff64a866a2a5860f06bc5c',1,'rand_walks::Wander']]]
+  ['metricgraph_12',['MetricGraph',['../classrwe_1_1_metric_graph.html#aac48c1ec2f57ca29d32289d9b4376f40',1,'rwe::MetricGraph::MetricGraph()'],['../classrwe_1_1_metric_graph.html',1,'rwe::MetricGraph']]]
 ];

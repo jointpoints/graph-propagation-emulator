@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['fromfile_23',['fromFile',['../classrand__walks_1_1_metric_graph.html#a710d7ff4c66c66dc18621b4d2ca60d07',1,'rand_walks::MetricGraph']]]
+  ['fromgexf_28',['fromGEXF',['../classrwe_1_1_metric_graph.html#a3c90e2953e7bb660fb57730c7944f454',1,'rwe::MetricGraph']]],
+  ['fromrweg_29',['fromRWEG',['../classrwe_1_1_metric_graph.html#aae9ad45228ff5260be50950bc1bf97f3',1,'rwe::MetricGraph']]]
 ];

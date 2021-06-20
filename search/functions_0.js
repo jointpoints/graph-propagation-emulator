@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['checkvertex_22',['checkVertex',['../classrand__walks_1_1_metric_graph.html#a71146202dfb983af76df04482f9257ca',1,'rand_walks::MetricGraph']]]
+  ['checkvertex_27',['checkVertex',['../classrwe_1_1_metric_graph.html#abcb528b1b0634b44030665f609fb7a2d',1,'rwe::MetricGraph']]]
 ];

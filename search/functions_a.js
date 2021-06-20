@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['wander_35',['Wander',['../classrand__walks_1_1_wander.html#aa0c26f33aead9a04e8b4e06b52188454',1,'rand_walks::Wander']]]
+  ['_7emetricgraph_43',['~MetricGraph',['../classrwe_1_1_metric_graph.html#a39a4da2a763b7253a1cb1efca862fe61',1,'rwe::MetricGraph']]],
+  ['_7erwspace_44',['~RWSpace',['../classrwe_1_1_r_w_space.html#a8e4a385569b1064cea483864657602b2',1,'rwe::RWSpace']]]
 ];

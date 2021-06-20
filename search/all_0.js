@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['checkvertex_0',['checkVertex',['../classrand__walks_1_1_metric_graph.html#a71146202dfb983af76df04482f9257ca',1,'rand_walks::MetricGraph']]],
-  ['concurrency_1',['Concurrency',['../classrand__walks_1_1_wander.html#a6b81ed056291e40cd31f15e1dc78cc32',1,'rand_walks::Wander']]]
+  ['_2erweg_20file_20specification_0',['.rweg file specification',['../rweg_spec.html',1,'']]],
+  ['_2erwes_20file_20specification_1',['.rwes file specification',['../rwes_spec.html',1,'']]]
 ];

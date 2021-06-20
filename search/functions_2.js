@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['getedgelength_24',['getEdgeLength',['../classrand__walks_1_1_metric_graph.html#aefba96b5b9dc50402be9a7547f3cea9a',1,'rand_walks::MetricGraph']]],
-  ['getvertexcount_25',['getVertexCount',['../classrand__walks_1_1_metric_graph.html#ab46296bed7a7c5a29f5c3829de273d7a',1,'rand_walks::MetricGraph']]]
+  ['getedgelength_30',['getEdgeLength',['../classrwe_1_1_metric_graph.html#a5533a0ee29d64101b87194ec43e0750e',1,'rwe::MetricGraph']]],
+  ['getvertexlist_31',['getVertexList',['../classrwe_1_1_metric_graph.html#af26bf1dd41f82dad786b1f4fa8564bb6',1,'rwe::MetricGraph']]]
 ];

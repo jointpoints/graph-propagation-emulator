@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['kill_27',['kill',['../classrand__walks_1_1_wander.html#a490251272659f1cf985fa38bfe0fb160',1,'rand_walks::Wander']]]
+  ['kill_33',['kill',['../classrwe_1_1_r_w_space.html#ac00d875364129286488fdb969f5fb009',1,'rwe::RWSpace']]]
 ];

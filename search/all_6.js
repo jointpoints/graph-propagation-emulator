@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['metricgraph_9',['MetricGraph',['../classrand__walks_1_1_metric_graph.html',1,'rand_walks::MetricGraph'],['../classrand__walks_1_1_metric_graph.html#a7ad36180b25f5a1b7dafaf2aa267ae28',1,'rand_walks::MetricGraph::MetricGraph()']]]
+  ['install_20random_20walks_20emulator_9',['Install Random Walks Emulator',['../saa_installation.html',1,'']]],
+  ['invalidate_10',['invalidate',['../classrwe_1_1_r_w_space.html#a73d9415c8fbce1116ce8352dbcd733eb',1,'rwe::RWSpace']]]
 ];

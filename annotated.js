@@ -1,7 +1,7 @@
 var annotated =
 [
-    [ "rand_walks", null, [
-      [ "MetricGraph", "classrand__walks_1_1_metric_graph.html", "classrand__walks_1_1_metric_graph" ],
-      [ "Wander", "classrand__walks_1_1_wander.html", "classrand__walks_1_1_wander" ]
+    [ "rwe", null, [
+      [ "MetricGraph", "classrwe_1_1_metric_graph.html", "classrwe_1_1_metric_graph" ],
+      [ "RWSpace", "classrwe_1_1_r_w_space.html", "classrwe_1_1_r_w_space" ]
     ] ]
 ];

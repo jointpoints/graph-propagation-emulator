@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['kill_8',['kill',['../classrand__walks_1_1_wander.html#a490251272659f1cf985fa38bfe0fb160',1,'rand_walks::Wander']]]
+  ['home_20page_8',['Home page',['../index.html',1,'']]]
 ];

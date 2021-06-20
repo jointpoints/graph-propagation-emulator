@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['wander_17',['Wander',['../classrand__walks_1_1_wander.html',1,'rand_walks::Wander'],['../classrand__walks_1_1_wander.html#aa0c26f33aead9a04e8b4e06b52188454',1,'rand_walks::Wander::Wander()']]]
+  ['reset_16',['reset',['../classrwe_1_1_r_w_space.html#ae6fae83222978d2f6175f4827d18c8a8',1,'rwe::RWSpace']]],
+  ['run_5fsaturation_17',['run_saturation',['../classrwe_1_1_r_w_space.html#af2d84068e06215ec4ad24beb5082e9c1',1,'rwe::RWSpace']]],
+  ['rwspace_18',['RWSpace',['../classrwe_1_1_r_w_space.html',1,'rwe::RWSpace'],['../classrwe_1_1_r_w_space.html#a0a1c566661a2bd523d90743d641a9b09',1,'rwe::RWSpace::RWSpace()']]]
 ];

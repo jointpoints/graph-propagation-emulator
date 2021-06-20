@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['wander_21',['Wander',['../classrand__walks_1_1_wander.html',1,'rand_walks']]]
+  ['rwspace_26',['RWSpace',['../classrwe_1_1_r_w_space.html',1,'rwe']]]
 ];

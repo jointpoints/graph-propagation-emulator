@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['installation_40',['Installation',['../installation.html',1,'']]]
+  ['basic_20theory_20and_20definitions_47',['Basic theory and definitions',['../theory.html',1,'']]]
 ];

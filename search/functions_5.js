@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['metricgraph_28',['MetricGraph',['../classrand__walks_1_1_metric_graph.html#a7ad36180b25f5a1b7dafaf2aa267ae28',1,'rand_walks::MetricGraph']]]
+  ['metricgraph_34',['MetricGraph',['../classrwe_1_1_metric_graph.html#aac48c1ec2f57ca29d32289d9b4376f40',1,'rwe::MetricGraph']]]
 ];

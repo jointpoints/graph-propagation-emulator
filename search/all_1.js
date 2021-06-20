@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['fromfile_2',['fromFile',['../classrand__walks_1_1_metric_graph.html#a710d7ff4c66c66dc18621b4d2ca60d07',1,'rand_walks::MetricGraph']]]
+  ['basic_20theory_20and_20definitions_2',['Basic theory and definitions',['../theory.html',1,'']]]
 ];

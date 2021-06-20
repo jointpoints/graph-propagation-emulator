@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['installation_6',['Installation',['../installation.html',1,'']]],
-  ['invalidate_7',['invalidate',['../classrand__walks_1_1_wander.html#a7f018c43458c3e1d8764b562fb1d01bf',1,'rand_walks::Wander']]]
+  ['getedgelength_6',['getEdgeLength',['../classrwe_1_1_metric_graph.html#a5533a0ee29d64101b87194ec43e0750e',1,'rwe::MetricGraph']]],
+  ['getvertexlist_7',['getVertexList',['../classrwe_1_1_metric_graph.html#af26bf1dd41f82dad786b1f4fa8564bb6',1,'rwe::MetricGraph']]]
 ];

@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['operator_3d_10',['operator=',['../classrand__walks_1_1_metric_graph.html#a4a4f6cf7e315765658791c3cb90be4c4',1,'rand_walks::MetricGraph']]],
-  ['outputedgelist_11',['outputEdgeList',['../classrand__walks_1_1_metric_graph.html#a7d8c3cf7bcc193f5e8044611fe908f65',1,'rand_walks::MetricGraph']]]
+  ['kill_11',['kill',['../classrwe_1_1_r_w_space.html#ac00d875364129286488fdb969f5fb009',1,'rwe::RWSpace']]]
 ];
