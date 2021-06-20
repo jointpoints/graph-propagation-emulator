@@ -2,7 +2,7 @@
 
 ## Brief
 
-This repository houses a C++ computer program and respective library contained within the `rand_walks` namespace that emulate random walks on metric graphs. Currently, this program is in the state of working prototype, thus, any of its contents may eventually become subjects to significant changes in the foreseeable future.
+This repository houses a C++ computer program and respective library contained within the `rwe` namespace that emulate random walks on metric graphs. Currently, this program is in the state of working prototype, thus, any of its contents may eventually become subjects to significant changes in the foreseeable future.
 
 ## How to use it?
 
