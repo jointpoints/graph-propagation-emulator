@@ -1,6 +1,4 @@
-# Random Walks Emulator   ₀.₁
-
-**| [Brief](#brief) | [How to use it?](#how-to-use-it) | [Copyright](#copyright) | [License](#license) |**
+# Random Walks Emulator v.0.2
 
 ## Brief
 
@@ -8,11 +6,11 @@ This repository houses a C++ computer program and respective library contained w
 
 ## How to use it?
 
-You may find technical documentation, description of basic theory, installation guidelines, practical tutorials and more at [the web-site of this project](https://jointpoints.github.io/random-walks/).
+You may find technical documentation, description of basic theory and installation guidelines at [the web-site of this project](https://jointpoints.github.io/random-walks/).
 
 ## Copyright
 
-This program has been developed by Andrei Eliseev (JointPoints) in 2021 as a part of term paper.
+This program has been developed by Andrei Eliseev (JointPoints) in 2021 as a part of one's term paper.
 
 ## License
 
