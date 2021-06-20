@@ -1,5 +1,5 @@
 // Create empty graph
-rand_walks::MetricGraph my_graph;
+rwe::MetricGraph my_graph;
 
 // Add undirected edge 1 --- 2 of length 15.5
 // and directed edge 0 --> 1 of length 8.0

@@ -12,7 +12,7 @@
 
 
 
-#include "../../wander/wander.hpp"
+#include "../../rw_space/rw_space.hpp"
 #include "../ui_common.hpp"
 #include <chrono>   // needed for "chrono" and "duration_cast"
 #include <fstream>  // needed for "fstream" and "regex_match"
@@ -27,12 +27,12 @@ enum ScenarioParseStates
 	TOP,                                // expect a top-level command ("graph")
 	GRAPH_FILE,                         // expect a file name with a graph
 	GRAPH_BODY_BEGIN,                   // expect a '{' character for a graph block
-	GRAPH_BODY,                         // expect a graph command ("epsilon-wander") or a '}' character
-	EPSILON_WANDER_BEGIN,               // expect a '{' character for an epsilon-wander block
-	EPSILON_WANDER_ARG,                 // expect an epsilon-wander argument ("start-vertex", "epsilon", "time-delta", "use-skip-forward") or a '}' character
-	EPSILON_WANDER_INT_VALUES_BEGIN,    // expect a ':' character before integer values inside an epsilon-wander block
-	EPSILON_WANDER_REAL_VALUES_BEGIN,   // expect a ':' character before real values inside an epsilon-wander block
-	EPSILON_WANDER_BOOL_VALUES_BEGIN,   // expect a ':' character before bool values inside an epsilon-wander block
+	GRAPH_BODY,                         // expect a graph command ("epsilon-saturation") or a '}' character
+	EPSILON_WANDER_BEGIN,               // expect a '{' character for an epsilon-saturation block
+	EPSILON_WANDER_ARG,                 // expect an epsilon-saturation argument ("start-vertex", "epsilon", "time-delta", "use-skip-forward") or a '}' character
+	EPSILON_WANDER_INT_VALUES_BEGIN,    // expect a ':' character before integer values inside an epsilon-saturation block
+	EPSILON_WANDER_REAL_VALUES_BEGIN,   // expect a ':' character before real values inside an epsilon-saturation block
+	EPSILON_WANDER_BOOL_VALUES_BEGIN,   // expect a ':' character before bool values inside an epsilon-saturation block
 	EPSILON_WANDER_INT_VALUES,          // expect an integer value, an array of integer values, or generator of integer values
 	EPSILON_WANDER_REAL_VALUES,         // expect a real value, an array of real values, or generator of real values
 	EPSILON_WANDER_BOOL_VALUES,         // expect a bool value or an array of bool values
@@ -44,7 +44,7 @@ enum ScenarioParseStates
 
 // Run epsilon wander emulation
 #define EMULATION_ERROR(what)   throw std::domain_error(what);
-void runEpsilonWander(AppSettings const &settings, rand_walks::Wander &epsilon_wander,
+void runEpsilonWander(AppSettings const &settings, rwe::RWSpace &rw_space,
                       std::vector<uint32_t> &epsilon_wander_start_vertex, std::vector<long double> &epsilon_wander_epsilon,
                       std::vector<long double> &epsilon_wander_time_delta, std::vector<bool> &epsilon_wander_use_skip_forward,
                       uint8_t const verbosity_level)
@@ -78,10 +78,10 @@ void runEpsilonWander(AppSettings const &settings, rand_walks::Wander &epsilon_w
 	for (uint32_t time_delta_i = 0; time_delta_i < epsilon_wander_time_delta.size(); ++time_delta_i)
 	for (uint32_t use_skip_forward_i = 0; use_skip_forward_i < epsilon_wander_use_skip_forward.size(); ++use_skip_forward_i)
 	{
-		epsilon_wander.reset();
+		rw_space.reset();
 		try
 		{
-			long double saturation_time = epsilon_wander.run(epsilon_wander_start_vertex[start_vertex_i], epsilon_wander_epsilon[epsilon_i], epsilon_wander_time_delta[time_delta_i], epsilon_wander_use_skip_forward[use_skip_forward_i]); \
+			long double saturation_time = rw_space.run_saturation(epsilon_wander_start_vertex[start_vertex_i], epsilon_wander_epsilon[epsilon_i], epsilon_wander_time_delta[time_delta_i], epsilon_wander_use_skip_forward[use_skip_forward_i]);
 			switch (verbosity_level)
 			{
 			// raw output
@@ -103,6 +103,7 @@ void runEpsilonWander(AppSettings const &settings, rand_walks::Wander &epsilon_w
 		}
 		catch (std::invalid_argument &e) {if (verbosity_level == 0) std::cout << '\n'; EMULATION_ERROR("The start vertex does not exist.");}
 		catch (std::logic_error &e) {if (verbosity_level == 0) std::cout << '\n'; EMULATION_ERROR("Unknown exception.");}
+		catch (...) {if (verbosity_level == 0) std::cout << '\n'; EMULATION_ERROR("Unknown exception.");}
 	}
 	auto time_stop = std::chrono::high_resolution_clock::now();
 
@@ -149,9 +150,9 @@ void cmd_run(AppSettings &settings, std::vector<std::string> const &params)
 	std::string                 curr_argument_string;
 	ScenarioParseStates         parser_state = TOP;
 
-	rand_walks::MetricGraph     graph;
+	rwe::MetricGraph     graph;
 
-	rand_walks::Wander          epsilon_wander(graph);
+	rwe::RWSpace         rw_space(graph);
 	std::vector<uint32_t>       epsilon_wander_start_vertex;
 	std::vector<long double>    epsilon_wander_epsilon;
 	std::vector<long double>    epsilon_wander_time_delta;
@@ -225,10 +226,25 @@ void cmd_run(AppSettings &settings, std::vector<std::string> const &params)
 					break;
 				}
 			}
+			if (symbol == '#')
+			{
+				if (token != "")
+				{
+					tokens.push_back(token);
+					token = "";
+				}
+				lexer_state = COMMENT;
+				break;
+			}
 			if (symbol == '"')
 				ignore_ws_regime = !ignore_ws_regime;
 			else
 				token += symbol;
+			break;
+		// expect comment
+		case COMMENT:
+			if ((symbol == '\n') || (symbol == '\r'))
+				lexer_state = SPACE;
 			break;
 		}
 	}
@@ -267,6 +283,10 @@ void cmd_run(AppSettings &settings, std::vector<std::string> const &params)
 
 		// expect a file name with a graph
 		case GRAPH_FILE:
+			if (tokens[token_i].size() < 5)
+				EMULATION_ERROR("Unsupported file format.");
+			if ((tokens[token_i].substr(tokens[token_i].size() - 5) != ".rweg") && (tokens[token_i].substr(tokens[token_i].size() - 5) != ".gexf"))
+				EMULATION_ERROR("Unsupported file format.");
 			in_file.open(tokens[token_i], std::fstream::in);
 			if (!in_file.is_open())
 			{
@@ -274,8 +294,11 @@ void cmd_run(AppSettings &settings, std::vector<std::string> const &params)
 				EMULATION_ERROR("Graph '" + tokens[token_i] + "' does not exist.");
 			}
 			in_file.close();
-			graph = rand_walks::MetricGraph();
-			graph.fromFile(tokens[token_i]);
+			graph = rwe::MetricGraph();
+			if (tokens[token_i].substr(tokens[token_i].size() - 5) == ".rweg")
+				graph.fromRWEG(tokens[token_i]);
+			else
+				graph.fromGEXF(tokens[token_i]);
 			switch (verbosity_level)
 			{
 			// raw output
@@ -302,9 +325,9 @@ void cmd_run(AppSettings &settings, std::vector<std::string> const &params)
 			}
 			SYNTAX_ERROR("Expected an opening of graph block. Found '" + tokens[token_i] + "' instead.");
 		
-		// expect a graph command ("epsilon-wander") or a '}' character
+		// expect a graph command ("epsilon-saturation") or a '}' character
 		case GRAPH_BODY:
-			if (tokens[token_i] == "epsilon-wander")
+			if (tokens[token_i] == "epsilon-saturation")
 			{
 				parser_state = EPSILON_WANDER_BEGIN;
 				break;
@@ -316,16 +339,16 @@ void cmd_run(AppSettings &settings, std::vector<std::string> const &params)
 			}
 			SYNTAX_ERROR("Graph block contains unknown command '" + tokens[token_i] + "'.");
 		
-		// expect a '{' character for an epsilon-wander block
+		// expect a '{' character for an epsilon-saturation block
 		case EPSILON_WANDER_BEGIN:
 			if (tokens[token_i] == "{")
 			{
 				parser_state = EPSILON_WANDER_ARG;
 				break;
 			}
-			SYNTAX_ERROR("Expected an opening of epsilon-wander block. Found '" + tokens[token_i] + "' instead.");
+			SYNTAX_ERROR("Expected an opening of epsilon-saturation block. Found '" + tokens[token_i] + "' instead.");
 
-		// expect an epsilon-wander argument ("start-vertex", "epsilon", "time-delta", "use-skip-forward") or a '}' character
+		// expect an epsilon-saturation argument ("start-vertex", "epsilon", "time-delta", "use-skip-forward") or a '}' character
 		case EPSILON_WANDER_ARG:
 			curr_argument_string = tokens[token_i];
 			if (tokens[token_i] == "start-vertex")
@@ -348,13 +371,13 @@ void cmd_run(AppSettings &settings, std::vector<std::string> const &params)
 			}
 			if (tokens[token_i] == "}")
 			{
-				runEpsilonWander(settings, epsilon_wander, epsilon_wander_start_vertex, epsilon_wander_epsilon, epsilon_wander_time_delta, epsilon_wander_use_skip_forward, verbosity_level);
+				runEpsilonWander(settings, rw_space, epsilon_wander_start_vertex, epsilon_wander_epsilon, epsilon_wander_time_delta, epsilon_wander_use_skip_forward, verbosity_level);
 				parser_state = GRAPH_BODY;
 				break;
 			}
-			SYNTAX_ERROR("Epsilon wander block contains unknown command '" + tokens[token_i] + "'.");
+			SYNTAX_ERROR("Epsilon saturation block contains unknown command '" + tokens[token_i] + "'.");
 
-		// expect a ':' character before integer values inside an epsilon-wander block
+		// expect a ':' character before integer values inside an epsilon-saturation block
 		case EPSILON_WANDER_INT_VALUES_BEGIN:
 			if (tokens[token_i] == ":")
 			{
@@ -363,7 +386,7 @@ void cmd_run(AppSettings &settings, std::vector<std::string> const &params)
 			}
 			SYNTAX_ERROR("Expected a colon after the name of the parameter '" + curr_argument_string + "'. Found '" + tokens[token_i] + "' instead.");
 		
-		// expect a ':' character before real values inside an epsilon-wander block
+		// expect a ':' character before real values inside an epsilon-saturation block
 		case EPSILON_WANDER_REAL_VALUES_BEGIN:
 			if (tokens[token_i] == ":")
 			{
@@ -372,7 +395,7 @@ void cmd_run(AppSettings &settings, std::vector<std::string> const &params)
 			}
 			SYNTAX_ERROR("Expected a colon after the name of the parameter '" + curr_argument_string + "'. Found '" + tokens[token_i] + "' instead.");
 		
-		// expect a ':' character before bool values inside an epsilon-wander block
+		// expect a ':' character before bool values inside an epsilon-saturation block
 		case EPSILON_WANDER_BOOL_VALUES_BEGIN:
 			if (tokens[token_i] == ":")
 			{
@@ -390,7 +413,7 @@ void cmd_run(AppSettings &settings, std::vector<std::string> const &params)
 			}
 			if (tokens[token_i] == "}")
 			{
-				runEpsilonWander(settings, epsilon_wander, epsilon_wander_start_vertex, epsilon_wander_epsilon, epsilon_wander_time_delta, epsilon_wander_use_skip_forward, verbosity_level);
+				runEpsilonWander(settings, rw_space, epsilon_wander_start_vertex, epsilon_wander_epsilon, epsilon_wander_time_delta, epsilon_wander_use_skip_forward, verbosity_level);
 				parser_state = GRAPH_BODY;
 				break;
 			}
@@ -431,7 +454,7 @@ void cmd_run(AppSettings &settings, std::vector<std::string> const &params)
 			}
 			if (tokens[token_i] == "}")
 			{
-				runEpsilonWander(settings, epsilon_wander, epsilon_wander_start_vertex, epsilon_wander_epsilon, epsilon_wander_time_delta, epsilon_wander_use_skip_forward, verbosity_level);
+				runEpsilonWander(settings, rw_space, epsilon_wander_start_vertex, epsilon_wander_epsilon, epsilon_wander_time_delta, epsilon_wander_use_skip_forward, verbosity_level);
 				parser_state = GRAPH_BODY;
 				break;
 			}
@@ -472,7 +495,7 @@ void cmd_run(AppSettings &settings, std::vector<std::string> const &params)
 			}
 			if (tokens[token_i] == "}")
 			{
-				runEpsilonWander(settings, epsilon_wander, epsilon_wander_start_vertex, epsilon_wander_epsilon, epsilon_wander_time_delta, epsilon_wander_use_skip_forward, verbosity_level);
+				runEpsilonWander(settings, rw_space, epsilon_wander_start_vertex, epsilon_wander_epsilon, epsilon_wander_time_delta, epsilon_wander_use_skip_forward, verbosity_level);
 				parser_state = GRAPH_BODY;
 				break;
 			}

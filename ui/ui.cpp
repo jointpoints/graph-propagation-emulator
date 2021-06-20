@@ -8,7 +8,9 @@
 #include "ui.hpp"
 
 #include "cmd/cmd_getconfig.hpp"
+#include "cmd/cmd_gexf2rweg.hpp"
 #include "cmd/cmd_run.hpp"
+#include "cmd/cmd_rweg2gexf.hpp"
 #include "cmd/cmd_setconfig.hpp"
 
 #include <fstream>      // needed for "fstream"
@@ -108,9 +110,9 @@ void run(void)
 	std::string                 token               = "";
 	std::vector<std::string>    command_tokens;
 
-	std::vector<std::string> const              cmd_names{"getconfig", "run", "setconfig"};
-	void                                      (*cmd_functions[])(AppSettings &, std::vector<std::string> const &) = {cmd_getconfig, cmd_run, cmd_setconfig};
-	std::string const                           cmd_help[] = {"cmdgc", "cmdr", "cmdsc"};
+	std::vector<std::string> const              cmd_names{"getconfig", "gexf2rweg", "run", "rweg2gexf", "setconfig"};
+	void                                      (*cmd_functions[])(AppSettings &, std::vector<std::string> const &) = {cmd_getconfig, cmd_gexf2rweg, cmd_run, cmd_rweg2gexf, cmd_setconfig};
+	std::string const                           cmd_help[] = {"cmdgc", "cmdgtr", "cmdr", "cmdrtg", "cmdsc"};
 	auto                                        cmd_position = cmd_names.end();
 
 	std::fstream technical;
@@ -122,7 +124,7 @@ void run(void)
 	SetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE), ENABLE_PROCESSED_OUTPUT | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
 #	endif
 
-	std::cout << "Random Walks Emulator v.0.1 by Andrei Eliseev (JointPoints), 2021\nProject web-site: https://jointpoints.github.io/random-walks/\n";
+	std::cout << "Random Walks Emulator v.0.2 by Andrei Eliseev (JointPoints), 2021\nProject web-site: https://jointpoints.github.io/random-walks/\n";
 	std::cout << "Type 'help' to get the full list of available commands with their short descriptions.\n\n";
 
 	// 2. Await for the next command
@@ -166,6 +168,9 @@ void run(void)
 					ignore_ws_regime = !ignore_ws_regime;
 				else
 					token += command_symbol;
+				break;
+			// DO NOT expect comments
+			case COMMENT:
 				break;
 			}
 		}

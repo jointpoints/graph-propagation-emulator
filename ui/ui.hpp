@@ -12,7 +12,7 @@
 
 
 
-#include "../wander/wander.hpp"
+#include "../rw_space/rw_space.hpp"
 #include <string>
 
 

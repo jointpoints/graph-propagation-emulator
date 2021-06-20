@@ -22,15 +22,15 @@
 
 
 
-namespace rand_walks
+namespace rwe
 {
 
 
 
 
 
-	// Forward declaration of Wander class
-	class Wander;
+	// Forward declaration of RWSpace class
+	class RWSpace;
 
 
 
@@ -79,7 +79,7 @@ namespace rand_walks
 		 * 
 		 * Destroys the metric graph.
 		 * 
-		 * \note All \c Wander objects associated with the respective metric graph will be
+		 * \note All \c RWSpace objects associated with the respective metric graph will be
 		 * automatically transferred into the \c dead state.
 		 */
 		~MetricGraph    (void);
@@ -102,9 +102,9 @@ namespace rand_walks
 		 * 
 		 * \param   other   A metric graph to move from.
 		 * 
-		 * \note All \c Wander objects associated with the old metric graph will remain
+		 * \note All \c RWSpace objects associated with the old metric graph will remain
 		 * associated (they will not be replaced), however, they will be automatically
-		 * transferred into the \c invalid state. All \c Wander objects associated with
+		 * transferred into the \c invalid state. All \c RWSpace objects associated with
 		 * the new metric graph will remain associated and their state will not be
 		 * changed.
 		 * 
@@ -131,18 +131,16 @@ namespace rand_walks
 		 * * \c true if vertex is found in graph;
 		 * * \c false otherwise.
 		 */
-		bool const          checkVertex     (uint32_t const vertex)                             const;
+		bool const                      checkVertex     (uint32_t const vertex)                             const;
 
 		/**
-		 * Gets number of vertices in the graph
+		 * Get vector of vertices IDs
 		 * 
-		 * This function helps to find out how many vertices there are in the corresponding graph.
+		 * This function helps to find out the IDs of the vertices in the corresponding graph.
 		 * 
-		 * \return Number of vertices, i.e. \f$|V|\f$.
-		 * 
-		 * \warning This is a future feature, currently it has no effect.
+		 * \return \c std::vector of vertices IDs, i.e. \f$V\f$.
 		 */
-		uint32_t const      getVertexCount  (void)                                              const;
+		std::vector<uint32_t> const     getVertexList   (void)                                              const;
 
 		/**
 		 * Gets length of the edge
@@ -158,7 +156,7 @@ namespace rand_walks
 		 * \f$v \rightarrow w\f$ edge exists;
 		 * * Positive infinity, otherwise.
 		 */
-		long double const   getEdgeLength   (uint32_t const out_vertex, uint32_t in_vertex)     const;
+		long double const               getEdgeLength   (uint32_t const out_vertex, uint32_t in_vertex)     const;
 
 		/**
 		 * Prints edge list into the stream
@@ -173,7 +171,7 @@ namespace rand_walks
 		 * Expected output:
 		 * \include MetricGraph_outputEdgeList_output.txt
 		 */
-		void                outputEdgeList  (std::ostream &output_stream)                       const;
+		void                            outputEdgeList  (std::ostream &output_stream)                       const;
 
 		///@}
 
@@ -254,7 +252,7 @@ namespace rand_walks
 		 * \param   is_directed     If \c true, desired type of edge will be \f$v \rightarrow w\f$,
 		 *                          if \c false, desired type of edge will be \f$v-w\f$.
 		 * 
-		 * \note All \c Wander objects associated with the respective metric graph will be
+		 * \note All \c RWSpace objects associated with the respective metric graph will be
 		 * automatically transferred into the \c invalid state.
 		 * 
 		 * \throw invalid_argument if desired length is non-positive.
@@ -274,18 +272,57 @@ namespace rand_walks
 		///@{
 
 		/**
+		 * Save graph to \c gexf file
+		 * 
+		 * This function saves respective metric graph to an XML-like file of \c gexf format with
+		 * the name specified by user. If the last five symbols of target file name are not
+		 * <tt>.gexf</tt>, they will be added automatically.
+		 * 
+		 * The lengths of edges will be stored in the \c weight attribute of corresponding edges.
+		 * 
+		 * \param   file_name   Name of a target \c gexf file.
+		 * \param   rewrite     If \c false and a file with the specified name already exists, then
+		 *                      it will not be rewritten but the ordinal number will be added to the
+		 *                      name in parentheses (like <em>'My file name (1).gexf'</em>, <em>'My
+		 *                      file name (2).gexf'</em> and so on).
+		 */
+		void    toGEXF      (std::string const file_name = "Saved files/My metric graph", bool const rewrite = false)   const;
+
+		/**
+		 * Load graph from \c gexf file
+		 * 
+		 * This function loads graph from the specified \c gexf file and merges it with the existing
+		 * one by adding all absent vertices, edges and updating their lengths and directions. If a
+		 * file with the specified name does not exist, the original data is left unchanged.
+		 * 
+		 * The following additional requirements need to be met:
+		 * 
+		 * * Version of the file must be <em>1.2draft</em>;
+		 * * Length of each edge must be stored in the \c weight attribute;
+		 * * IDs of vertices must meet the requirements mentioned at the top of this page.
+		 * 
+		 * Isolated vertices are omitted. Mutual edges are treated as undirected. If edge with the same
+		 * \c source and \c target is repeated multiple times, it will be treated as it is described in
+		 * a table for \ref updateEdge function in the respective order of repetitions.
+		 * 
+		 * \param   file_name   Name of a source \c gexf file.
+		 */
+		void    fromGEXF    (std::string const file_name);
+
+		/**
 		 * Save graph to \c rweg file
 		 * 
 		 * This function saves respective metric graph to a binary file of \c rweg format with
 		 * the name specified by user. If the last five symbols of target file name are not
-		 * <tt>.rweg</tt>, they will be added automatically. If a file with the specified name
-		 * already exists, it will not be rewritten but the ordinal number will be added to the
-		 * name in parentheses (like <em>'My file name (1).rweg'</em>, <em>'My file name (2).rweg'</em>
-		 * and so on).
+		 * <tt>.rweg</tt>, they will be added automatically.
 		 * 
 		 * \param   file_name   Name of a target \c rweg file.
+		 * \param   rewrite     If \c false and a file with the specified name already exists, then
+		 *                      it will not be rewritten but the ordinal number will be added to the
+		 *                      name in parentheses (like <em>'My file name (1).rweg'</em>, <em>'My
+		 *                      file name (2).rweg'</em> and so on).
 		 */
-		void    toFile      (std::string const file_name = "Saved files/My metric graph")   const;
+		void    toRWEG      (std::string const file_name = "Saved files/My metric graph", bool const rewrite = false)   const;
 
 		/**
 		 * Load graph from \c rweg file
@@ -296,11 +333,11 @@ namespace rand_walks
 		 * 
 		 * \param   file_name   Name of a source \c rweg file.
 		 */
-		void    fromFile    (std::string const file_name);
+		void    fromRWEG    (std::string const file_name);
 
 		///@}
 	private:
-		friend class Wander;
+		friend class RWSpace;
 
 		using VertexList            = std::vector<uint32_t>;
 		using LengthList            = std::vector<long double>;
@@ -310,7 +347,7 @@ namespace rand_walks
 		using Edge                  = std::pair<uint32_t, uint32_t>;
 
 		EdgeList                edges;
-		std::vector<Wander *>   associated_wanders;
+		std::vector<RWSpace *>   associated_wanders;
 
 		// Access
 		Edge                getEdge             (uint32_t const out_vertex, uint32_t const in_vertex, bool const is_directed = true, bool const strict_mode = false) const;
@@ -321,7 +358,7 @@ namespace rand_walks
 
 
 
-} // rand_walks
+} // rwe
 
 
 

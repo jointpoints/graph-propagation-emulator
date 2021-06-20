@@ -1,5 +1,5 @@
 #!/bin/bash
-version='0.1'
+version='0.2'
 
 
 
@@ -25,7 +25,7 @@ compiler_min_version='4.8.1'
 object_folder='random_walks_emulator_obj'
 out_folder="Random Walks Emulator (build, v.$version)"
 out_file='rwe'
-units=('metric_graph' 'wander' 'ui' 'main')
+units=('metric_graph' 'rw_space' 'ui' 'main')
 
 
 
@@ -248,14 +248,14 @@ echo '3. Compilation...'
 mkdir -p $object_folder
 for unit_i in `seq 0 $((${#units[@]} - 1))`
 do
-	Create-Object-File "    3.$(($unit_i + 1))" $unit_i
+	Create-Object-File "    3.$(($unit_i + 1))." $unit_i
 	if [ $? -eq 1 ]; then
 		exit
 	fi
 done
 # Linker
 mkdir -p "$out_folder"
-Create-Exe "    3.$((${#units[@]} + 1))"
+Create-Exe "    3.$((${#units[@]} + 1))."
 if [ $? -eq 1 ]; then
 	exit
 fi
@@ -273,12 +273,15 @@ rm -rf $object_folder
 mkdir -p "$out_folder/My graphs"
 mkdir -p "$out_folder/My scenarios"
 mkdir -p "$out_folder/Technical files"
-cp _util/gs1 "$out_folder/My graphs/Sample graph 1.rweg"
+cp _util/gs2 "$out_folder/My graphs/Star2.rweg"
+cp _util/gs3 "$out_folder/My graphs/Star3.rweg"
 cp _util/ss1 "$out_folder/My scenarios/Basic.rwes"
 cp _util/tfrm "$out_folder/Technical files/ReadMe.txt"
 cp _util/cmdgc "$out_folder/Technical files/cmdgc"
+cp _util/cmdgtr "$out_folder/Technical files/cmdgtr"
 cp _util/cmdh "$out_folder/Technical files/cmdh"
 cp _util/cmdr "$out_folder/Technical files/cmdr"
+cp _util/cmdrtg "$out_folder/Technical files/cmdrtg"
 cp _util/cmdsc "$out_folder/Technical files/cmdsc"
 echo '(success)'
 

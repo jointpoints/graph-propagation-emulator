@@ -3,7 +3,9 @@ List of available commands
 |  Command  |                       Description                       |
 |-----------|---------------------------------------------------------|
 | getconfig | Prints current global parameters of emulator.           |
+| gexf2rweg | Converts gexf file into rweg file.                      |
 | run       | Runs the specified Random Walks Emulator Scenario file. |
+| rweg2gexf | Converts rweg file into gexf file.                      |
 | setconfig | Alters global parameters of emulator.                   |
 | exit      | Exits the program.                                      |
 

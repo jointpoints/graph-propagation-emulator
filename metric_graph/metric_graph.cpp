@@ -5,11 +5,12 @@
  * \author
  *       Andrei Eliseev (JointPoints), 2021
  */
-#include "../wander/wander.hpp"
+#include "../rw_space/rw_space.hpp"
 
 #include <stdexcept>    // needed for exceptions
 #include <algorithm>    // needed for "find_if", "find", "min", "max", "lower_bound"
 #include <fstream>      // needed for "fstream"
+#include <set>          // needed for "set"
 
 
 
@@ -21,7 +22,7 @@
 
 
 
-rand_walks::MetricGraph::MetricGraph(void) :
+rwe::MetricGraph::MetricGraph(void) :
 	edges(), associated_wanders()
 {
 	// Intended to be empty
@@ -29,7 +30,7 @@ rand_walks::MetricGraph::MetricGraph(void) :
 
 
 
-rand_walks::MetricGraph::~MetricGraph(void)
+rwe::MetricGraph::~MetricGraph(void)
 {
 	// 1. Kill all associated wanders
 	for (uint32_t wander_i = 0; wander_i < this->associated_wanders.size(); ++wander_i)
@@ -46,7 +47,7 @@ rand_walks::MetricGraph::~MetricGraph(void)
 
 
 
-rand_walks::MetricGraph & rand_walks::MetricGraph::operator=(rand_walks::MetricGraph &&other)
+rwe::MetricGraph & rwe::MetricGraph::operator=(rwe::MetricGraph &&other)
 {
 	// 1. Invalidate associated wanders
 	for (uint32_t wander_i = 0; wander_i < this->associated_wanders.size(); ++wander_i)
@@ -69,7 +70,7 @@ rand_walks::MetricGraph & rand_walks::MetricGraph::operator=(rand_walks::MetricG
 
 
 
-bool const rand_walks::MetricGraph::checkVertex(uint32_t const vertex) const
+bool const rwe::MetricGraph::checkVertex(uint32_t const vertex) const
 {
 	// 1. Check if <vertex> is present in the <id>'s of neighbourhoods
 	auto    comparator          = [](VertexView const curr_vertex, uint32_t const value){return curr_vertex.id < value;};
@@ -93,14 +94,22 @@ bool const rand_walks::MetricGraph::checkVertex(uint32_t const vertex) const
 
 
 
-uint32_t const rand_walks::MetricGraph::getVertexCount(void) const
+std::vector<uint32_t> const rwe::MetricGraph::getVertexList(void) const
 {
-	return 0; // TODO
+	std::set<uint32_t> vertices;
+
+	for (uint32_t vertex_i = 0; vertex_i < this->edges.size(); ++vertex_i)
+	{
+		vertices.insert(vertex_i);
+		vertices.insert(this->edges[vertex_i].adjacents.begin(), this->edges[vertex_i].adjacents.end());
+	}
+
+	return std::vector<uint32_t>(vertices.begin(), vertices.end());
 }
 
 
 
-long double const rand_walks::MetricGraph::getEdgeLength(uint32_t const out_vertex, uint32_t in_vertex) const
+long double const rwe::MetricGraph::getEdgeLength(uint32_t const out_vertex, uint32_t in_vertex) const
 {
 	// 1. Try to find corresponding edge
 	Edge edge = this->getEdge(out_vertex, in_vertex);
@@ -114,7 +123,7 @@ long double const rand_walks::MetricGraph::getEdgeLength(uint32_t const out_vert
 
 
 
-void rand_walks::MetricGraph::outputEdgeList(std::ostream &output_stream) const
+void rwe::MetricGraph::outputEdgeList(std::ostream &output_stream) const
 {
 	for (uint32_t vertex_1 = 0; vertex_1 < this->edges.size(); ++vertex_1)
 	{
@@ -128,7 +137,7 @@ void rand_walks::MetricGraph::outputEdgeList(std::ostream &output_stream) const
 
 
 
-rand_walks::MetricGraph::Edge rand_walks::MetricGraph::getEdge(uint32_t const out_vertex, uint32_t const in_vertex, bool const is_directed, bool const strict_mode) const
+rwe::MetricGraph::Edge rwe::MetricGraph::getEdge(uint32_t const out_vertex, uint32_t const in_vertex, bool const is_directed, bool const strict_mode) const
 {
 	uint32_t const  out_vertex_new      = (is_directed) ? (out_vertex) : (std::min(out_vertex, in_vertex));
 	uint32_t const  in_vertex_new       = (is_directed) ? (in_vertex)  : (std::max(out_vertex, in_vertex));
@@ -174,7 +183,7 @@ rand_walks::MetricGraph::Edge rand_walks::MetricGraph::getEdge(uint32_t const ou
 
 
 
-std::deque<rand_walks::MetricGraph::Edge> rand_walks::MetricGraph::getDepartingEdges(uint32_t const out_vertex) const
+std::deque<rwe::MetricGraph::Edge> rwe::MetricGraph::getDepartingEdges(uint32_t const out_vertex) const
 {
 	auto                out_comparator  = [](VertexView const curr_vertex, uint32_t const value){return curr_vertex.id < value;};
 	uint32_t const      max_index       = std::distance(this->edges.begin(), std::lower_bound(this->edges.begin(), this->edges.end(), out_vertex, out_comparator));
@@ -210,7 +219,7 @@ std::deque<rand_walks::MetricGraph::Edge> rand_walks::MetricGraph::getDepartingE
 
 
 
-void rand_walks::MetricGraph::updateEdge(uint32_t const out_vertex, uint32_t const in_vertex, long double const length, bool const is_directed)
+void rwe::MetricGraph::updateEdge(uint32_t const out_vertex, uint32_t const in_vertex, long double const length, bool const is_directed)
 {
 	// 1. <length> must be positive
 	if (length <= 0)
@@ -293,29 +302,310 @@ void rand_walks::MetricGraph::updateEdge(uint32_t const out_vertex, uint32_t con
 
 
 
-void rand_walks::MetricGraph::toFile(std::string const file_name) const
+void rwe::MetricGraph::toGEXF(std::string const file_name, bool const rewrite) const
+{
+	std::string const   file_format     = ".gexf";
+	std::string         file_name_new   = ((file_name.size() >= file_format.size()) && (file_name.substr(file_name.size() - file_format.size()) == file_format)) ? (file_name.substr(0, file_name.size() - file_format.size())) : (file_name);
+	std::fstream        out_file;
+
+	std::vector<uint32_t>   vertex_list;
+	uint64_t                edge_id         = 0;
+
+	// 1. Check if specified file already exists
+	if (!rewrite)
+	{
+		out_file.open(file_name_new + file_format, std::fstream::in);
+		if (out_file.is_open())
+		{
+			uint8_t file_number = 1;
+
+			out_file.close();
+			file_name_new += " (1)";
+			out_file.open(file_name_new + file_format, std::fstream::in);
+			while (out_file.is_open())
+			{
+				out_file.close();
+				file_name_new = file_name + " (" + std::to_string(++file_number) + ")";
+				out_file.open(file_name_new + file_format, std::fstream::in);
+			}
+		}
+		out_file.close();
+	}
+
+	// 2. Dump information about graph into this file
+	out_file.open(file_name_new + file_format, std::fstream::out);
+	out_file << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+	out_file << "<gexf xmlns=\"http://www.gexf.net/1.2draft\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.gexf.net/1.2draft http://www.gexf.net/1.2draft/gexf.xsd\" version=\"1.2\">\n";
+	out_file << "\t<meta>\n";
+	out_file << "\t\t<creator>Random Walks Emulator v.0.2 by Andrei Eliseev (JointPoints, https://jointpoints.github.io/random-walks/)</creator>\n";
+	out_file << "\t</meta>\n";
+	out_file << "\t<graph>\n";
+	out_file << "\t\t<nodes>\n";
+	vertex_list = this->getVertexList();
+	for (uint32_t vertex_i = 0; vertex_i < vertex_list.size(); ++vertex_i)
+		out_file << "\t\t\t<node id=\"" + std::to_string(vertex_list[vertex_i]) + "\" />\n";
+	out_file << "\t\t</nodes>\n";
+	out_file << "\t\t<edges>\n";
+	for (uint32_t vertex_1 = 0; vertex_1 < this->edges.size(); ++vertex_1)
+	{
+		VertexView const &curr_vertex = this->edges[vertex_1];
+		for (uint32_t vertex_2 = 0; vertex_2 < curr_vertex.adjacents.size(); ++vertex_2)
+			out_file << "\t\t\t<edge id=\"" + std::to_string(edge_id++) + "\" source=\"" + std::to_string(curr_vertex.id) + "\" target=\"" + \
+			            std::to_string(curr_vertex.adjacents[vertex_2]) + "\" type=\"" + ((curr_vertex.is_directed[vertex_2]) ? ("directed") : ("undirected")) + \
+			            "\" weight=\"" + std::to_string(curr_vertex.lengths[vertex_2]) + "\" />\n";
+	}
+	out_file << "\t\t</edges>\n";
+	out_file << "\t</graph>\n";
+	out_file << "</gexf>\n";
+	out_file.close();
+	
+	return;
+}
+
+
+
+void rwe::MetricGraph::fromGEXF(std::string const file_name)
+{
+	enum GEXFLexStates{SPACE, TOKEN};
+	enum GEXFParserStates{EDGE_BEGIN, ATTR_BEGIN, SOURCE_VALUE, TARGET_VALUE, TYPE_VALUE, WEIGHT_VALUE, SKIP_VALUE};
+
+	std::string const   file_format     = ".gexf";
+	std::fstream        in_file;
+
+	// 1. Open file and read data
+	in_file.open(((file_name.size() >= file_format.size()) && (file_name.substr(file_name.size() - file_format.size()) == file_format)) ? (file_name) : (file_name + file_format), std::fstream::in);
+	if (in_file.is_open())
+	{
+		GEXFLexStates                       lexer_state         = SPACE;
+		bool                                ignore_ws_regime    = false;
+		char                                symbol;
+		std::string                         token               = "";
+		std::vector<std::string>            tokens;
+		std::vector<std::string>::iterator  default_type_begin;
+		std::vector<std::string>::iterator  edges_begin;
+		std::vector<std::string>::iterator  edges_end;
+
+		GEXFParserStates                    parser_state        = EDGE_BEGIN;
+		uint32_t                            out_vertex(0), in_vertex(0);
+		long double                         length(0.0);
+		bool                                is_directed(false);
+		bool                                default_is_directed(false);
+		bool                                source_specified    = false;
+		bool                                target_specified    = false;
+		bool                                weight_specified    = false;
+
+		// 1.1. Tokenise the text from file
+		while (in_file >> std::noskipws >> symbol)
+		{
+			switch (lexer_state)
+			{
+			// expect space
+			case SPACE:
+				if ((symbol == ' ') || (symbol == '\t') || (symbol == '\n') || (symbol == '\r'))
+					break;
+				lexer_state = TOKEN;
+			// expect token
+			case TOKEN:
+				if (!ignore_ws_regime)
+				{
+					if ((symbol == '>') || (symbol == '='))
+					{
+						if (token != "")
+						{
+							tokens.push_back(token);
+							token = "";
+						}
+						lexer_state = SPACE;
+						break;
+					}
+					if ((symbol == ' ') || (symbol == '\t') || (symbol == '\n') || (symbol == '\r'))
+					{
+						if (token != "")
+						{
+							tokens.push_back(token);
+							token = "";
+						}
+						lexer_state = SPACE;
+						break;
+					}
+				}
+				if (symbol == '"')
+					ignore_ws_regime = !ignore_ws_regime;
+				else
+					token += symbol;
+				break;
+			}
+		}
+
+		// 1.2. Find out the default edge type
+		default_type_begin = std::find(tokens.begin(), tokens.end(), "defaultedgetype");
+		if (default_type_begin == tokens.end() - 1)
+			throw std::runtime_error("Unable to find out the default edge type.");
+		if (default_type_begin != tokens.end())
+		{
+			if ((*(default_type_begin + 1) == "undirected") || (*(default_type_begin + 1) == "mutual"))
+				default_is_directed = false;
+			else
+				if (*(default_type_begin + 1) == "directed")
+					default_is_directed = true;
+				else
+					throw std::runtime_error("Unknown default type of the edge '" + *(default_type_begin + 1) + "'.");
+		}
+
+		// 1.3. We don't really care about anything but the "edges" section
+		edges_begin = std::find(tokens.begin(), tokens.end(), "<edges");
+		edges_end = std::find(tokens.begin(), tokens.end(), "</edges");
+		if ((edges_begin == tokens.end()) || (edges_end == tokens.end()))
+		{
+			in_file.close();
+			return;
+		}
+		for (auto token_i = edges_begin + 1; token_i < edges_end; ++token_i)
+		{
+			switch (parser_state)
+			{
+			// expect beginning of a new edge
+			case EDGE_BEGIN:
+				if (*token_i != "<edge")
+					throw std::runtime_error("Unexpected token '" + *token_i + "' in the 'edges' section of the gexf file.");
+				source_specified = target_specified = weight_specified = false;
+				out_vertex = in_vertex = 0;
+				length = 0.0;
+				is_directed = default_is_directed;
+				parser_state = ATTR_BEGIN;
+				break;
+			// expect beginning of an attribute
+			case ATTR_BEGIN:
+				if (*token_i == "source")
+				{
+					parser_state = SOURCE_VALUE;
+					break;
+				}
+				if (*token_i == "target")
+				{
+					parser_state = TARGET_VALUE;
+					break;
+				}
+				if (*token_i == "type")
+				{
+					parser_state = TYPE_VALUE;
+					break;
+				}
+				if (*token_i == "weight")
+				{
+					parser_state = WEIGHT_VALUE;
+					break;
+				}
+				if ((*token_i == "<edge") || (*token_i == "/"))
+				{
+					if (source_specified && target_specified && weight_specified)
+					{
+						this->updateEdge(out_vertex, in_vertex, length, is_directed);
+						if (*token_i == "<edge")
+						{
+							source_specified = target_specified = weight_specified = false;
+							out_vertex = in_vertex = 0;
+							length = 0.0;
+							is_directed = default_is_directed;
+							break;
+						}
+						parser_state = EDGE_BEGIN;
+						break;
+					}
+					throw std::runtime_error("Each edge must contain 'source', 'target' and 'weight' attributes.");
+				}
+				if ((*token_i)[0] == '<')
+					throw std::runtime_error("Unexpected token '" + *token_i + "' in the 'edges' section of the gexf file.");
+				parser_state = SKIP_VALUE;
+				break;
+			// expect the source value
+			case SOURCE_VALUE:
+				try
+				{
+					out_vertex = std::stoi(*token_i);
+					source_specified = true;
+					parser_state = ATTR_BEGIN;
+					break;
+				}
+				catch(...){}
+				throw std::runtime_error("Vertex ID '" + *token_i + "' do not comply with the requirements of emulator.");
+			// expect the target value
+			case TARGET_VALUE:
+				try
+				{
+					in_vertex = std::stoi(*token_i);
+					target_specified = true;
+					parser_state = ATTR_BEGIN;
+					break;
+				}
+				catch(...){}
+				throw std::runtime_error("Vertex ID '" + *token_i + "' do not comply with the requirements of emulator.");
+			// expect the type value
+			case TYPE_VALUE:
+				if ((*token_i == "undirected") || (*token_i == "mutual"))
+				{
+					is_directed = false;
+					parser_state = ATTR_BEGIN;
+					break;
+				}
+				if (*token_i == "directed")
+				{
+					is_directed = true;
+					parser_state = ATTR_BEGIN;
+					break;
+				}
+				throw std::runtime_error("Unknown type of the edge '" + *token_i + "'.");
+			// expect the weight value
+			case WEIGHT_VALUE:
+				try
+				{
+					length = std::stold(*token_i);
+					weight_specified = true;
+					parser_state = ATTR_BEGIN;
+					break;
+				}
+				catch(...){}
+				throw std::runtime_error("Unable to interpret weight value '" + *token_i + "'.");
+			// skip the value
+			case SKIP_VALUE:
+				parser_state = ATTR_BEGIN;
+				break;
+			}
+		}
+	}
+	in_file.close();
+
+	return;
+}
+
+
+
+void rwe::MetricGraph::toRWEG(std::string const file_name, bool const rewrite) const
 {
 	std::string const   file_format     = ".rweg";
-	std::string         file_name_new   = file_name;
+	std::string         file_name_new   = ((file_name.size() >= file_format.size()) && (file_name.substr(file_name.size() - file_format.size()) == file_format)) ? (file_name.substr(0, file_name.size() - file_format.size())) : (file_name);;
 	std::fstream        out_file;
 
 	// 1. Check if specified file already exists
-	out_file.open(file_name_new + file_format, std::fstream::in | std::fstream::binary);
-	if (out_file.is_open())
+	if (!rewrite)
 	{
-		uint8_t file_number = 1;
-
-		out_file.close();
-		file_name_new += " (1)";
 		out_file.open(file_name_new + file_format, std::fstream::in | std::fstream::binary);
-		while (out_file.is_open())
+		if (out_file.is_open())
 		{
+			uint8_t file_number = 1;
+
 			out_file.close();
-			file_name_new = file_name + " (" + std::to_string(++file_number) + ")";
+			file_name_new += " (1)";
 			out_file.open(file_name_new + file_format, std::fstream::in | std::fstream::binary);
+			while (out_file.is_open())
+			{
+				out_file.close();
+				file_name_new = file_name + " (" + std::to_string(++file_number) + ")";
+				out_file.open(file_name_new + file_format, std::fstream::in | std::fstream::binary);
+			}
 		}
+		out_file.close();
 	}
-	out_file.close();
 
 	// 2. Dump information about graph into this file
 	out_file.open(file_name_new + file_format, std::fstream::out | std::fstream::binary);
@@ -338,7 +628,7 @@ void rand_walks::MetricGraph::toFile(std::string const file_name) const
 
 
 
-void rand_walks::MetricGraph::fromFile(std::string const file_name)
+void rwe::MetricGraph::fromRWEG(std::string const file_name)
 {
 	std::string const   file_format     = ".rweg";
 	std::fstream        in_file;

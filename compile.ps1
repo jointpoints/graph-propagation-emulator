@@ -1,4 +1,4 @@
-$version = '0.1'
+$version = '0.2'
 
 
 
@@ -24,7 +24,7 @@ $compiler_min_version = '4.8.1'
 $object_folder = 'random_walks_emulator_obj'
 $out_folder = "Random Walks Emulator (build, v.$version)"
 $out_file = 'rwe.exe'
-$units = @('metric_graph', 'wander', 'ui', 'main')
+$units = @('metric_graph', 'rw_space', 'ui', 'main')
 
 
 
@@ -264,14 +264,14 @@ Write-Host '3. Compilation...'
 (New-Item -Type Directory -Force -Path $object_folder) *> $NULL
 for ($unit_i = 0; $unit_i -lt $units.count; $unit_i++)
 {
-	if ((Create-Object-File "    3.$($unit_i + 1)" $unit_i) -eq $false)
+	if ((Create-Object-File "    3.$($unit_i + 1)." $unit_i) -eq $false)
 	{
 		Return
 	}
 }
 # Linker
 (New-Item -Type Directory -Force -Path "$out_folder") *> $NULL
-if ((Create-Exe "    3.$($units.count + 1)") -eq $false)
+if ((Create-Exe "    3.$($units.count + 1).") -eq $false)
 {
 	Return
 }
@@ -289,12 +289,15 @@ Write-Host '4. Finalisation... ' -NoNewLine
 (New-Item -Type Directory -Force -Path "$out_folder\My graphs") *> $NULL
 (New-Item -Type Directory -Force -Path "$out_folder\My scenarios") *> $NULL
 (New-Item -Type Directory -Force -Path "$out_folder\Technical files") *> $NULL
-(Copy-Item -Force -Path _util\gs1 -Destination "$out_folder\My graphs\Sample graph 1.rweg") *> $NULL
+(Copy-Item -Force -Path _util\gs2 -Destination "$out_folder\My graphs\Star2.rweg") *> $NULL
+(Copy-Item -Force -Path _util\gs3 -Destination "$out_folder\My graphs\Star3.rweg") *> $NULL
 (Copy-Item -Force -Path _util\ss1 -Destination "$out_folder\My scenarios\Basic.rwes") *> $NULL
 (Copy-Item -Force -Path _util\tfrm -Destination "$out_folder\Technical files\ReadMe.txt") *> $NULL
 (Copy-Item -Force -Path _util\cmdgc -Destination "$out_folder\Technical files\cmdgc") *> $NULL
+(Copy-Item -Force -Path _util\cmdgtr -Destination "$out_folder\Technical files\cmdgtr") *> $NULL
 (Copy-Item -Force -Path _util\cmdh -Destination "$out_folder\Technical files\cmdh") *> $NULL
 (Copy-Item -Force -Path _util\cmdr -Destination "$out_folder\Technical files\cmdr") *> $NULL
+(Copy-Item -Force -Path _util\cmdrtg -Destination "$out_folder\Technical files\cmdrtg") *> $NULL
 (Copy-Item -Force -Path _util\cmdsc -Destination "$out_folder\Technical files\cmdsc") *> $NULL
 Write-Host '(success)'
 
