@@ -75,9 +75,9 @@ gpe::Graph::Graph(std::string const gexf_path)
 				throw gpe::error::WrongFileFormat(gexf_path);
 			// Look up indices of source and target by their GEXF ids
 			auto        source_vertex   = std::find(this->self.begin(), this->self.end(), source);
-			uint64_t    source_index    = source_vertex - this->self.begin();
+			size_t      source_index    = source_vertex - this->self.begin();
 			auto        target_vertex   = std::find(this->self.begin(), this->self.end(), target);
-			uint64_t    target_index    = target_vertex - this->self.begin();
+			size_t      target_index    = target_vertex - this->self.begin();
 			if ((source_vertex == this->self.end()) || (target_index >= this->self.size()))
 				throw gpe::error::WrongFileFormat(gexf_path);
 			// Check if edge is directed
@@ -124,6 +124,15 @@ size_t const gpe::Graph::get_edge_count(void) const
 		}
 	
 	return answer;
+}
+
+
+
+
+
+std::vector<gpe::Graph::Edge> gpe::Graph::get_out_edges(size_t const vertex_i) const
+{
+	return std::vector<gpe::Graph::Edge>(this->self[vertex_i].neighbours.begin(), this->self[vertex_i].neighbours.end());
 }
 
 

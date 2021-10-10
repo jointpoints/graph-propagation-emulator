@@ -52,10 +52,15 @@ class Graph final
 
 
 
-private:
+public:
 
 	/// Represents edge
-	using Edge                  = struct Edge{uint64_t const target; long double const length; bool const inline operator==(uint64_t const other) const {return this->target == other;};};
+	using Edge                  = struct Edge{size_t const target; long double const length; bool const inline operator==(size_t const other) const {return this->target == other;};};
+
+
+
+private:
+
 	/// Stroes vertices which are adjacent to some vertex
 	using EdgeLess              = struct {bool const inline operator()(Edge const &edge1, Edge const &edge2) const {return edge1.target < edge2.target;};};
 	using VertexNeighbourhood   = std::set<Edge, EdgeLess>;
@@ -119,6 +124,17 @@ public:
 	 * @return Number of edges.
 	 */
 	size_t const get_edge_count(void) const;
+
+	/**
+	 * @brief Outgoing edges
+	 *
+	 * Gets the vector of edges outgoing from the specified vertex.
+	 * 
+	 * @param vertex_i The index (not ID) of vertex.
+	 * 
+	 * @return @c std::vector of @c gpe::Graph::Edge.
+	 */
+	std::vector<Edge> get_out_edges(size_t const vertex_i) const;
 
 	/**
 	 * @brief Number of vertices
