@@ -28,13 +28,22 @@ namespace gpe
  *
  * Stores functional properties for a procedure to find the first \f$\varepsilon\f$-sauration
  * moment.
+ * 
+ * @param use_concurrency   Signifies whether to use multiple threads or not.
+ * @param use_skip_forward  Signifies whether to use a skip-forward technique or not.
+ *                          Skip-forward decreases computation time but is not suitable
+ *                          for frame-by-frame animation.
+ * @param time_delta        Signifies time step. Less time step increases precision but
+ *                          decreases speed of calculations.
+ * @param max_time          Signifies maximal reachable time moment. If no saturation
+ *                          happens up to this moment, the procedure halts.
  */
 using FirstSaturationInfo = struct FirstSaturationInfo
 {
-	bool        use_concurrency;    /// Signifies whether to use multiple threads or not.
-	bool        use_skip_forward;   /// Signifies whether to use a skip-forward technique or not. Skip-forward decreases computation time but is not suitable for frame-by-frame animation.
-	long double time_delta;         /// Signifies time step. Less time step increases precision but decreases speed of calculations.
-	long double max_time;           /// Signifies maximal reachable time moment. If no saturation happens up to this moment, the procedure halts.
+	bool        use_concurrency;
+	bool        use_skip_forward;
+	long double time_delta;
+	long double max_time;
 };
 
 

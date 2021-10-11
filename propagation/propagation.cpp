@@ -3,6 +3,7 @@
  * @author JointPoints, 2021, github.com/jointpoints
  */
 #include "propagation.hpp"
+#include <cmath>
 #include <iostream>
 
 
@@ -16,30 +17,114 @@
 
 
 /**
- * @struct Edge
+ * @class Edge
  * @brief Represents a single unique edge of graph
  *
  * Used in propagation emulation for better concurrency.
  */
-using Edge = struct Edge
+class Edge final
 {
+
+
+
+public:
+
 	size_t source;
 	size_t target;
 	bool is_directed;
 	long double length;
+	std::vector<long double> agents;
+
+	/// @name Constructors & destructors
+	/// @{
+
+	/**
+	 * @brief Default constructor
+	 *
+	 * Sets everything to zero.
+	 */
 	Edge(void) :
 		source(0), target(0), is_directed(false), length(0.0L){};
+	
+	/**
+	 * @brief From-graph constructor
+	 *
+	 * Constructs a copy of Graph edge suitable for concurrent computing.
+	 * 
+	 * @param source        The index of source vertex.
+	 * @param graph_edge    gpe::Graph::Edge object containing all data
+	 *                      about the edge.
+	 */
 	Edge(size_t const source, gpe::Graph::Edge const &graph_edge) :
 		source(source), target(graph_edge.target), is_directed(true), length(graph_edge.length){};
+	
+	/**
+	 * @brief Default destructor
+	 *
+	 * Deletes the edge.
+	 */
+	~Edge(void) = default;
+	
+	/// @}
+	
+
+
+	/// @name Operators
+	/// @{
+
+	/**
+	 * @brief Equality operator
+	 *
+	 * Enables comparison of two edges. Edges are considered equal, if they have the same
+	 * source an target vertices (not necessarily respectively).
+	 * 
+	 * @param other Another edge.
+	 * 
+	 * @return @c true if edges are equal, @c false otherwise.
+	 */
 	inline bool const operator==(Edge const &other)
 	{
 		return ((this->source == other.source) && (this->target == other.target)) || ((this->source == other.target) && (this->target == other.source));
 	};
-};
+
+	///@}
+
+
+
+	/// @name Modifiers
+	/// @{
+
+	/**
+	 * @brief Adds new agent
+	 *
+	 * Adds new agent to one of the vertices incident to this edge (i.e., either
+	 * @c source or @c target).
+	 * 
+	 * @param vertex_i Graph-local index of the vertex where a new agent needs to be
+	 *                 placed.
+	 * 
+	 * @throw 
+	 */
+	void new_agent(size_t const vertex_i)
+	{
+		if (vertex_i == this->source)
+			agents.insert(agents.begin(), 0.L);
+		else
+			if (vertex_i == this->target)
+				agents.push_back(this->length);
+			else
+				throw 0;
+		return;
+	}
+
+	/// @}
+
+
+
+}; // class Edge
 
 /**
- * @struct EdgeList
- * @brief Vector of all edges of graph
+ * Vector of all edges of graph
  */
 using EdgeList = std::vector<Edge>;
 
@@ -90,7 +175,10 @@ EdgeList extract_unique_edges(gpe::Graph const &graph)
  */
 void first_saturation_consecutive(EdgeList const &edge_list, size_t const start_vertex_i, long double const epsilon, gpe::FirstSaturationInfo const &info)
 {
-	// ...
+	auto a = [](EdgeList::const_iterator const edge_iter, long double const birthtime, long double const t)
+	{
+		return edge_iter->length * (1 - std::abs( 2 * std::fmod( (t - birthtime) / (2 * edge_iter->length), 1.L) - 1 ));
+	};
 }
 
 
